@@ -1,20 +1,23 @@
 const __G = global || window || this;
+console.log(__G)
 const __UNDEF = void 1;
 
 export const RequireNodeModule = (name: string): any => __G.require(name);
 
 export const ToString = <T>(data: T): string => {
     const typeHandlers = {
-        boolean: (data) => `${data}`,
-        string: (data) => data,
-        number: (data) => `${data}`,
-        object: (data) => IsObject(data) ? Stringify(data) : ''
+        boolean: (data: boolean) => `${data}`,
+        string: (data: string) => data,
+        number: (data: number) => `${data}`,
+        object: (data: object) => IsObject(data) ? Stringify(data) : ''
     };
 
     const type = typeof data;
 
-    if (typeHandlers.hasOwnProperty(type))
+    if (typeHandlers.hasOwnProperty(type)) {
+        // @ts-ignore
         return typeHandlers[type](data);
+    }
     return '';
 }
 

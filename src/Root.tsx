@@ -9,7 +9,7 @@ function Root(): React.JSX.Element {
     return (
         <div>
             <HeaderControls />
-            <div className={'lm_app-content lmo_none_user_select'}>
+            <div className={'lmo_app-content lmo_none_user_select'}>
                 <LeftMenu />
                 <AppContent />
             </div>

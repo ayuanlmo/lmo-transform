@@ -1,8 +1,26 @@
 import * as React from 'react';
+import {setSelectedFiles} from "../lib/Store/AppState";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../lib/Store";
+import {SelectFile} from "../utils/fs";
 
 function DropFile(): React.JSX.Element {
+
+    const dispatch = useDispatch();
+
+    const selectedFiles = useSelector((state: RootState) => state.app.selectedFiles)
+
+    console.log(selectedFiles)
+
+
+    console.log()
+
     return (
-        <div className={'lmo-app-content-drop-file lmo_position_relative lmo_cursor_pointer'}>
+        <div onClick={() => {
+            SelectFile().then((res): void => {
+                dispatch(setSelectedFiles(res));
+            });
+        }} className={'lmo-app-content-drop-file lmo_position_relative lmo_cursor_pointer'}>
             <div className={'lmo_flex_box'}>
                 <div className={'lmo-app-content-drop-file-select-file-icon'}>
                     <img src={require('../static/svg/select-file.svg').default} alt=""/>
