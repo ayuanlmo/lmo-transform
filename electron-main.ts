@@ -1,4 +1,4 @@
-import {app, BrowserWindow, dialog, ipcMain} from 'electron';
+import {app, BrowserWindow, dialog, ipcMain, Menu} from 'electron';
 import {join} from 'path';
 import {ElectronChannel} from './ipc';
 
@@ -33,6 +33,7 @@ const createWindow = async (type: APP_RUN_TYPES = 'dev'): Promise<BrowserWindow>
     const window = new BrowserWindow({
         width: 800,
         height: 600,
+        frame: false,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
@@ -57,3 +58,7 @@ const appListens = () => {
             await createWindow();
     });
 }
+
+((): void => {
+    Menu.setApplicationMenu(null);
+})();
