@@ -2,11 +2,14 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import Root from './Root';
 import reportWebVitals from './reportWebVitals';
-import {RequireNodeModule} from "./utils";
+import { Provider } from 'react-redux';
+import Store from "./lib/Store";
 
 ReactDOM.createRoot(document.getElementById('__lmo__') as HTMLElement).render(
-  <React.StrictMode>
-    <Root />
-  </React.StrictMode>
+    <Provider store={Store}>
+        <React.StrictMode>
+            <Root />
+        </React.StrictMode>
+    </Provider>
 );
 reportWebVitals();
