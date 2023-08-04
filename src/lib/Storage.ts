@@ -1,12 +1,12 @@
 import {ToString} from "../utils";
-import AppConfig from "../const/AppConfig";
+import AppConfig from "../conf/AppConfig";
 
 export default class Storage {
     private static store = AppConfig.storageOptions.storage === 'local' ? localStorage : sessionStorage;
     private static namespace: string = AppConfig.storageOptions.namespace;
 
-    public static Get(key: string): string {
-        return this.store.getItem(this.namespace + key);
+    public static Get(key: string): void {
+        this.store.getItem(this.namespace + key);
     }
 
     public static Set<T>(key: string, value: T): void {
