@@ -1,6 +1,6 @@
-import {app, BrowserWindow, dialog, ipcMain, Menu} from 'electron';
+import {app, BrowserWindow, Menu} from 'electron';
 import {join} from 'path';
-import {ElectronChannel} from './ipc';
+import {closeApp, initIpcMainHandles} from './ipc';
 
 type APP_RUN_TYPES = 'dev' | 'prod';
 export const main = (): void => {
@@ -17,16 +17,7 @@ const onReady = (type: APP_RUN_TYPES): void => {
 }
 
 const mainWindowListens = (mainWindow: BrowserWindow): void => {
-    ipcMainHandles(mainWindow);
-}
-
-
-const ipcMainHandles = (mainWindow: BrowserWindow): void => {
-    ipcMain.handle(ElectronChannel.openDialog, (): void => {
-        dialog.showOpenDialog(mainWindow).then(v => {
-            console.log(v);
-        });
-    });
+    initIpcMainHandles(mainWindow);
 }
 
 const createWindow = async (type: APP_RUN_TYPES = 'dev'): Promise<BrowserWindow> => {
@@ -40,6 +31,10 @@ const createWindow = async (type: APP_RUN_TYPES = 'dev'): Promise<BrowserWindow>
         }
     });
 
+    window.on('close',()=>{
+        closeApp();
+    });
+
     if (type === 'dev') {
         await window.loadURL('http://localhost:3000');
         window.webContents.openDevTools();
@@ -50,8 +45,7 @@ const createWindow = async (type: APP_RUN_TYPES = 'dev'): Promise<BrowserWindow>
 
 const appListens = () => {
     app.on('window-all-closed', (): void => {
-        if (process.platform !== 'darwin')
-            app.quit();
+        return closeApp();
     });
     app.on('activate', async (): Promise<void> => {
         if (BrowserWindow.getAllWindows().length === 0)
