@@ -52,3 +52,7 @@ export const Exec_CMD = (cmd: string, opt: any): Promise<any> => {
         }
     });
 }
+
+export const ResolvePath = (path: string) => {
+    return path.split('\\').join('/')
+}
