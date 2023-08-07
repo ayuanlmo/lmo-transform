@@ -2,10 +2,11 @@ import * as React from 'react';
 import {VIDEO_TYPE_MAP} from "../const/ResourceTypes";
 import {useDispatch} from "react-redux";
 import {deleteSelectedFilesItem} from "../lib/Store/AppState";
+import {ResolveSize} from "../utils";
 
 interface ResourceInfoTypes {
     cover: string;
-    duration: string;
+    duration: string | number;
     format: string;
     height?: number;
     lastModified: number;
@@ -35,11 +36,11 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                         <div className={'lmo-app-resource-item-content-in-info-name'}>{info.name}</div>
                         <div className={'lmo-app-resource-item-content-in-info-item lmo_flex_box'}>
                             <div>类型：{info.type.split('/')[1]}</div>
-                            <div>大小：{info.size}</div>
+                            <div>大小：{ResolveSize(info.size)}</div>
                         </div>
                         <div className={'lmo-app-resource-item-content-in-info-item lmo_flex_box'}>
-                            <div>尺寸：{info.width}</div>
-                            <div>时长：{info.height}</div>
+                            <div>尺寸：{info.width} * {info.height}</div>
+                            <div>时长：{info.duration.toString().split('.').join(':')}</div>
                         </div>
                     </div>
                 </div>
@@ -60,11 +61,10 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                                     }
                                 </select>
                             </div>
-                            <div>大小：16M</div>
                         </div>
                         <div className={'lmo-app-resource-item-content-in-info-item lmo_flex_box'}>
-                            <div>尺寸：MP4</div>
-                            <div>时长：16M</div>
+                            <div>尺寸：{info.width} * {info.height}</div>
+                            <div>时长：{info.duration.toString().split('.').join(':')}</div>
                         </div>
                     </div>
                 </div>
