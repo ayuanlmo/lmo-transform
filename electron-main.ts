@@ -10,6 +10,11 @@ export const main = (): void => {
 
 
 const onReady = (type: APP_RUN_TYPES): void => {
+    const os = require('os');
+
+    if ((os.platform() !== 'win32') && (os.arch() !== 'x64'))
+        return closeApp(true);
+
     app.whenReady().then(async (): Promise<void> => {
         const mainWindow = createWindow(type);
         mainWindowListens(await mainWindow);
@@ -22,8 +27,10 @@ const mainWindowListens = (mainWindow: BrowserWindow): void => {
 
 const createWindow = async (type: APP_RUN_TYPES = 'dev'): Promise<BrowserWindow> => {
     const window = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1500,
+        height: 800,
+        minWidth: 1500,
+        minHeight: 800,
         frame: false,
         webPreferences: {
             nodeIntegration: true,
@@ -31,8 +38,8 @@ const createWindow = async (type: APP_RUN_TYPES = 'dev'): Promise<BrowserWindow>
         }
     });
 
-    window.on('close',()=>{
-        closeApp();
+    window.on('close', () => {
+        return closeApp();
     });
 
     if (type === 'dev') {
@@ -48,9 +55,11 @@ const appListens = () => {
         return closeApp();
     });
     app.on('activate', async (): Promise<void> => {
-        if (BrowserWindow.getAllWindows().length === 0)
-            await createWindow();
+        if (require('os').platform() === '')
+            if (BrowserWindow.getAllWindows().length === 0)
+                await createWindow();
     });
+    console.log()
 }
 
 ((): void => {
