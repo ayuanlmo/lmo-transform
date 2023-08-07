@@ -9,7 +9,7 @@ const fs = require('fs');
 
 type APP_RUN_TYPES = 'dev' | 'prod';
 export const main = (): void => {
-    onReady('dev');
+    onReady('prod');
     appListens();
 }
 
@@ -59,7 +59,7 @@ const createWindow = async (type: APP_RUN_TYPES = 'dev'): Promise<BrowserWindow>
         await window.loadURL('http://localhost:3000');
         window.webContents.openDevTools();
     } else
-        await window.loadFile(join(__dirname, 'build', 'index.html'));
+        await window.loadFile(join(__dirname, '/index.html'))
     return window;
 }
 
