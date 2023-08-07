@@ -11,7 +11,7 @@ function Resource(): React.JSX.Element {
             <div className={'lmo-app-resource-content'}>
                 {
                     selectedFiles.map((item, index) => {
-                        return (<ResourceItem info={item} key={index}/>)
+                        return (<ResourceItem index={index} info={item} key={index}/>)
                     })
                 }
             </div>

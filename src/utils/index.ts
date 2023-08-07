@@ -56,3 +56,9 @@ export const Exec_CMD = (cmd: string, opt: any): Promise<any> => {
 export const ResolvePath = (path: string) => {
     return path.split('\\').join('/')
 }
+
+export const SpliceArray = <T>(arr: Array<T>, index: number): Array<T> => {
+    if (index > -1 && index < arr.length)
+        return arr.slice(0, index).concat(arr.slice(index + 1));
+    return arr;
+}
