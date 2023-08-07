@@ -30,7 +30,7 @@ function Resource(): React.JSX.Element {
                                     <div className={'lmo_color_white'}>类型：
                                         <select name="" id="">
                                             {
-                                                VIDEO_TYPE_MAP.map((i,k) => {
+                                                VIDEO_TYPE_MAP.map((i, k) => {
                                                     return (
                                                         <option key={k} value={i.type}>
                                                             {i.name}
@@ -48,14 +48,17 @@ function Resource(): React.JSX.Element {
                                 </div>
                             </div>
                         </div>
+                        <div className={'lmo-app-resource-item-content-controls'}>
+                            <button className={'lmo_theme_color_border lmo_position_relative'}>
+                                <img src={require('../static/delete.svg').default}/>
+                            </button>
+                            <button className={'lmo_theme_color_border lmo_position_relative'}>
+                                开始转换
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div className={'lmo-app-resource-item'}></div>
-                <div className={'lmo-app-resource-item'}></div>
-                <div className={'lmo-app-resource-item'}></div>
-                <div className={'lmo-app-resource-item'}></div>
             </div>
-
         </div>
     );
 }
