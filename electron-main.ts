@@ -1,6 +1,11 @@
 import {app, BrowserWindow, Menu} from 'electron';
 import {join} from 'path';
 import {closeApp, initIpcMainHandles} from './ipc';
+import AppConfig from "./src/conf/AppConfig";
+
+const os = require('os');
+const fs = require('fs');
+
 
 type APP_RUN_TYPES = 'dev' | 'prod';
 export const main = (): void => {
@@ -10,7 +15,14 @@ export const main = (): void => {
 
 
 const onReady = (type: APP_RUN_TYPES): void => {
-    const os = require('os');
+    const {tempPath} = AppConfig.system;
+    const appPath: string = `${AppConfig.system.tempPath}${AppConfig.appName}`;
+    const appTmpPath: string = `${AppConfig.system.tempPath}${AppConfig.appName}/tmp`;
+
+    if (!fs.existsSync(appPath))
+        fs.mkdirSync(appPath);
+    if (!fs.existsSync(appTmpPath))
+        fs.mkdirSync(appTmpPath);
 
     if ((os.platform() !== 'win32') && (os.arch() !== 'x64'))
         return closeApp(true);

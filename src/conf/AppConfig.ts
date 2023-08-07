@@ -1,4 +1,5 @@
-const os = window.require('os');
+// @ts-ignore
+const os = eval('require(\'os\');');
 
 export default {
     appName: 'lmo-Transform',
