@@ -1,9 +1,43 @@
 {
-  "name": "lt",
+  "name": "lmo-Transform",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "./build/electron-app.js",
   "license": "Apache",
   "homepage": ".",
+  "author": "ayuanlmo",
+  "build": {
+    "productName": "lmo-Transform",
+    "icon": "public/icon.ico",
+    "asar": true,
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "nsis": {
+      "oneClick": false,
+      "language": "2052",
+      "perMachine": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "allowToChangeInstallationDirectory": true
+    },
+    "win": {
+      "icon": "build/icons/icon.png",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "extends": null,
+    "files": [
+      "./build/**/*",
+      "./build/electron-app.js"
+    ]
+  },
   "scripts": {
     "start-app": "tsc && concurrently \"yarn start\" \"electron out/electron-app.js \"",
     "build": "tsc && electron-builder",
