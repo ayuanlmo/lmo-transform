@@ -5,15 +5,7 @@ import {RootState} from "../lib/Store";
 import {SelectFile} from "../utils/fs";
 
 function DropFile(): React.JSX.Element {
-
     const dispatch = useDispatch();
-
-    const selectedFiles = useSelector((state: RootState) => state.app.selectedFiles)
-
-    console.log(selectedFiles)
-
-
-    console.log()
 
     return (
         <div onClick={() => {

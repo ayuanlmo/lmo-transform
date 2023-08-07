@@ -46,6 +46,7 @@ const createWindow = async (type: APP_RUN_TYPES = 'dev'): Promise<BrowserWindow>
         frame: false,
         webPreferences: {
             nodeIntegration: true,
+            webSecurity: false,
             contextIsolation: false,
         }
     });
