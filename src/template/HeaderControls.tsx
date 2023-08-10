@@ -15,6 +15,20 @@ function HeaderControls(): React.JSX.Element {
                 {AppConfig.appName}
             </div>
             <div className={'lmo_header-controls-block'}></div>
+            <div className={'lmo_header-controls-operation'}>
+                <button className={'lmo_cursor_pointer lmo_color_white'}>
+                   <span>
+                        <img src={require('../static/svg/header/log.svg').default} alt=""/>
+                    日志
+                   </span>
+                </button>
+                <button className={'lmo_cursor_pointer lmo_color_white'}>
+                    <span>
+                        <img src={require('../static/svg/header/setting.svg').default} alt=""/>
+                    设置
+                    </span>
+                </button>
+            </div>
             <div className={'lmo_header-controls-window-buttons'}>
                 <div onClick={(): void => {
                     ipcRenderer.send('HIDE-WINDOW');
