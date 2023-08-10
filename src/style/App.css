@@ -17,6 +17,36 @@ select {
     width: 260px;
     background: #252528;
     height: 100vh;
+    padding-top: 40px;
+}
+
+.lmo-app-left-menu-item {
+    width: 220px;
+    height: 60px;
+    position: relative;
+    left: calc((260px - 220px) / 2);
+    border-radius: 10px;
+    opacity: 1;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: normal;
+    margin-bottom: 28px;
+}
+
+.lmo-app-left-menu-item-active{
+    background: #343337;
+}
+
+.lmo-app-left-menu-item:hover {
+
+}
+
+.lmo-app-left-menu-item-content {
+    width: 102px;
+    height: 46px;
+    top: 20px;
+    margin: auto;
+    justify-content: space-between;
 }
 
 .lmo-app-content {
