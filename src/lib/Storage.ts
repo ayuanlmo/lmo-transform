@@ -5,7 +5,7 @@ export default class Storage {
     private static store = AppConfig.storageOptions.storage === 'local' ? localStorage : sessionStorage;
     private static namespace: string = AppConfig.storageOptions.namespace;
 
-    public static Get(key: string): string {
+    public static Get(key: string): string | null {
         return this.store.getItem(this.namespace + key);
     }
 

@@ -61,7 +61,7 @@ export const getFileInfo = (filePath: string): Promise<any> => {
 
 export const transformVideo = (data: any): Promise<any> => {
     const inputFile: string = data.path;
-    const outputPath: string = Storage.Get('output_path');
+    const outputPath: string = Storage.Get('output_path') as string;
 
     return new Promise((resolve, reject) => {
         const optFile: string = outputPath + "\\" + data.name.split('.')[0] + '.' + data.output.type;
