@@ -4,13 +4,9 @@ import {FILE_ERROR_MESSAGE} from "../const/Message";
 
 const {ipcRenderer} = window.require('electron');
 
-interface MyFileList extends FileList, File {
-    path: any;
-}
-
 export const SelectFile = () => {
     return new Promise((resolve, reject): void => {
-        const i: HTMLInputElement = document.createElement('input');
+        const i: any = document.createElement('input');
         i.type = 'file';
         i.multiple = true;
         i.accept = 'video/*';
@@ -19,7 +15,7 @@ export const SelectFile = () => {
     });
 }
 
-export const resolveFile = async (files) => {
+export const resolveFile = async (files: Array<any>) => {
     const _ = [];
 
     for (let j = 0; j < files.length; j++) {

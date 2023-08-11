@@ -16,11 +16,11 @@ function Root(): React.JSX.Element {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const handleDragOver = (e) => e.preventDefault();
-        const handleDrop = async (e) => {
+        const handleDragOver = (e: Event) => e.preventDefault();
+        const handleDrop = async (e: any) => {
             e.preventDefault();
             // 输入文件
-            dispatch(setSelectedFiles([...selectedFiles,... await resolveFile(e.dataTransfer.files)]));
+            dispatch(setSelectedFiles([...selectedFiles, ...await resolveFile(e.dataTransfer.files)]));
         };
         document.body.addEventListener('dragover', handleDragOver);
         document.body.addEventListener('drop', handleDrop);
