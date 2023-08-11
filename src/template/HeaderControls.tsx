@@ -10,6 +10,8 @@ const {ipcRenderer} = window.require('electron');
 function HeaderControls(): React.JSX.Element {
     const [miniWindow, setMiniWindow] = useState<boolean>(false);
 
+    ipcRenderer.on('WINDOW-ON-MAX', (e: any, state: boolean): void => setMiniWindow(state));
+
     return (
         <div className={'lmo_header-controls'}>
 
@@ -24,7 +26,7 @@ function HeaderControls(): React.JSX.Element {
                     日志
                    </span>
                 </button>
-                <Setting />
+                <Setting/>
             </div>
             <div className={'lmo_header-controls-window-buttons'}>
                 <div onClick={(): void => {

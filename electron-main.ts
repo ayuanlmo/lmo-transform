@@ -55,6 +55,8 @@ const createWindow = async (type: APP_RUN_TYPES = 'dev'): Promise<BrowserWindow>
     window.on('close', () => {
         return closeApp();
     });
+    window.on('maximize', (): void => window.webContents.send('WINDOW-ON-MAX', true));
+    window.on('unmaximize', (): void => window.webContents.send('WINDOW-ON-MAX', false));
 
     if (type === 'dev') {
         await window.loadURL('http://localhost:3000');
