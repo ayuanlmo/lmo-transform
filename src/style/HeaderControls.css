@@ -72,3 +72,58 @@
     top: 4px;
     left: 8px;
 }
+
+dialog {
+    width: 560px;
+    padding: 0;
+    min-height: 350px;
+    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.5);
+    z-index: 9;
+    border: 1px solid #2D2D2E;
+    background: #1B1B1C;
+    border-radius: 10px;
+    position: absolute;
+    top: calc((100vh - 350px) / 2);
+}
+
+.dialog-header {
+    width: 100%;
+    height: 32px;
+    line-height: 22px;
+    margin-top: 10px;
+    margin-left: 10px;
+    font-size: 16px;
+}
+
+.dialog-content {
+    padding: 20px;
+    height: 210px;
+    border-top: 1px solid #2D2D2E;
+    border-bottom: 1px solid #2D2D2E;
+}
+
+.dialog-controls-buttons {
+    position: relative;
+    top: 16px;
+    display: flex;
+    justify-content: end;
+}
+
+.dialog-controls-buttons button {
+    width: 70px;
+    height: 26px;
+    border: 0;
+    cursor: pointer;
+    border-radius: 4px;
+    background: #4F4F56;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: normal;
+    margin-right: 20px;
+    letter-spacing: 0;
+    color: #FFFFFF;
+}
+
+.dialog-controls-buttons button:nth-child(2) {
+    background: #229EED;;
+}
