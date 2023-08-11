@@ -1,5 +1,6 @@
-import * as React from 'react';
 import AppConfig from "../conf/AppConfig";
+import Setting from "./Setting";
+import {useState} from "react";
 
 require('../style/HeaderControls.css');
 require('../style/Global.css');
@@ -7,14 +8,26 @@ require('../style/Global.css');
 const {ipcRenderer} = window.require('electron');
 
 function HeaderControls(): React.JSX.Element {
-    const [miniWindow, setMiniWindow] = React.useState<boolean>(false);
+    const [miniWindow, setMiniWindow] = useState<boolean>(false);
+
+    ipcRenderer.on('WINDOW-ON-MAX', (e: any, state: boolean): void => setMiniWindow(state));
 
     return (
         <div className={'lmo_header-controls'}>
+
             <div className={'lmo_header-controls-app-name lmo_theme_color'}>
                 {AppConfig.appName}
             </div>
             <div className={'lmo_header-controls-block'}></div>
+            <div className={'lmo_header-controls-operation'}>
+                <button className={'lmo_cursor_pointer lmo_color_white'}>
+                   <span>
+                        <img src={require('../static/svg/header/log.svg').default} alt=""/>
+                    日志
+                   </span>
+                </button>
+                <Setting/>
+            </div>
             <div className={'lmo_header-controls-window-buttons'}>
                 <div onClick={(): void => {
                     ipcRenderer.send('HIDE-WINDOW');

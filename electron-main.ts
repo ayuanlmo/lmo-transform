@@ -1,6 +1,11 @@
 import {app, BrowserWindow, Menu} from 'electron';
 import {join} from 'path';
 import {closeApp, initIpcMainHandles} from './ipc';
+import AppConfig from "./src/conf/AppConfig";
+
+const os = require('os');
+const fs = require('fs');
+
 
 type APP_RUN_TYPES = 'dev' | 'prod';
 export const main = (): void => {
@@ -10,6 +15,18 @@ export const main = (): void => {
 
 
 const onReady = (type: APP_RUN_TYPES): void => {
+    const {tempPath} = AppConfig.system;
+    const appPath: string = `${AppConfig.system.tempPath}${AppConfig.appName}`;
+    const appTmpPath: string = `${AppConfig.system.tempPath}${AppConfig.appName}/tmp`;
+
+    if (!fs.existsSync(appPath))
+        fs.mkdirSync(appPath);
+    if (!fs.existsSync(appTmpPath))
+        fs.mkdirSync(appTmpPath);
+
+    if ((os.platform() !== 'win32') && (os.arch() !== 'x64'))
+        return closeApp(true);
+
     app.whenReady().then(async (): Promise<void> => {
         const mainWindow = createWindow(type);
         mainWindowListens(await mainWindow);
@@ -22,24 +39,30 @@ const mainWindowListens = (mainWindow: BrowserWindow): void => {
 
 const createWindow = async (type: APP_RUN_TYPES = 'dev'): Promise<BrowserWindow> => {
     const window = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1500,
+        height: 800,
+        icon: 'public/favicon.ico',
+        minWidth: 1500,
+        minHeight: 800,
         frame: false,
         webPreferences: {
             nodeIntegration: true,
+            webSecurity: false,
             contextIsolation: false,
         }
     });
 
-    window.on('close',()=>{
-        closeApp();
+    window.on('close', () => {
+        return closeApp();
     });
+    window.on('maximize', (): void => window.webContents.send('WINDOW-ON-MAX', true));
+    window.on('unmaximize', (): void => window.webContents.send('WINDOW-ON-MAX', false));
 
     if (type === 'dev') {
         await window.loadURL('http://localhost:3000');
         window.webContents.openDevTools();
     } else
-        await window.loadFile(join(__dirname, 'build', 'index.html'));
+        await window.loadFile(join(__dirname, '/index.html'))
     return window;
 }
 
@@ -48,8 +71,9 @@ const appListens = () => {
         return closeApp();
     });
     app.on('activate', async (): Promise<void> => {
-        if (BrowserWindow.getAllWindows().length === 0)
-            await createWindow();
+        if (require('os').platform() === "win32")
+            if (BrowserWindow.getAllWindows().length === 0)
+                await createWindow();
     });
 }
 
