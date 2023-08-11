@@ -66,3 +66,9 @@ export const SpliceArray = <T>(arr: Array<T>, index: number): Array<T> => {
 export const ResolveSize = (size: number): string => {
     return (size / 1024 / 1024).toFixed(2).toString() + 'M';
 }
+
+export const FormatSec = (sec: string | number): string => {
+    if (typeof sec === 'number') sec = sec.toString();
+
+    return sec.split('.').join(':');
+};

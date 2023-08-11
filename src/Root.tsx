@@ -9,6 +9,7 @@ import {resolveFile} from "./utils/fs";
 
 require('./style/lmo-default.t.css');
 require('./style/App.css');
+require('./style/animate.min.css');
 
 function Root(): React.JSX.Element {
     const selectedFiles = useSelector((state: RootState) => state.app.selectedFiles);

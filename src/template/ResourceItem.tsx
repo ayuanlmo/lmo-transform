@@ -2,7 +2,7 @@ import * as React from 'react';
 import {VIDEO_TYPE_MAP} from "../const/ResourceTypes";
 import {useDispatch} from "react-redux";
 import {deleteSelectedFilesItem} from "../lib/Store/AppState";
-import {ResolveSize} from "../utils";
+import {FormatSec, ResolveSize} from "../utils";
 
 interface ResourceInfoTypes {
     cover: string;
@@ -24,7 +24,6 @@ interface ResourceInfoTypes {
 function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.JSX.Element {
     const {info, index} = props;
     const dispatch = useDispatch();
-
     return (
         <div className={'lmo-app-resource-item'}>
             <div className={'lmo-app-resource-item-content lmo_flex_box'}>
@@ -40,7 +39,7 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                         </div>
                         <div className={'lmo-app-resource-item-content-in-info-item lmo_flex_box'}>
                             <div>尺寸：{info.width} * {info.height}</div>
-                            <div>时长：{info.duration.toString().split('.').join(':')}</div>
+                            <div>时长：{FormatSec(info.duration as string)}</div>
                         </div>
                     </div>
                 </div>
@@ -64,12 +63,12 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                         </div>
                         <div className={'lmo-app-resource-item-content-in-info-item lmo_flex_box'}>
                             <div>尺寸：{info.width} * {info.height}</div>
-                            <div>时长：{info.duration.toString().split('.').join(':')}</div>
+                            <div>时长：{FormatSec(info.duration as string)}</div>
                         </div>
                     </div>
                 </div>
                 <div className={'lmo-app-resource-item-content-controls'}>
-                    <button onClick={()=>{
+                    <button onClick={() => {
                         dispatch(deleteSelectedFilesItem(index));
                     }} className={'lmo_theme_color_border lmo_position_relative'}>
                         <img src={require('../static/delete.svg').default} alt={''}/>

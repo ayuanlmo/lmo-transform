@@ -9,7 +9,7 @@ const fs = require('fs');
 
 type APP_RUN_TYPES = 'dev' | 'prod';
 export const main = (): void => {
-    onReady('prod');
+    onReady('dev');
     appListens();
 }
 
@@ -41,6 +41,7 @@ const createWindow = async (type: APP_RUN_TYPES = 'dev'): Promise<BrowserWindow>
     const window = new BrowserWindow({
         width: 1500,
         height: 800,
+        icon: 'public/favicon.ico',
         minWidth: 1500,
         minHeight: 800,
         frame: false,
@@ -54,6 +55,8 @@ const createWindow = async (type: APP_RUN_TYPES = 'dev'): Promise<BrowserWindow>
     window.on('close', () => {
         return closeApp();
     });
+    window.on('maximize', (): void => window.webContents.send('WINDOW-ON-MAX', true));
+    window.on('unmaximize', (): void => window.webContents.send('WINDOW-ON-MAX', false));
 
     if (type === 'dev') {
         await window.loadURL('http://localhost:3000');
@@ -68,11 +71,10 @@ const appListens = () => {
         return closeApp();
     });
     app.on('activate', async (): Promise<void> => {
-        if (require('os').platform() === '')
+        if (require('os').platform() === "win32")
             if (BrowserWindow.getAllWindows().length === 0)
                 await createWindow();
     });
-    console.log()
 }
 
 ((): void => {

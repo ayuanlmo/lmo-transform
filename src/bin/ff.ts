@@ -25,7 +25,9 @@ export const getVideoFirstFrame = (inputFilePath: string) => {
         }).on('end', function (e: any) {
             if (e)
                 console.log('生成首帧图错误', e);
-        });
+        }).on('error', function (e: any) {
+            reject({err: true, msg: e, file: inputFilePath});
+        })
     })
 }
 
