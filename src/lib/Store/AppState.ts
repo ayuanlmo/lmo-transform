@@ -12,12 +12,21 @@ export const counterSlice = createSlice({
         outputPath: local_output_path === null ? AppConfig.system.tempPath : local_output_path
     },
     reducers: {
-        setSelectedFiles: (state, data): void => {
-            state.selectedFiles.push(...data.payload);
+        // 设置选择的文件
+        setSelectedFiles: (state, {payload}): void => {
+            // @ts-ignore
+            state.selectedFiles.push(...payload);
         },
+        // 删除某个删除的文件
         deleteSelectedFilesItem: (state, {payload}): void => {
             state.selectedFiles = SpliceArray(state.selectedFiles, payload);
         },
+        // 设置文件输出格式
+        setSelectedFileOutputType: (state, {payload}): void => {
+            // @ts-ignore
+            state.selectedFiles[payload.index].output.type = payload.type;
+        },
+        // 设置系统输出路径
         setOutputPath: (state, {payload}): void => {
             state.outputPath = payload as string;
             Storage.Set('output_path', payload as string);
@@ -25,6 +34,11 @@ export const counterSlice = createSlice({
     },
 });
 
-export const {setSelectedFiles, deleteSelectedFilesItem, setOutputPath} = counterSlice.actions;
+export const {
+    setSelectedFiles,
+    deleteSelectedFilesItem,
+    setSelectedFileOutputType,
+    setOutputPath
+} = counterSlice.actions;
 
 export default counterSlice.reducer;
