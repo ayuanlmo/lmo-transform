@@ -33,7 +33,7 @@ select {
     margin-bottom: 28px;
 }
 
-.lmo-app-left-menu-item-active{
+.lmo-app-left-menu-item-active {
     background: #343337;
 }
 
@@ -192,4 +192,23 @@ select {
 
 .lmo-app-resource-item-content-controls button:nth-child(2) {
     padding: 14px 60px;
+}
+
+.lmo-app-setting-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.lmo-app-setting-item-label{
+    margin-top: 8px;
+}
+
+.lmo-app-setting-item input {
+    width: 400px;
+    background: #343337;
+    border: 0;
+    height: 36px;
+    border-radius: 4px;
+    padding: 0 20px;
 }

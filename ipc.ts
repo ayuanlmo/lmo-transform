@@ -2,21 +2,18 @@ import {app, BrowserWindow, dialog, ipcMain} from "electron";
 
 export const electronApi = 'electronApi';
 
-export enum ElectronChannel {
-    openDialog = 'OPEN-DIALOG',
-    onDragStart = 'ON-DRAG-START',
-}
-
 export const initIpcMainHandles = (window: BrowserWindow): void => {
     ipcMain.on('HIDE-WINDOW', (): void => window.minimize());
     ipcMain.on('MAX-WINDOW', (): void => window.maximize());
     ipcMain.on('RESTORE-WINDOW', (): void => window.unmaximize());
-    ipcMain.on('CLOSE-WINDOW', (): void => {
-        closeApp();
-    });
-    ipcMain.on(ElectronChannel.openDialog, (): void => {
-        dialog.showOpenDialog(window).then(v => {
-            console.log(v);
+    ipcMain.on('CLOSE-WINDOW', (): void => closeApp());
+    ipcMain.on("OPEN-DIRECTORY", (event: Electron.IpcMainEvent): void => {
+        dialog.showOpenDialog(
+            window,
+            {properties: ['openDirectory']}
+        ).then((v: Electron.OpenDialogReturnValue) => {
+            if(!(v.canceled))
+                event.sender.send('SELECTED-DIRECTORY', v.filePaths[0]);
         });
     });
 };

@@ -1,5 +1,6 @@
-import * as React from 'react';
 import AppConfig from "../conf/AppConfig";
+import Setting from "./Setting";
+import {useState} from "react";
 
 require('../style/HeaderControls.css');
 require('../style/Global.css');
@@ -7,10 +8,11 @@ require('../style/Global.css');
 const {ipcRenderer} = window.require('electron');
 
 function HeaderControls(): React.JSX.Element {
-    const [miniWindow, setMiniWindow] = React.useState<boolean>(false);
+    const [miniWindow, setMiniWindow] = useState<boolean>(false);
 
     return (
         <div className={'lmo_header-controls'}>
+
             <div className={'lmo_header-controls-app-name lmo_theme_color'}>
                 {AppConfig.appName}
             </div>
@@ -22,12 +24,7 @@ function HeaderControls(): React.JSX.Element {
                     日志
                    </span>
                 </button>
-                <button className={'lmo_cursor_pointer lmo_color_white'}>
-                    <span>
-                        <img src={require('../static/svg/header/setting.svg').default} alt=""/>
-                    设置
-                    </span>
-                </button>
+                <Setting />
             </div>
             <div className={'lmo_header-controls-window-buttons'}>
                 <div onClick={(): void => {
