@@ -22,6 +22,11 @@ interface ResourceInfoTypes {
     width?: number;
 }
 
+interface CurrentStateTypes {
+    current: number;
+    frame: Array<number>;
+}
+
 type SuccessState = 'running' | 'success' | 'error' | 'pending';
 
 enum SuccessStateName {
@@ -37,6 +42,10 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
     const dispatch = useDispatch();
     const [successState, setSuccessState] = useState<SuccessState>('pending');
     const [resourcePath, setResourcePath] = useState<string>('');
+    const [currentState, setCurrentState] = useState<CurrentStateTypes>({
+        current: 0,
+        frame: []
+    });
 
     useEffect((): void => {
         dispatch(setSelectedFileOutputType({
@@ -48,10 +57,12 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
         <div className={'lmo-app-resource-item'}>
             <div className={'lmo-app-resource-item-content lmo_flex_box'}>
                 <div className={'lmo-app-resource-item-content-in-info lmo_flex_box'}>
-                    <div className={'lmo_cursor_pointer'} onClick={(): void => {
+                    <div className={'lmo_cursor_pointer lmo_position_relative'} onClick={(): void => {
                         ffplayer(info.path);
                     }}>
                         <img src={info.cover} alt={info.cover}/>
+                        <div style={{width: `${currentState.current}%`}}
+                             className={'lmo-app-resource-item-content-in-info-bg'}></div>
                     </div>
                     <div className={'lmo-app-resource-item-content-in-info-box'}>
                         <div className={'lmo-app-resource-item-content-in-info-name'}>{info.name}</div>
@@ -102,10 +113,12 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                     </button>
                     <button onClick={
                         (): void => {
-                            let path = ''
-                            if (successState === 'pending') {
+                            // 开始处理（状态为等待 || 错误
+                            if (successState === 'pending' || successState === 'error') {
                                 setSuccessState('running');
-                                transformVideo(info).then((res: string) => {
+                                transformVideo(info, (data: CurrentStateTypes) => {
+                                    setCurrentState(data);
+                                }).then((res: string) => {
                                     setSuccessState('success');
                                     setResourcePath(res);
                                 }).catch(e => {
@@ -113,14 +126,17 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                                     console.log('失败')
                                 })
                             }
-                            if(successState === 'success'){
+                            // 转换成功
+                            if (successState === 'success')
                                 openOutputPath();
-                            }
                         }
                     } className={'lmo_theme_color_border lmo_position_relative'}>
-                        {
-                            SuccessStateName[successState]
-                        }
+                        <div>
+                            {
+                                SuccessStateName[successState]
+                            }
+                        </div>
+
                     </button>
                 </div>
             </div>

@@ -135,6 +135,15 @@ select {
     border-radius: 10px;
 }
 
+.lmo-app-resource-item-content-in-info-bg{
+    height: 100%;
+    position: absolute;
+    background: #00000066;
+    top: 0;
+    z-index: 999;
+    border-radius: 10px;
+}
+
 .lmo-app-resource-item-content-in-info-box {
     margin-left: 20px;
 }

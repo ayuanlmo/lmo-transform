@@ -1,10 +1,27 @@
-import {getFileInfo, getVideoFirstFrame} from "../bin/ff";
+import {getFileInfo, GetFileInfoTypes, getVideoFirstFrame} from "../bin/ff";
 import {ResolvePath} from "./index";
 import {FILE_ERROR_MESSAGE} from "../const/Message";
 
 const {ipcRenderer} = window.require('electron');
 
-export const SelectFile = () => {
+export interface ResolveFileTypes extends GetFileInfoTypes {
+    name: string;
+    path: string;
+    type: string;
+    cover: string;
+    lastModified: number;
+    output: {
+        type: string;
+    }
+}
+
+/**
+ * @method SelectFile
+ * @returns {Promise<[{
+ *     ResolveFileTypes
+ * }]>}
+ * **/
+export const SelectFile = (): Promise<Array<ResolveFileTypes>> => {
     return new Promise((resolve, reject): void => {
         const i: any = document.createElement('input');
         i.type = 'file';
@@ -15,7 +32,7 @@ export const SelectFile = () => {
     });
 }
 
-export const resolveFile = async (files: Array<any>) => {
+export const resolveFile = async (files: Array<any>): Promise<any[]> => {
     const _ = [];
 
     for (let j = 0; j < files.length; j++) {
