@@ -3,6 +3,7 @@ import AppConfig from "../conf/AppConfig";
 import Storage from "../lib/Storage";
 import {FFPLAY_BIN_PATH} from "./ffmpeg";
 import {FIRST_FRAME_ERROR, PLAYER_ERROR, TRANSFORM_ERROR} from "../const/Message";
+import {playBeep} from "../utils";
 
 const ffmpeg = window.require('fluent-ffmpeg');
 const fs = window.require('fs');
@@ -68,6 +69,7 @@ export const transformVideo = (data: any): Promise<any> => {
 
         ffmpeg(inputFile).output(optFile)
             .on('end', function () {
+                playBeep();
                 resolve(optFile);
             })
             .on('error', function (err: any) {

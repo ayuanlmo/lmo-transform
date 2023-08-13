@@ -2,7 +2,7 @@ import * as React from 'react';
 import {VIDEO_TYPE_MAP} from "../const/ResourceTypes";
 import {useDispatch} from "react-redux";
 import {deleteSelectedFilesItem, setSelectedFileOutputType} from "../lib/Store/AppState";
-import {FormatSec, ResolveSize} from "../utils";
+import {FormatSec, openOutputPath, ResolveSize} from "../utils";
 import {ffplayer, transformVideo} from "../bin/ff";
 import {useEffect, useState} from "react";
 
@@ -26,7 +26,7 @@ type SuccessState = 'running' | 'success' | 'error' | 'pending';
 
 enum SuccessStateName {
     running = "转换中",
-    success = "打开文件",
+    success = "打开文件夹",
     error = "转换失败",
     pending = "开始转换",
 }
@@ -36,6 +36,7 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
     const {info, index} = props;
     const dispatch = useDispatch();
     const [successState, setSuccessState] = useState<SuccessState>('pending');
+    const [resourcePath, setResourcePath] = useState<string>('');
 
     useEffect((): void => {
         dispatch(setSelectedFileOutputType({
@@ -101,15 +102,19 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                     </button>
                     <button onClick={
                         (): void => {
+                            let path = ''
                             if (successState === 'pending') {
                                 setSuccessState('running');
                                 transformVideo(info).then((res: string) => {
                                     setSuccessState('success');
-                                    console.log('成功', res)
+                                    setResourcePath(res);
                                 }).catch(e => {
                                     setSuccessState('error');
                                     console.log('失败')
                                 })
+                            }
+                            if(successState === 'success'){
+                                openOutputPath();
                             }
                         }
                     } className={'lmo_theme_color_border lmo_position_relative'}>

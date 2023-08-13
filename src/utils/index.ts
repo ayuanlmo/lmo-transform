@@ -1,6 +1,7 @@
+import Storage from "../lib/Storage";
+
 const __G = global || window || this;
-console.log(__G)
-const __UNDEF = void 1;
+const {shell} = __G.require('electron');
 
 export const RequireNodeModule = (name: string): any => __G.require(name);
 
@@ -72,3 +73,11 @@ export const FormatSec = (sec: string | number): string => {
 
     return sec.split('.').join(':');
 };
+
+export const openOutputPath = (): void => {
+    shell.openPath(Storage.Get('output_path'));
+}
+
+export const playBeep = (): void => {
+    shell.beep();
+}
