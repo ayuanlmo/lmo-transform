@@ -24,31 +24,28 @@ function Dialog(props: DialogProps): React.JSX.Element {
         confirmLabel = '确定',
         show = false
     } = props;
-    const dialog = useRef<HTMLDialogElement>(null);
-
-    useEffect((): void => {
-        if (dialog.current === null) return;
-    }, [dialog]);
 
     return (
-        <dialog open={show} ref={dialog}>
-            <div className={'dialog-header lmo_color_white'}>
-                {title}
-            </div>
-            <div className={'dialog-content'}>
-                {children}
-            </div>
-            <div className={'dialog-controls-buttons'}>
-                {
-                    showCancel ? <button onClick={
-                        (e): void => onCancel && onCancel(e)
-                    }>{cancelLabel}</button> : ''
-                }
-                {
-                    showConfirm ? <button onClick={
-                        (e): void => onConfirm && onConfirm(e)
-                    }>{confirmLabel}</button> : ''
-                }
+        <dialog open={show}>
+            <div className={'dialog'}>
+                <div className={'dialog-header lmo_color_white'}>
+                    {title}
+                </div>
+                <div className={'dialog-content'}>
+                    {children}
+                </div>
+                <div className={'dialog-controls-buttons'}>
+                    {
+                        showCancel ? <button onClick={
+                            (e): void => onCancel && onCancel(e)
+                        }>{cancelLabel}</button> : ''
+                    }
+                    {
+                        showConfirm ? <button onClick={
+                            (e): void => onConfirm && onConfirm(e)
+                        }>{confirmLabel}</button> : ''
+                    }
+                </div>
             </div>
         </dialog>
     );

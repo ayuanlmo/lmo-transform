@@ -1,3 +1,10 @@
+#__lmo__ {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    overflow: hidden;
+}
+
 select {
     border-radius: 4px;
     border: 0;
@@ -135,7 +142,7 @@ select {
     border-radius: 10px;
 }
 
-.lmo-app-resource-item-content-in-info-bg{
+.lmo-app-resource-item-content-in-info-bg {
     height: 100%;
     position: absolute;
     background: #00000066;
@@ -209,7 +216,7 @@ select {
     margin-bottom: 20px;
 }
 
-.lmo-app-setting-item-label{
+.lmo-app-setting-item-label {
     margin-top: 8px;
 }
 

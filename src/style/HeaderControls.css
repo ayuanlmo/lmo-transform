@@ -74,6 +74,13 @@
 }
 
 dialog {
+    width: 100vw;
+    height: 100vh;
+    z-index: 999;
+    background: #050505b8;
+}
+
+.dialog {
     width: 560px;
     padding: 0;
     min-height: 350px;
@@ -84,6 +91,7 @@ dialog {
     border-radius: 10px;
     position: absolute;
     top: calc((100vh - 350px) / 2);
+    left: calc((100vw - 560px) / 2);
 }
 
 .dialog-header {
