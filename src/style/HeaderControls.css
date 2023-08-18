@@ -136,3 +136,40 @@ dialog {
 .dialog-controls-buttons button:nth-child(1) {
     background: #229EED;;
 }
+
+.lmo-app-about {
+    text-align: center;
+}
+
+.lmo-app-about-app-name {
+    margin-top: 16px;
+    padding-bottom: 38px;
+}
+
+.lmo-app-about h2 {
+    font-weight: bold;
+}
+
+.lmo-app-about-logo {
+    width: 408px;
+    margin: auto auto 16px;
+}
+
+.lmo-app-about-logo img {
+    width: 180px;
+    margin: 0 12px;
+    border-radius: 50%;
+}
+
+.lmo-app-about-line {
+    height: 1px;
+    background: #FBFBFD;
+    width: 60%;
+    margin: auto;
+}
+
+.lmo-app-about-version {
+    line-height: 38px;
+    margin-top: 18px;
+    margin-bottom: 12px;
+}

@@ -1,6 +1,7 @@
 import AppConfig from "../conf/AppConfig";
 import Setting from "./Setting";
 import {useState} from "react";
+import About from "./About";
 
 require('../style/HeaderControls.css');
 require('../style/Global.css');
@@ -9,13 +10,18 @@ const {ipcRenderer} = window.require('electron');
 
 function HeaderControls(): React.JSX.Element {
     const [miniWindow, setMiniWindow] = useState<boolean>(false);
+    const [showAboutDialog, setShowAboutDialog] = useState<boolean>(false);
 
     ipcRenderer.on('WINDOW-ON-MAX', (e: any, state: boolean): void => setMiniWindow(state));
 
     return (
         <div className={'lmo_header-controls'}>
-
-            <div className={'lmo_header-controls-app-name lmo_theme_color'}>
+            <About onConfirm={(): void => {
+                setShowAboutDialog(!showAboutDialog);
+            }} show={showAboutDialog}/>
+            <div onClick={(): void => {
+                setShowAboutDialog(!showAboutDialog);
+            }} className={'lmo_header-controls-app-name lmo_theme_color lmo_cursor_pointer'}>
                 {AppConfig.appName}
             </div>
             <div className={'lmo_header-controls-block'}></div>
