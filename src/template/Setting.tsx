@@ -29,34 +29,28 @@ function Setting(): React.JSX.Element {
                     设置
                 </span>
             </button>
-            <Dialog onConfirm={(): void => {
-                serShowDialogState(!showDialog);
-                dispatch(setOutputPath(selectOutputPath));
-            }} onCancel={(): void => {
-                serShowDialogState(!showDialog);
-            }} show={showDialog} title={'设置'}>
-                <div className={'lmo-app-setting'}>
-                    <div onClick={selectPath} className={'lmo-app-setting-item'}>
-                        <div className={'lmo-app-setting-item-label lmo_color_white'}>输出路径</div>
-                        <div>
-                            <input
-                                value={selectOutputPath}
-                                className={'lmo_color_white lmo_cursor_pointer'}
-                                disabled
-                                type="text"
-                            />
+            {
+                showDialog ? <Dialog onConfirm={(): void => {
+                    serShowDialogState(!showDialog);
+                    dispatch(setOutputPath(selectOutputPath));
+                }} onCancel={(): void => {
+                    serShowDialogState(!showDialog);
+                }} show={showDialog} title={'设置'}>
+                    <div className={'lmo-app-setting'}>
+                        <div onClick={selectPath} className={'lmo-app-setting-item'}>
+                            <div className={'lmo-app-setting-item-label lmo_color_white'}>输出路径</div>
+                            <div>
+                                <input
+                                    value={selectOutputPath}
+                                    className={'lmo_color_white lmo_cursor_pointer'}
+                                    disabled
+                                    type="text"
+                                />
+                            </div>
                         </div>
                     </div>
-                    {/*<div className={'lmo-app-setting-item'}>*/}
-                    {/*    <div  className={'lmo-app-setting-item-label lmo_color_white'}>*/}
-                    {/*        并行任务*/}
-                    {/*    </div>*/}
-                    {/*    <div>*/}
-                    {/*        <input className={'lmo_color_white'} type="text"/>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                </div>
-            </Dialog>
+                </Dialog> : <></>
+            }
         </>
     );
 }
