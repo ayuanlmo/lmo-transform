@@ -115,6 +115,7 @@ dialog {
     top: 16px;
     display: flex;
     justify-content: end;
+    height: 66px;
 }
 
 .dialog-controls-buttons button {
@@ -132,6 +133,6 @@ dialog {
     color: #FFFFFF;
 }
 
-.dialog-controls-buttons button:nth-child(2) {
+.dialog-controls-buttons button:nth-child(1) {
     background: #229EED;;
 }

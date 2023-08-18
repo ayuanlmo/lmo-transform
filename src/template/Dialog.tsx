@@ -1,15 +1,20 @@
-import {useEffect, useRef} from "react";
+import * as React from "react";
+
+type TitleAlign = 'start' | 'center';
 
 export interface DialogProps {
-    children: React.JSX.Element,
+    children: React.JSX.Element;
     title: string;
     showCancel?: boolean;
     showConfirm?: boolean;
-    onConfirm?: null | Function;
-    onCancel?: null | Function;
+    readonly onConfirm?: null | ((e?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void);
+    readonly onCancel?: null | ((e?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void);
     cancelLabel?: string;
     confirmLabel?: string;
     show: boolean;
+    width?: number;
+    height?: number;
+    readonly titleAlign?: TitleAlign;
 }
 
 function Dialog(props: DialogProps): React.JSX.Element {
@@ -22,28 +27,39 @@ function Dialog(props: DialogProps): React.JSX.Element {
         onCancel = null,
         cancelLabel = '取消',
         confirmLabel = '确定',
-        show = false
+        show = false,
+        width = 560,
+        height = 210,
+        titleAlign = 'start'
     } = props;
 
     return (
         <dialog open={show}>
-            <div className={'dialog'}>
-                <div className={'dialog-header lmo_color_white'}>
+            <div className={'dialog'} style={{
+                width: `${width}px`,
+                top: `calc((100vh - ${height + 200}px) / 2)`,
+                left: `calc((100vw - ${width}px) / 2)`
+            }}>
+                <div className={'dialog-header lmo_color_white'} style={{
+                    textAlign: titleAlign
+                }}>
                     {title}
                 </div>
-                <div className={'dialog-content'}>
+                <div className={'dialog-content'} style={{
+                    height: `${height}px`
+                }}>
                     {children}
                 </div>
                 <div className={'dialog-controls-buttons'}>
                     {
-                        showCancel ? <button onClick={
-                            (e): void => onCancel && onCancel(e)
-                        }>{cancelLabel}</button> : ''
-                    }
-                    {
                         showConfirm ? <button onClick={
                             (e): void => onConfirm && onConfirm(e)
                         }>{confirmLabel}</button> : ''
+                    }
+                    {
+                        showCancel ? <button onClick={
+                            (e): void => onCancel && onCancel(e)
+                        }>{cancelLabel}</button> : ''
                     }
                 </div>
             </div>
