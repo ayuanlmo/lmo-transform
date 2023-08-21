@@ -1,8 +1,10 @@
 import {getFileInfo, GetFileInfoTypes, getVideoFirstFrame} from "../bin/ff";
 import {ResolvePath} from "./index";
 import {FILE_ERROR_MESSAGE} from "../const/Message";
+import AppConfig from "../conf/AppConfig";
 
 const {ipcRenderer} = window.require('electron');
+const fs = window.require('fs');
 
 export interface ResolveFileTypes extends GetFileInfoTypes {
     name: string;
@@ -60,4 +62,37 @@ export const resolveFile = async (files: Array<any>): Promise<any[]> => {
         }
     }
     return _;
+}
+
+export const GetTmpFileInfo = (): { total: number; size: number; } => {
+    const path: string = AppConfig.system.tempPath + AppConfig.appName + '/tmp';
+    const files: Array<string> = fs.readdirSync(path);
+    let size: number = 0;
+
+    files.forEach((i: string): void => {
+        const file: { size: number } = fs.statSync(path + '/' + i);
+        size += file.size;
+    });
+
+    return {
+        total: files.length,
+        size: Math.ceil(size / 1024)
+    }
+}
+
+export const DeleteTmpFile = (file: string = '') => {
+    const path: string = file === '' ? AppConfig.system.tempPath + AppConfig.appName + '/tmp' : file;
+    const files: Array<string> = fs.readdirSync(path);
+
+    if (fs.existsSync(path)) {
+        files.forEach((i: string): void => {
+            const _tmp: string = `${path}/${i}`;
+
+            if (fs.statSync(_tmp).isDirectory())
+                DeleteTmpFile(_tmp);
+            else
+                fs.unlinkSync(_tmp);
+        });
+        ipcRenderer.send('SHOW-INFO-MESSAGE-BOX', '删除完成');
+    }
 }

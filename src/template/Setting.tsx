@@ -3,18 +3,23 @@ import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../lib/Store";
 import {setOutputPath} from "../lib/Store/AppState";
+import {DeleteTmpFile, GetTmpFileInfo} from "../utils/fs";
 
 const {ipcRenderer} = window.require('electron');
 
 function Setting(): React.JSX.Element {
     const dispatch = useDispatch();
-    const [showDialog, serShowDialogState] = useState<boolean>(false);
     const outputPath = useSelector((state: RootState) => state.app.outputPath);
+    const [showDialog, serShowDialogState] = useState<boolean>(false);
     const [selectOutputPath, setSelectOutputPath] = useState<string>(outputPath);
+    const [tmpFileSize, setTmpFileSize] = useState<number>(0);
 
     useEffect((): void => {
         setSelectOutputPath(outputPath);
+        initTmpFileSize();
     }, [showDialog]);
+
+    const initTmpFileSize = (): void => setTmpFileSize(GetTmpFileInfo().size);
 
     ipcRenderer.on('SELECTED-DIRECTORY', (event, path: string): void => setSelectOutputPath(path));
     const selectPath = (): void => ipcRenderer.send('OPEN-DIRECTORY');
@@ -39,13 +44,26 @@ function Setting(): React.JSX.Element {
                     <div className={'lmo-app-setting'}>
                         <div onClick={selectPath} className={'lmo-app-setting-item'}>
                             <div className={'lmo-app-setting-item-label lmo_color_white'}>输出路径</div>
-                            <div>
+                            <div className={'lmo-app-setting-item-content'}>
                                 <input
                                     value={selectOutputPath}
                                     className={'lmo_color_white lmo_cursor_pointer'}
                                     disabled
                                     type="text"
                                 />
+                            </div>
+                        </div>
+                        <div className={'lmo-app-setting-item'}>
+                            <div className={'lmo-app-setting-item-label lmo_color_white'}>临时文件</div>
+                            <div className={'lmo-app-setting-item-content lmo_flex_box'}>
+                                <span className={'lmo_theme_color'}>{tmpFileSize + 'kb'}</span>
+                                <button onClick={(): void => {
+                                    DeleteTmpFile();
+                                    initTmpFileSize();
+                                }} style={{
+                                    marginLeft: '12px'
+                                }} className={'lmo_color_white lmo_cursor_pointer'}>删除
+                                </button>
                             </div>
                         </div>
                     </div>

@@ -212,8 +212,16 @@ select {
 
 .lmo-app-setting-item {
     display: flex;
-    justify-content: space-between;
     margin-bottom: 20px;
+}
+
+.lmo-app-setting-item-content {
+    width: 60%;
+    margin-left: 16px;
+}
+
+.lmo-app-setting-item-content span {
+    line-height: 36px;
 }
 
 .lmo-app-setting-item-label {
@@ -221,7 +229,7 @@ select {
 }
 
 .lmo-app-setting-item input {
-    width: 400px;
+    width: 100%;
     background: #343337;
     border: 0;
     height: 36px;
