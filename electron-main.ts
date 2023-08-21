@@ -2,6 +2,7 @@ import {app, BrowserWindow, globalShortcut, Menu} from 'electron';
 import {join} from 'path';
 import {closeApp, initIpcMainHandles} from './ipc';
 import AppConfig from "./src/conf/AppConfig";
+import * as process from "process";
 
 type APP_RUN_TYPES = 'dev' | 'prod';
 
@@ -14,10 +15,11 @@ const ShortcutKey = [
         handlers: (main?: BrowserWindow): void => main?.webContents.openDevTools()
     }
 ];
+const isDev: boolean = process.env.NODE_ENV === 'development';
 
 export const main = (): void => {
     app.on('ready', (): void => {
-        onReady('dev');
+        onReady(isDev ? 'dev' : 'prod');
         appListens();
     });
 }
