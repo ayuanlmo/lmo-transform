@@ -25,6 +25,8 @@ export const counterSlice = createSlice({
         setSelectedFileOutputType: (state, {payload}): void => {
             // @ts-ignore
             state.selectedFiles[payload.index].output.type = payload.type;
+            // @ts-ignore
+            state.selectedFiles[payload.index].output.libs = payload.libs;
         },
         // 设置系统输出路径
         setOutputPath: (state, {payload}): void => {

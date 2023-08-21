@@ -72,7 +72,7 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                         </div>
                         <div className={'lmo-app-resource-item-content-in-info-item lmo_flex_box'}>
                             <div>尺寸：{info.width} * {info.height}</div>
-                            <div>时长：{FormatSec(info.duration as string)}</div>
+                            <div>时长：{FormatSec(Number(info.duration as string))}</div>
                         </div>
                     </div>
                 </div>
@@ -82,16 +82,20 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                         <div className={'lmo-app-resource-item-content-in-info-item lmo_flex_box'}>
                             <div className={'lmo_color_white'}>类型：
                                 <select onChange={(e) => {
+                                    const type = VIDEO_TYPE_MAP.find(i => {
+                                        return i.label === e.target.value;
+                                    });
                                     dispatch(setSelectedFileOutputType({
                                         index: index,
-                                        type: e.target.value.toLowerCase()
+                                        type: type?.name,
+                                        libs: type?.libs
                                     }));
                                 }} name="" id="">
                                     {
                                         VIDEO_TYPE_MAP.map((i, k) => {
                                             return (
-                                                <option key={k} value={i.name}>
-                                                    {i.name}
+                                                <option key={k} value={i.label}>
+                                                    {i.label}
                                                 </option>
                                             );
                                         })
@@ -101,7 +105,7 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                         </div>
                         <div className={'lmo-app-resource-item-content-in-info-item lmo_flex_box'}>
                             <div>尺寸：{info.width} * {info.height}</div>
-                            <div>时长：{FormatSec(info.duration as string)}</div>
+                            <div>时长：{FormatSec(Number(info.duration as string))}</div>
                         </div>
                     </div>
                 </div>

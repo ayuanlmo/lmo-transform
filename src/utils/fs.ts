@@ -51,7 +51,8 @@ export const resolveFile = async (files: Array<any>): Promise<any[]> => {
                     lastModified: files[j].lastModified,
                     ...await getFileInfo(filePath),
                     output: {
-                        type: ''
+                        type: '',
+                        libs: ''
                     }
                 });
         } catch (e: any) {

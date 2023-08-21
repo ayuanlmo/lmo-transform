@@ -18,6 +18,16 @@ export interface GetFileInfoTypes {
     format: Array<string>;
 }
 
+export interface Codes {
+    canDecode: boolean; // 可解码
+    canEncode: boolean;// 可编码
+    description: string;// 描述
+    isLossless: boolean;// 无损
+    isLossy: boolean;// 有损
+    type: 'audio' | 'video';// 有损
+    intraFrameOnly?: boolean;// 仅帧内
+}
+
 /**
  * @method getVideoFirstFrame
  * @param {string} inputFilePath - 文件路径
@@ -92,6 +102,7 @@ export const getFileInfo = (filePath: string): Promise<GetFileInfoTypes> => {
  * **/
 export const transformVideo = (data: any, callback: Function): Promise<any> => {
     const inputFile: string = data.path;
+    const libs: string = data.output.libs;
     const outputPath: string = Storage.Get('output_path') as string;
 
     return new Promise((resolve, reject) => {
@@ -99,6 +110,9 @@ export const transformVideo = (data: any, callback: Function): Promise<any> => {
         const duration: number = parseFloat(data.duration);
         let current: number = 0;
         const _ffmpeg = ffmpeg(inputFile);
+
+        if (libs !== '' && libs !== undefined)
+            _ffmpeg.outputOptions(libs);
 
         _ffmpeg.output(optFile);
         _ffmpeg.on('end', function () {
@@ -109,6 +123,7 @@ export const transformVideo = (data: any, callback: Function): Promise<any> => {
             });
             resolve(optFile);
         })
+        console.log(_ffmpeg);
         _ffmpeg.on('progress', (progress: any) => {
             const currentDuration: number = duration * progress.percent / 100;  // 已转换的视频时长（单位：秒）
             const _ = Number(((currentDuration / duration) * 100).toFixed());
@@ -144,4 +159,26 @@ export const ffplayer = (path: string): void => {
                 msg: PLAYER_ERROR(path, err)
             });
     })
+}
+
+// 获取可用的编解码器
+export const getAvailableCodecs = (): Promise<Array<Codes>> => {
+    return new Promise((resolve): void => {
+        ffmpeg.getAvailableCodecs(function (err: any, codes: any) {
+            const _: Array<Codes> = [];
+
+            if (err) {
+                resolve([]);
+            }
+            Object.keys(codes).forEach((i: string) => {
+                const {type} = codes[i];
+
+                if (type === 'audio' || type === 'video') {
+                    _.push({...codes[i]})
+                    console.log('音频')
+                }
+            });
+            resolve(_);
+        })
+    });
 }
