@@ -1,4 +1,6 @@
 import * as React from "react";
+// @ts-ignore
+import ReactDOM from "react-dom";
 
 type TitleAlign = 'start' | 'center';
 
@@ -33,7 +35,7 @@ function Dialog(props: DialogProps): React.JSX.Element {
         titleAlign = 'start'
     } = props;
 
-    return (
+    return ReactDOM.createPortal((
         <dialog open={show}>
             <div className={'dialog'} style={{
                 width: `${width}px`,
@@ -64,7 +66,7 @@ function Dialog(props: DialogProps): React.JSX.Element {
                 </div>
             </div>
         </dialog>
-    );
+    ), document.body);
 }
 
 export default Dialog;
