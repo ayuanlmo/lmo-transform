@@ -1,18 +1,26 @@
-import {app, BrowserWindow, Menu} from 'electron';
+import {app, BrowserWindow, globalShortcut, Menu} from 'electron';
 import {join} from 'path';
 import {closeApp, initIpcMainHandles} from './ipc';
 import AppConfig from "./src/conf/AppConfig";
 
+type APP_RUN_TYPES = 'dev' | 'prod';
+
 const os = require('os');
 const fs = require('fs');
+const ShortcutKey = [
+    {
+        key: 'Ctrl+Alt+Shift+F12',
+        description: 'Open dev tools',
+        handlers: (main?: BrowserWindow): void => main?.webContents.openDevTools()
+    }
+];
 
-
-type APP_RUN_TYPES = 'dev' | 'prod';
 export const main = (): void => {
-    onReady('dev');
-    appListens();
+    app.on('ready', (): void => {
+        onReady('dev');
+        appListens();
+    });
 }
-
 
 const onReady = (type: APP_RUN_TYPES): void => {
     const {tempPath} = AppConfig.system;
@@ -28,8 +36,16 @@ const onReady = (type: APP_RUN_TYPES): void => {
         return closeApp(true);
 
     app.whenReady().then(async (): Promise<void> => {
-        const mainWindow = createWindow(type);
+        const mainWindow: BrowserWindow = await createWindow(type);
         mainWindowListens(await mainWindow);
+
+        ShortcutKey.forEach((i) => {
+            globalShortcut.register(i.key, (): void => {
+                i.handlers(mainWindow);
+            });
+            if (!globalShortcut.isRegistered(i.key))
+                console.log(`${i.key} 注册失败`);
+        });
     });
 }
 
@@ -52,7 +68,7 @@ const createWindow = async (type: APP_RUN_TYPES = 'dev'): Promise<BrowserWindow>
         }
     });
 
-    window.on('close', () => {
+    window.on('close', (): void => {
         return closeApp();
     });
     window.on('maximize', (): void => window.webContents.send('WINDOW-ON-MAX', true));
@@ -66,7 +82,10 @@ const createWindow = async (type: APP_RUN_TYPES = 'dev'): Promise<BrowserWindow>
     return window;
 }
 
-const appListens = () => {
+const appListens = (): void => {
+    app.on('will-quit', (): void => {
+        globalShortcut.unregisterAll();
+    });
     app.on('window-all-closed', (): void => {
         return closeApp();
     });
