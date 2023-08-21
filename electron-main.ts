@@ -15,7 +15,7 @@ const ShortcutKey = [
         handlers: (main?: BrowserWindow): void => main?.webContents.openDevTools()
     }
 ];
-const isDev: boolean = process.env.NODE_ENV === 'development';
+const isDev: boolean = process.env.NODE_ENV?.trim() === 'development';
 
 export const main = (): void => {
     app.on('ready', (): void => {
