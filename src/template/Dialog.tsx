@@ -17,6 +17,7 @@ export interface DialogProps {
     width?: number;
     height?: number;
     readonly titleAlign?: TitleAlign;
+    style?: object;
 }
 
 function Dialog(props: DialogProps): React.JSX.Element {
@@ -32,11 +33,12 @@ function Dialog(props: DialogProps): React.JSX.Element {
         show = false,
         width = 560,
         height = 210,
-        titleAlign = 'start'
+        titleAlign = 'start',
+        style = {}
     } = props;
 
     return ReactDOM.createPortal((
-        <dialog open={show}>
+        <dialog style={style} open={show}>
             <div className={'dialog'} style={{
                 width: `${width}px`,
                 top: `calc((100vh - ${height + 200}px) / 2)`,
