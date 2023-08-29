@@ -19,7 +19,7 @@ function About(props: AboutProps): React.JSX.Element {
             show={show}
             width={800}
             height={500}
-            title={`关于${AppConfig.appName}`}
+            title={'About'}
             showCancel={false}
             confirmLabel={'关闭'}
             onConfirm={
@@ -38,16 +38,14 @@ function About(props: AboutProps): React.JSX.Element {
                 <div className={'lmo-app-about-line'}/>
                 <div className={'lmo-app-about-version lmo_color_white animated fadeInDown'}>
                     <div>
-                        软件安装版本：{AppConfig.version} - {AppConfig.ca} for {os.platform()}
+                        App version: [ {AppConfig.version} - {AppConfig.ca} for {os.platform()} ]
                     </div>
                     <div>
-                        NodeJS版本：{process.version} / {process.versions.v8}
+                        NodeJS version: [ {process.version} / {process.versions.v8} ]
                         <br/>
-                        Chromium 版本：{process.versions.chrome}
+                        Chromium version: [ {process.versions.chrome} ]
                         <br/>
-                        名称： {os.userInfo().username} / {os.hostname()}
-                        <br/>
-                        操心系统：{os.platform()} - {os.type()} - {os.arch()}
+                        OS: [ {os.userInfo().username} / {os.hostname()} ]
                     </div>
                 </div>
             </div>
