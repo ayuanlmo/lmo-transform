@@ -21,7 +21,7 @@ function Setting(): React.JSX.Element {
 
     const initTmpFileSize = (): void => setTmpFileSize(GetTmpFileInfo().size);
 
-    ipcRenderer.on('SELECTED-DIRECTORY', (event, path: string): void => setSelectOutputPath(path));
+    ipcRenderer.on('SELECTED-DIRECTORY', (event: any, path: string): void => setSelectOutputPath(path));
     const selectPath = (): void => ipcRenderer.send('OPEN-DIRECTORY');
 
     return (
@@ -48,8 +48,8 @@ function Setting(): React.JSX.Element {
                                 <input
                                     value={selectOutputPath}
                                     className={'lmo_color_white lmo_cursor_pointer'}
-                                    disabled
                                     type="text"
+                                    readOnly
                                 />
                             </div>
                         </div>
@@ -60,8 +60,6 @@ function Setting(): React.JSX.Element {
                                 <button onClick={(): void => {
                                     DeleteTmpFile();
                                     initTmpFileSize();
-                                }} style={{
-                                    marginLeft: '12px'
                                 }} className={'lmo_color_white lmo_cursor_pointer'}>删除
                                 </button>
                             </div>

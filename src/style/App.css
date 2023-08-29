@@ -5,6 +5,10 @@
     overflow: hidden;
 }
 
+body {
+    user-select: none;
+}
+
 select {
     border-radius: 4px;
     border: 0;
@@ -218,6 +222,19 @@ select {
 .lmo-app-setting-item-content {
     width: 60%;
     margin-left: 16px;
+}
+
+.lmo-app-setting-item-content button {
+    margin-left: 12px;
+    background-color: #343337;
+    border: 0;
+    padding: 0 6px;
+    width: 80px;
+    border-radius: 4px;
+}
+
+.lmo-app-setting-item-content button:hover {
+    background-color: #229EED;
 }
 
 .lmo-app-setting-item-content span {
