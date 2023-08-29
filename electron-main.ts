@@ -18,13 +18,13 @@ const ShortcutKey = [
 const isDev: boolean = process.env.NODE_ENV?.trim() === 'development';
 
 export const main = (): void => {
-    app.on('ready', (): void => {
-        onReady(isDev ? 'dev' : 'prod');
+    app.on('ready', async (): Promise<void> => {
+        await onReady(isDev ? 'dev' : 'prod');
         appListens();
     });
 }
 
-const onReady = (type: APP_RUN_TYPES): void => {
+const onReady = async (type: APP_RUN_TYPES): Promise<void> => {
     const {tempPath} = AppConfig.system;
     const appPath: string = `${AppConfig.system.tempPath}${AppConfig.appName}`;
     const appTmpPath: string = `${AppConfig.system.tempPath}${AppConfig.appName}/tmp`;
@@ -35,11 +35,11 @@ const onReady = (type: APP_RUN_TYPES): void => {
         fs.mkdirSync(appTmpPath);
 
     if ((os.platform() !== 'win32') && (os.arch() !== 'x64'))
-        return closeApp(true);
+        await closeApp(true);
 
     app.whenReady().then(async (): Promise<void> => {
         const mainWindow: BrowserWindow = await createWindow(type);
-        mainWindowListens(await mainWindow);
+        mainWindowListens(mainWindow);
 
         ShortcutKey.forEach((i) => {
             globalShortcut.register(i.key, (): void => {
@@ -70,8 +70,9 @@ const createWindow = async (type: APP_RUN_TYPES = 'dev'): Promise<BrowserWindow>
         }
     });
 
-    window.on('close', (): void => {
-        return closeApp();
+    window.on('close', (event: Electron.Event): void => {
+        event.preventDefault();
+        closeApp();
     });
     window.on('maximize', (): void => window.webContents.send('WINDOW-ON-MAX', true));
     window.on('unmaximize', (): void => window.webContents.send('WINDOW-ON-MAX', false));
@@ -85,16 +86,17 @@ const createWindow = async (type: APP_RUN_TYPES = 'dev'): Promise<BrowserWindow>
 }
 
 const appListens = (): void => {
-    app.on('will-quit', (): void => {
-        globalShortcut.unregisterAll();
-    });
-    app.on('window-all-closed', (): void => {
-        return closeApp();
+    app.on('before-quit', async (event: Electron.Event): Promise<void> => {
+        event.preventDefault();
+        await closeApp(true, true);
     });
     app.on('activate', async (): Promise<void> => {
-        if (require('os').platform() === "win32")
+        if (require('os').platform() === "win32") {
             if (BrowserWindow.getAllWindows().length === 0)
                 await createWindow();
+        } else {
+            await closeApp(true);
+        }
     });
 }
 

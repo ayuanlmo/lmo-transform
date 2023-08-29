@@ -1,4 +1,4 @@
-import {app, BrowserWindow, dialog, ipcMain} from "electron";
+import {app, BrowserWindow, dialog, globalShortcut, ipcMain, MessageBoxOptions} from "electron";
 import {join} from "path";
 
 export const electronApi = 'electronApi';
@@ -24,7 +24,7 @@ export const initIpcMainHandles = (window: BrowserWindow): void => {
     ipcMain.on('HIDE-WINDOW', (): void => window.minimize());
     ipcMain.on('MAX-WINDOW', (): void => window.maximize());
     ipcMain.on('RESTORE-WINDOW', (): void => window.unmaximize());
-    ipcMain.on('CLOSE-WINDOW', (): void => closeApp());
+    ipcMain.on('CLOSE-WINDOW', async (): Promise<void> => await closeApp());
     ipcMain.on("OPEN-DIRECTORY", (event: Electron.IpcMainEvent): void => {
         dialog.showOpenDialog(
             window,
@@ -45,17 +45,29 @@ export const initIpcMainHandles = (window: BrowserWindow): void => {
     });
 };
 
-export const closeApp = (_: boolean = false): void => {
-    if (_) return app.quit();
-
-    dialog.showMessageBox({
+const showCloseAppConfirmationDialog = async () => {
+    const options = {
         type: 'warning',
-        title: "系统提示",
-        message: "您确定要退出吗？",
-        buttons: ["OK", "Cancel"]
-    }).then((res): void => {
-        if (res.response === 0)
-            if (process.platform !== 'darwin')
-                app.quit();
-    });
+        title: '系统提示',
+        message: '您确定要退出吗？',
+        buttons: ['OK', 'Cancel']
+    };
+
+    const {response} = await dialog.showMessageBox(options as MessageBoxOptions);
+    return response === 0;
+};
+
+export const closeApp = async (instant: boolean = false, exit: boolean = false): Promise<void> => {
+    globalShortcut.unregisterAll();
+
+    if (exit) {
+        app.exit();
+    } else if (instant) {
+        app.quit();
+    } else {
+        const shouldExit: boolean = await showCloseAppConfirmationDialog();
+
+        if (shouldExit && process.platform !== 'darwin')
+            app.quit();
+    }
 }
