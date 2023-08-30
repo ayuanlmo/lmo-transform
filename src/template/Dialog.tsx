@@ -1,4 +1,5 @@
 import * as React from "react";
+import {useEffect} from "react";
 // @ts-ignore
 import ReactDOM from "react-dom";
 
@@ -18,6 +19,7 @@ export interface DialogProps {
     height?: number;
     readonly titleAlign?: TitleAlign;
     style?: object;
+    readonly escape?: boolean;
 }
 
 function Dialog(props: DialogProps): React.JSX.Element {
@@ -34,8 +36,22 @@ function Dialog(props: DialogProps): React.JSX.Element {
         width = 560,
         height = 210,
         titleAlign = 'start',
-        style = {}
+        style = {},
+        escape = true
     } = props;
+
+    useEffect((): () => void => {
+        const escapeHandle = (event: KeyboardEvent): void => {
+            if (event.key === 'Escape' && escape) {
+                onConfirm && onConfirm();
+                onCancel && onCancel();
+            }
+        }
+
+        document.addEventListener('keydown', escapeHandle);
+
+        return (): void => document.removeEventListener('keydown', escapeHandle);
+    }, [show]);
 
     return ReactDOM.createPortal((
         <dialog style={style} open={show}>
