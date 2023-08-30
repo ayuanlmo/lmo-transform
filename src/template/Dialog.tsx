@@ -39,7 +39,7 @@ function Dialog(props: DialogProps): React.JSX.Element {
 
     return ReactDOM.createPortal((
         <dialog style={style} open={show}>
-            <div className={'dialog'} style={{
+            <div className={'dialog animated bounceIn'} style={{
                 width: `${width}px`,
                 top: `calc((100vh - ${height + 200}px) / 2)`,
                 left: `calc((100vw - ${width}px) / 2)`
