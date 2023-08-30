@@ -1,5 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {SpliceArray} from "../../utils";
+import {getCurrentDateTime, SpliceArray} from "../../utils";
 import Storage from "../Storage";
 import AppConfig from "../../conf/AppConfig";
 
@@ -10,7 +10,8 @@ export const counterSlice = createSlice({
     initialState: {
         selectedFiles: [],
         outputPath: local_output_path === null ? AppConfig.system.tempPath : local_output_path,
-        parallelTasksLength: Storage.Get('parallel_tasks_length') || 1
+        parallelTasksLength: Storage.Get('parallel_tasks_length') || 1,
+        logContent: `[${getCurrentDateTime()}]\n程序启动...\n\n`
     },
     reducers: {
         // 设置选择的文件
@@ -38,6 +39,15 @@ export const counterSlice = createSlice({
         setParallelTasksLen(state, {payload}): void {
             state.parallelTasksLength = payload as number;
             Storage.Set('parallel_tasks_length', payload as string);
+        },
+        // 添加日志内容
+        pushLog(state, {payload}): void {
+            const _: string = `[${getCurrentDateTime()}]\n${payload}...\n\n`;
+
+            if (state.logContent.length >= ((19 * 90) * 5))
+                state.logContent = _;
+            else
+                state.logContent += _;
         }
     },
 });
@@ -47,7 +57,8 @@ export const {
     deleteSelectedFilesItem,
     setSelectedFileOutputType,
     setOutputPath,
-    setParallelTasksLen
+    setParallelTasksLen,
+    pushLog
 } = counterSlice.actions;
 
 export default counterSlice.reducer;

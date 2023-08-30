@@ -1,5 +1,6 @@
 import Storage from "../lib/Storage";
 
+
 const __G = global || window || this;
 const {shell} = __G.require('electron');
 
@@ -115,4 +116,17 @@ export const openOutputPath = (): void => {
 // 播放bibi声音
 export const playBeep = (): void => {
     shell.beep();
+}
+
+// 获取当前时间
+export const getCurrentDateTime = (): string => {
+    const now: Date = new Date();
+    const year: number = now.getFullYear();
+    const month: string = String(now.getMonth() + 1).padStart(2, '0');
+    const day: string = String(now.getDate()).padStart(2, '0');
+    const hours: string = String(now.getHours()).padStart(2, '0');
+    const minutes: string = String(now.getMinutes()).padStart(2, '0');
+    const seconds: string = String(now.getSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
