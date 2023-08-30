@@ -1,10 +1,10 @@
 import * as React from 'react';
+import {useEffect, useState} from 'react';
 import {VIDEO_TYPE_MAP} from "../const/ResourceTypes";
 import {useDispatch} from "react-redux";
 import {deleteSelectedFilesItem, setSelectedFileOutputType} from "../lib/Store/AppState";
 import {FormatSec, openOutputPath, ResolveSize} from "../utils";
 import {ffplayer, transformVideo} from "../bin/ff";
-import {useEffect, useState} from "react";
 
 interface ResourceInfoTypes {
     cover: string;
@@ -65,14 +65,19 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                              className={'lmo-app-resource-item-content-in-info-bg'}></div>
                     </div>
                     <div className={'lmo-app-resource-item-content-in-info-box'}>
-                        <div className={'lmo-app-resource-item-content-in-info-name'}>{info.name}</div>
+                        <div
+                            className={'lmo-app-resource-item-content-in-info-name lmo-app-text-ellipsis'}
+                            title={info.name}
+                        >
+                            {info.name}
+                        </div>
                         <div className={'lmo-app-resource-item-content-in-info-item lmo_flex_box'}>
                             <div>类型：{info.type.split('/')[1]}</div>
                             <div>大小：{ResolveSize(info.size)}</div>
                         </div>
                         <div className={'lmo-app-resource-item-content-in-info-item lmo_flex_box'}>
-                            <div>尺寸：{info.width} * {info.height}</div>
-                            <div>时长：{FormatSec(Number(info.duration as string))}</div>
+                            <div>{info.width} * {info.height}</div>
+                            <div>{FormatSec(Number(info.duration as string))}</div>
                         </div>
                     </div>
                 </div>
@@ -104,8 +109,8 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                             </div>
                         </div>
                         <div className={'lmo-app-resource-item-content-in-info-item lmo_flex_box'}>
-                            <div>尺寸：{info.width} * {info.height}</div>
-                            <div>时长：{FormatSec(Number(info.duration as string))}</div>
+                            <div>{info.width} * {info.height}</div>
+                            <div>{FormatSec(Number(info.duration as string))}</div>
                         </div>
                     </div>
                 </div>

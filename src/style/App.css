@@ -25,6 +25,12 @@ textarea {
     resize: none;
 }
 
+.lmo-app-text-ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .lmo_app-content {
     display: flex;
     user-select: none;
@@ -159,7 +165,7 @@ textarea {
     position: absolute;
     background: #00000066;
     top: 0;
-    z-index: 999;
+    z-index: 9;
     border-radius: 10px;
 }
 
@@ -168,6 +174,7 @@ textarea {
 }
 
 .lmo-app-resource-item-content-in-info-name {
+    width: 230px;
     font-size: 18px;
     font-weight: 500;
     letter-spacing: 0;
