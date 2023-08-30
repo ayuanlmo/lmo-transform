@@ -1,8 +1,9 @@
 import Dialog from "../template/Dialog";
+import * as React from "react";
 import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../lib/Store";
-import {setOutputPath} from "../lib/Store/AppState";
+import {setOutputPath, setParallelTasksLen} from "../lib/Store/AppState";
 import {DeleteTmpFile, GetTmpFileInfo} from "../utils/fs";
 
 const {ipcRenderer} = window.require('electron');
@@ -10,14 +11,20 @@ const {ipcRenderer} = window.require('electron');
 function Setting(): React.JSX.Element {
     const dispatch = useDispatch();
     const outputPath = useSelector((state: RootState) => state.app.outputPath);
+    const parallelTasksLen = useSelector((state: RootState) => state.app.parallelTasksLength);
     const [showDialog, serShowDialogState] = useState<boolean>(false);
     const [selectOutputPath, setSelectOutputPath] = useState<string>(outputPath);
     const [tmpFileSize, setTmpFileSize] = useState<number>(0);
+    const [parallelTasksLength, setParallelTasksLength] = useState<number | string>(parallelTasksLen);
 
     useEffect((): void => {
         setSelectOutputPath(outputPath);
         initTmpFileSize();
     }, [showDialog]);
+    useEffect((): void => {
+        if (parallelTasksLength === '')
+            setParallelTasksLength(1);
+    }, [parallelTasksLength]);
 
     const initTmpFileSize = (): void => setTmpFileSize(GetTmpFileInfo().size);
 
@@ -38,6 +45,7 @@ function Setting(): React.JSX.Element {
                 showDialog ? <Dialog onConfirm={(): void => {
                     serShowDialogState(!showDialog);
                     dispatch(setOutputPath(selectOutputPath));
+                    dispatch(setParallelTasksLen(parallelTasksLength));
                 }} onCancel={(): void => {
                     serShowDialogState(!showDialog);
                 }} show={showDialog} title={'设置'}>
@@ -50,6 +58,21 @@ function Setting(): React.JSX.Element {
                                     className={'lmo_color_white lmo_cursor_pointer'}
                                     type="text"
                                     readOnly
+                                />
+                            </div>
+                        </div>
+                        <div className={'lmo-app-setting-item'}>
+                            <div className={'lmo-app-setting-item-label lmo_color_white'}>并行任务</div>
+                            <div className={'lmo-app-setting-item-content'}>
+                                <input
+                                    defaultValue={parallelTasksLength}
+                                    className={'lmo_color_white lmo_cursor_pointer'}
+                                    min={1}
+                                    max={5}
+                                    type="number"
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                                        setParallelTasksLength(Number(e.target.value));
+                                    }}
                                 />
                             </div>
                         </div>
