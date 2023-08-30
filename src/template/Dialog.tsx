@@ -57,12 +57,12 @@ function Dialog(props: DialogProps): React.JSX.Element {
                 <div className={'dialog-controls-buttons'}>
                     {
                         showConfirm ? <button onClick={
-                            (e): void => onConfirm && onConfirm(e)
+                            (e): void | null => onConfirm && onConfirm(e)
                         }>{confirmLabel}</button> : ''
                     }
                     {
                         showCancel ? <button onClick={
-                            (e): void => onCancel && onCancel(e)
+                            (e): void | null => onCancel && onCancel(e)
                         }>{cancelLabel}</button> : ''
                     }
                 </div>
