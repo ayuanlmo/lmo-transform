@@ -24,7 +24,7 @@ function ShowLogs(props: ShowLogsProps): React.JSX.Element {
                 }
                 showCancel={false}
                 width={700}
-                height={300}
+                height={334}
                 show={show}
                 titleAlign={'start'}
                 title={'日志'}
@@ -33,6 +33,9 @@ function ShowLogs(props: ShowLogsProps): React.JSX.Element {
                 <textarea
                     className={'lmo_color_white'}
                     defaultValue={logContent}
+                    style={{
+                        width: '650px'
+                    }}
                     readOnly
                     rows={19}
                     cols={90}
