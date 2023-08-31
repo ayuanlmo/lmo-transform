@@ -76,8 +76,8 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                             <div>大小：{ResolveSize(info.size)}</div>
                         </div>
                         <div className={'lmo-app-resource-item-content-in-info-item lmo_flex_box'}>
-                            <div>{info.width} * {info.height}</div>
-                            <div>{FormatSec(Number(info.duration as string))}</div>
+                            <div>尺寸：{info.width} * {info.height}</div>
+                            <div>时长：{FormatSec(Number(info.duration as string))}</div>
                         </div>
                     </div>
                 </div>
@@ -109,8 +109,8 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                             </div>
                         </div>
                         <div className={'lmo-app-resource-item-content-in-info-item lmo_flex_box'}>
-                            <div>{info.width} * {info.height}</div>
-                            <div>{FormatSec(Number(info.duration as string))}</div>
+                            <div>尺寸：{info.width} * {info.height}</div>
+                            <div>时长：{FormatSec(Number(info.duration as string))}</div>
                         </div>
                     </div>
                 </div>

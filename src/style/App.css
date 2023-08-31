@@ -150,7 +150,7 @@ textarea {
 }
 
 .lmo-app-resource-item-content-in-info {
-    width: 480px;
+    width: 45%;
     height: 130px;
 }
 
@@ -171,10 +171,11 @@ textarea {
 
 .lmo-app-resource-item-content-in-info-box {
     margin-left: 20px;
+    width: 52%;
 }
 
 .lmo-app-resource-item-content-in-info-name {
-    width: 230px;
+    width: 100%;
     font-size: 18px;
     font-weight: 500;
     letter-spacing: 0;
@@ -184,20 +185,20 @@ textarea {
 }
 
 .lmo-app-resource-item-content-in-info-item {
-    width: 230px;
     font-size: 16px;
     font-weight: normal;
     letter-spacing: 0;
     margin-bottom: 15px;
+    overflow: hidden;
     color: #9E9E9E;
     justify-content: space-between;
 }
 
 .lmo-app-resource-item-content-output-info-box {
     height: 130px;
+    width: 30%;
     background: #2C2C2F;
     border-radius: 10px;
-    margin-left: 100px;
 }
 
 .lmo-app-resource-item-content-output-info-box-content {
