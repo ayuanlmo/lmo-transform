@@ -8,6 +8,7 @@ const local_output_path: string | null = Storage.Get('output_path');
 export const counterSlice = createSlice({
     name: 'app',
     initialState: {
+        globalLoading: false,
         selectedFiles: [],
         outputPath: local_output_path === null ? AppConfig.system.tempPath : local_output_path,
         parallelTasksLength: Storage.Get('parallel_tasks_length') || 1,
@@ -48,6 +49,10 @@ export const counterSlice = createSlice({
                 state.logContent = _;
             else
                 state.logContent += _;
+        },
+        // 设置全局加载状态
+        setGlobalLoading(state, {payload}): void {
+            state.globalLoading = payload as boolean;
         }
     },
 });
@@ -58,7 +63,8 @@ export const {
     setSelectedFileOutputType,
     setOutputPath,
     setParallelTasksLen,
-    pushLog
+    pushLog,
+    setGlobalLoading
 } = counterSlice.actions;
 
 export default counterSlice.reducer;

@@ -2,6 +2,8 @@ import {getFileInfo, GetFileInfoTypes, getVideoFirstFrame} from "../bin/ff";
 import {ResolvePath} from "./index";
 import {FILE_ERROR_MESSAGE} from "../const/Message";
 import AppConfig from "../conf/AppConfig";
+import store from '../lib/Store/index'
+import {setGlobalLoading} from "../lib/Store/AppState";
 
 const {ipcRenderer} = window.require('electron');
 const fs = window.require('fs');
@@ -29,12 +31,15 @@ export const SelectFile = (): Promise<Array<ResolveFileTypes>> => {
         i.type = 'file';
         i.multiple = true;
         i.accept = 'video/*';
-        i.onchange = async () => resolve(resolveFile(i.files));
+        i.onchange = async () => {
+            resolve(resolveFile(i.files));
+        }
         i.click();
     });
 }
 
 export const resolveFile = async (files: Array<any>): Promise<any[]> => {
+    store.dispatch(setGlobalLoading(true));
     const _ = [];
 
     for (let j = 0; j < files.length; j++) {
@@ -62,6 +67,7 @@ export const resolveFile = async (files: Array<any>): Promise<any[]> => {
                 });
         }
     }
+    store.dispatch(setGlobalLoading(false));
     return _;
 }
 
