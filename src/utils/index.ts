@@ -130,3 +130,12 @@ export const getCurrentDateTime = (): string => {
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
+
+//
+
+export const runCommand = (cmd: Array<string>): void => {
+    if (cmd.length === 0)
+        return;
+    const {spawn} = window.require('child_process');
+    spawn('cmd.exe', ['/c', 'start cmd.exe', '/k', ...cmd], {stdio: 'inherit', shell: true})
+}

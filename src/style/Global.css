@@ -12,6 +12,14 @@ img {
     user-select: none;
 }
 
+button {
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 0;
+    background-color: #343337;
+    cursor: pointer;
+}
+
 .lmo_theme_color {
     color: #229EED;
 }
