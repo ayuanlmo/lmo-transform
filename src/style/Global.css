@@ -1,7 +1,25 @@
 @charset "UTF-8";
-body{
+* {
+    font-family: "Microsoft YaHei UI", sans-serif;
+}
+
+body {
     background: #1B1B1C;
 }
+
+img {
+    user-drag: none;
+    user-select: none;
+}
+
+button {
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 0;
+    background-color: #343337;
+    cursor: pointer;
+}
+
 .lmo_theme_color {
     color: #229EED;
 }

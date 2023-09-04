@@ -9,6 +9,8 @@ export default {
         namespace: '__lmo__',
         storage: 'local'
     },
+    version: '1.0.0 Beta',
+    ca: 'x64',
     system: {
         tempPath: `${os.tmpdir().split('\\').join('/')}/`,
         homeDir: `${os.homedir().split('\\').join('/')}/`,

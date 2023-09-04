@@ -1,3 +1,6 @@
+body{
+    overflow: hidden;
+}
 .lmo_header-controls {
     width: 100%;
     height: 40px;
@@ -74,6 +77,12 @@
 }
 
 dialog {
+    width: 100vw;
+    height: 100vh;
+    background: #050505b8;
+}
+
+.dialog {
     width: 560px;
     padding: 0;
     min-height: 350px;
@@ -84,6 +93,7 @@ dialog {
     border-radius: 10px;
     position: absolute;
     top: calc((100vh - 350px) / 2);
+    left: calc((100vw - 560px) / 2);
 }
 
 .dialog-header {
@@ -107,6 +117,7 @@ dialog {
     top: 16px;
     display: flex;
     justify-content: end;
+    height: 66px;
 }
 
 .dialog-controls-buttons button {
@@ -124,6 +135,43 @@ dialog {
     color: #FFFFFF;
 }
 
-.dialog-controls-buttons button:nth-child(2) {
+.dialog-controls-buttons button:nth-child(1) {
     background: #229EED;;
+}
+
+.lmo-app-about {
+    text-align: center;
+}
+
+.lmo-app-about-app-name {
+    margin-top: 16px;
+    padding-bottom: 38px;
+}
+
+.lmo-app-about h2 {
+    font-weight: bold;
+}
+
+.lmo-app-about-logo {
+    width: 408px;
+    margin: auto auto 16px;
+}
+
+.lmo-app-about-logo img {
+    width: 180px;
+    margin: 0 12px;
+    border-radius: 50%;
+}
+
+.lmo-app-about-line {
+    height: 1px;
+    background: #FBFBFD;
+    width: 60%;
+    margin: auto;
+}
+
+.lmo-app-about-version {
+    line-height: 38px;
+    margin-top: 18px;
+    margin-bottom: 12px;
 }

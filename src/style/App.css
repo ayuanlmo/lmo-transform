@@ -1,9 +1,34 @@
+#__lmo__ {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    overflow: hidden;
+}
+
+body {
+    user-select: none;
+}
+
 select {
     border-radius: 4px;
     border: 0;
     padding: 4px 10px;
     background: #3B393E;
     color: #FFFFFF;
+}
+
+textarea {
+    background-color: #343337;
+    border: 0;
+    border-radius: 4px;
+    padding: 6px;
+    resize: none;
+}
+
+.lmo-app-text-ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .lmo_app-content {
@@ -125,7 +150,7 @@ select {
 }
 
 .lmo-app-resource-item-content-in-info {
-    width: 480px;
+    width: 45%;
     height: 130px;
 }
 
@@ -135,11 +160,22 @@ select {
     border-radius: 10px;
 }
 
+.lmo-app-resource-item-content-in-info-bg {
+    height: 100%;
+    position: absolute;
+    background: #00000066;
+    top: 0;
+    z-index: 9;
+    border-radius: 10px;
+}
+
 .lmo-app-resource-item-content-in-info-box {
     margin-left: 20px;
+    width: 52%;
 }
 
 .lmo-app-resource-item-content-in-info-name {
+    width: 100%;
     font-size: 18px;
     font-weight: 500;
     letter-spacing: 0;
@@ -149,20 +185,20 @@ select {
 }
 
 .lmo-app-resource-item-content-in-info-item {
-    width: 230px;
     font-size: 16px;
     font-weight: normal;
     letter-spacing: 0;
     margin-bottom: 15px;
+    overflow: hidden;
     color: #9E9E9E;
     justify-content: space-between;
 }
 
 .lmo-app-resource-item-content-output-info-box {
     height: 130px;
+    width: 30%;
     background: #2C2C2F;
     border-radius: 10px;
-    margin-left: 100px;
 }
 
 .lmo-app-resource-item-content-output-info-box-content {
@@ -196,16 +232,37 @@ select {
 
 .lmo-app-setting-item {
     display: flex;
-    justify-content: space-between;
     margin-bottom: 20px;
 }
 
-.lmo-app-setting-item-label{
+.lmo-app-setting-item-content {
+    width: 60%;
+    margin-left: 16px;
+}
+
+.lmo-app-setting-item-content button {
+    margin-left: 12px;
+    background-color: #343337;
+    border: 0;
+    padding: 0 6px;
+    width: 80px;
+    border-radius: 4px;
+}
+
+.lmo-app-setting-item-content button:hover {
+    background-color: #229EED;
+}
+
+.lmo-app-setting-item-content span {
+    line-height: 36px;
+}
+
+.lmo-app-setting-item-label {
     margin-top: 8px;
 }
 
 .lmo-app-setting-item input {
-    width: 400px;
+    width: 100%;
     background: #343337;
     border: 0;
     height: 36px;

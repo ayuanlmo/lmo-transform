@@ -1,20 +1,30 @@
-import {app, BrowserWindow, Menu} from 'electron';
+import {app, BrowserWindow, globalShortcut, Menu} from 'electron';
 import {join} from 'path';
 import {closeApp, initIpcMainHandles} from './ipc';
 import AppConfig from "./src/conf/AppConfig";
+import * as process from "process";
+
+type APP_RUN_TYPES = 'dev' | 'prod';
 
 const os = require('os');
 const fs = require('fs');
+const ShortcutKey = [
+    {
+        key: 'Ctrl+Alt+Shift+F12',
+        description: 'Open dev tools',
+        handlers: (main?: BrowserWindow): void => main?.webContents.openDevTools()
+    }
+];
+const isDev: boolean = process.env.NODE_ENV?.trim() === 'development';
 
-
-type APP_RUN_TYPES = 'dev' | 'prod';
 export const main = (): void => {
-    onReady('dev');
-    appListens();
+    app.on('ready', async (): Promise<void> => {
+        await onReady(isDev ? 'dev' : 'prod');
+        appListens();
+    });
 }
 
-
-const onReady = (type: APP_RUN_TYPES): void => {
+const onReady = async (type: APP_RUN_TYPES): Promise<void> => {
     const {tempPath} = AppConfig.system;
     const appPath: string = `${AppConfig.system.tempPath}${AppConfig.appName}`;
     const appTmpPath: string = `${AppConfig.system.tempPath}${AppConfig.appName}/tmp`;
@@ -25,11 +35,19 @@ const onReady = (type: APP_RUN_TYPES): void => {
         fs.mkdirSync(appTmpPath);
 
     if ((os.platform() !== 'win32') && (os.arch() !== 'x64'))
-        return closeApp(true);
+        await closeApp(true);
 
     app.whenReady().then(async (): Promise<void> => {
-        const mainWindow = createWindow(type);
-        mainWindowListens(await mainWindow);
+        const mainWindow: BrowserWindow = await createWindow(type);
+        mainWindowListens(mainWindow);
+
+        ShortcutKey.forEach((i) => {
+            globalShortcut.register(i.key, (): void => {
+                i.handlers(mainWindow);
+            });
+            if (!globalShortcut.isRegistered(i.key))
+                console.log(`${i.key} 注册失败`);
+        });
     });
 }
 
@@ -52,8 +70,9 @@ const createWindow = async (type: APP_RUN_TYPES = 'dev'): Promise<BrowserWindow>
         }
     });
 
-    window.on('close', () => {
-        return closeApp();
+    window.on('close', (event: Electron.Event): void => {
+        event.preventDefault();
+        closeApp();
     });
     window.on('maximize', (): void => window.webContents.send('WINDOW-ON-MAX', true));
     window.on('unmaximize', (): void => window.webContents.send('WINDOW-ON-MAX', false));
@@ -66,14 +85,18 @@ const createWindow = async (type: APP_RUN_TYPES = 'dev'): Promise<BrowserWindow>
     return window;
 }
 
-const appListens = () => {
-    app.on('window-all-closed', (): void => {
-        return closeApp();
+const appListens = (): void => {
+    app.on('before-quit', async (event: Electron.Event): Promise<void> => {
+        event.preventDefault();
+        await closeApp(true, true);
     });
     app.on('activate', async (): Promise<void> => {
-        if (require('os').platform() === "win32")
+        if (require('os').platform() === "win32") {
             if (BrowserWindow.getAllWindows().length === 0)
                 await createWindow();
+        } else {
+            await closeApp(true);
+        }
     });
 }
 

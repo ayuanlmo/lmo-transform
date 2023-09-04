@@ -6,6 +6,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "./lib/Store";
 import {setSelectedFiles} from "./lib/Store/AppState";
 import {resolveFile} from "./utils/fs";
+import GlobalLoading from "./template/GlobalLoading";
 
 require('./style/lmo-default.t.css');
 require('./style/App.css');
@@ -31,6 +32,7 @@ function Root(): React.JSX.Element {
     }, []);
     return (
         <div>
+            <GlobalLoading />
             <HeaderControls/>
             <div className={'lmo_app-content lmo_none_user_select'}>
                 <LeftMenu/>

@@ -47,8 +47,8 @@
     ]
   },
   "scripts": {
-    "start": "tsc && concurrently \"yarn react-start\" \"electron build/electron-app.js \"",
-    "build": "tsc && electron-builder",
+    "start": "tsc && concurrently \"yarn react-start\" \"set NODE_ENV=development && electron build/electron-app.js \"",
+    "build": "tsc && set NODE_ENV=production && electron-builder",
     "react-start": "set BROWSER=none&&set PORT=3000&&react-scripts start",
     "react-build": "react-scripts build",
     "react-test": "react-scripts test",
@@ -64,7 +64,9 @@
     "react-redux": "^8.1.2",
     "react-scripts": "5.0.1",
     "typescript": "^5.1.6",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "electron": "^26.0.0",
+    "electron-builder": "^24.6.3"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.17.0",
@@ -74,15 +76,7 @@
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.39",
     "@types/react": "^18.2.17",
-    "@types/react-dom": "^18.2.7",
-    "electron": "^25.3.2",
-    "electron-builder": "^24.6.3"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "@types/react-dom": "^18.2.7"
   },
   "browserslist": {
     "production": [

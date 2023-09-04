@@ -1,22 +1,34 @@
 import Dialog from "../template/Dialog";
+import * as React from "react";
 import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../lib/Store";
-import {setOutputPath} from "../lib/Store/AppState";
+import {setOutputPath, setParallelTasksLen} from "../lib/Store/AppState";
+import {DeleteTmpFile, GetTmpFileInfo} from "../utils/fs";
 
 const {ipcRenderer} = window.require('electron');
 
 function Setting(): React.JSX.Element {
     const dispatch = useDispatch();
-    const [showDialog, serShowDialogState] = useState<boolean>(false);
     const outputPath = useSelector((state: RootState) => state.app.outputPath);
+    const parallelTasksLen = useSelector((state: RootState) => state.app.parallelTasksLength);
+    const [showDialog, serShowDialogState] = useState<boolean>(false);
     const [selectOutputPath, setSelectOutputPath] = useState<string>(outputPath);
+    const [tmpFileSize, setTmpFileSize] = useState<number>(0);
+    const [parallelTasksLength, setParallelTasksLength] = useState<number | string>(parallelTasksLen);
 
     useEffect((): void => {
         setSelectOutputPath(outputPath);
+        initTmpFileSize();
     }, [showDialog]);
+    useEffect((): void => {
+        if (parallelTasksLength === '')
+            setParallelTasksLength(1);
+    }, [parallelTasksLength]);
 
-    ipcRenderer.on('SELECTED-DIRECTORY', (event, path: string): void => setSelectOutputPath(path));
+    const initTmpFileSize = (): void => setTmpFileSize(GetTmpFileInfo().size);
+
+    ipcRenderer.on('SELECTED-DIRECTORY', (event: any, path: string): void => setSelectOutputPath(path));
     const selectPath = (): void => ipcRenderer.send('OPEN-DIRECTORY');
 
     return (
@@ -29,34 +41,55 @@ function Setting(): React.JSX.Element {
                     设置
                 </span>
             </button>
-            <Dialog onConfirm={(): void => {
-                serShowDialogState(!showDialog);
-                dispatch(setOutputPath(selectOutputPath));
-            }} onCancel={(): void => {
-                serShowDialogState(!showDialog);
-            }} show={showDialog} title={'设置'}>
-                <div className={'lmo-app-setting'}>
-                    <div onClick={selectPath} className={'lmo-app-setting-item'}>
-                        <div className={'lmo-app-setting-item-label lmo_color_white'}>输出路径</div>
-                        <div>
-                            <input
-                                value={selectOutputPath}
-                                className={'lmo_color_white lmo_cursor_pointer'}
-                                disabled
-                                type="text"
-                            />
+            {
+                showDialog ? <Dialog onConfirm={(): void => {
+                    serShowDialogState(!showDialog);
+                    dispatch(setOutputPath(selectOutputPath));
+                    dispatch(setParallelTasksLen(parallelTasksLength));
+                }} onCancel={(): void => {
+                    serShowDialogState(!showDialog);
+                }} show={showDialog} title={'设置'}>
+                    <div className={'lmo-app-setting'}>
+                        <div onClick={selectPath} className={'lmo-app-setting-item'}>
+                            <div className={'lmo-app-setting-item-label lmo_color_white'}>输出路径</div>
+                            <div className={'lmo-app-setting-item-content'}>
+                                <input
+                                    value={selectOutputPath}
+                                    className={'lmo_color_white lmo_cursor_pointer'}
+                                    type="text"
+                                    readOnly
+                                />
+                            </div>
+                        </div>
+                        <div className={'lmo-app-setting-item'}>
+                            <div className={'lmo-app-setting-item-label lmo_color_white'}>并行任务</div>
+                            <div className={'lmo-app-setting-item-content'}>
+                                <input
+                                    defaultValue={parallelTasksLength}
+                                    className={'lmo_color_white lmo_cursor_pointer'}
+                                    min={1}
+                                    max={5}
+                                    type="number"
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                                        setParallelTasksLength(Number(e.target.value));
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        <div className={'lmo-app-setting-item'}>
+                            <div className={'lmo-app-setting-item-label lmo_color_white'}>临时文件</div>
+                            <div className={'lmo-app-setting-item-content lmo_flex_box'}>
+                                <span className={'lmo_theme_color'}>{tmpFileSize + 'kb'}</span>
+                                <button onClick={(): void => {
+                                    DeleteTmpFile();
+                                    initTmpFileSize();
+                                }} className={'lmo_color_white lmo_cursor_pointer'}>删除
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    {/*<div className={'lmo-app-setting-item'}>*/}
-                    {/*    <div  className={'lmo-app-setting-item-label lmo_color_white'}>*/}
-                    {/*        并行任务*/}
-                    {/*    </div>*/}
-                    {/*    <div>*/}
-                    {/*        <input className={'lmo_color_white'} type="text"/>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                </div>
-            </Dialog>
+                </Dialog> : <></>
+            }
         </>
     );
 }

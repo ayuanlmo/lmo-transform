@@ -1,12 +1,15 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
 import {TRANSFORM_MAP, TRANSFORM_TYPES} from "../const/TransformType";
+import {useDispatch} from "react-redux";
+import {setGlobalType} from "../lib/Store/AppState";
 
 function LeftMenu(): React.JSX.Element {
+    const dispatch = useDispatch();
     const [transformType, setTransformType] = useState<TRANSFORM_TYPES>('video');
 
     useEffect((): void => {
-        console.log('transformType', transformType);
+        dispatch(setGlobalType(transformType));
     }, [transformType]);
 
     const getClassName = (type: TRANSFORM_TYPES): string => {
