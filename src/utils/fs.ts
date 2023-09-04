@@ -44,15 +44,16 @@ export const resolveFile = async (files: Array<any>): Promise<any[]> => {
 
     for (let j = 0; j < files.length; j++) {
         const filePath: string = files[j].path.split('\\').join('/');
+        const fileInfo = await getFileInfo(filePath);
+        const isVideo: boolean = fileInfo.streams.codec_type === 'video';
 
         try {
-            const framePath = await getVideoFirstFrame(filePath);
             if (files[j].type !== '')
                 _.push({
                     name: files[j].name,
                     path: ResolvePath(files[j].path),
                     type: files[j].type,
-                    cover: framePath,
+                    cover: isVideo ? await getVideoFirstFrame(filePath) : '',
                     lastModified: files[j].lastModified,
                     ...await getFileInfo(filePath),
                     output: {
