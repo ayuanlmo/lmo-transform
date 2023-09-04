@@ -98,7 +98,10 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                     <div className={'lmo_cursor_pointer lmo_position_relative'} onClick={(): void => {
                         ffplayer(info.path);
                     }}>
-                        <img src={info.cover} alt={info.cover}/>
+                        {
+                            isAudio ? <img src={require('../static/svg/audio.svg').default} alt={'icon'}/> : isVideo ?
+                                <img src={info.cover} alt={info.cover}/> : <></>
+                        }
                         <div style={{width: `${currentState.current}%`}}
                              className={'lmo-app-resource-item-content-in-info-bg'}></div>
                     </div>
