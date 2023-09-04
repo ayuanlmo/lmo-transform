@@ -4,7 +4,9 @@ import {VIDEO_TYPE_MAP} from "../const/ResourceTypes";
 import {useDispatch} from "react-redux";
 import {deleteSelectedFilesItem, setSelectedFileOutputType} from "../lib/Store/AppState";
 import {FormatSec, openOutputPath, ResolveSize} from "../utils";
-import {ffplayer, transformVideo} from "../bin/ff";
+import {FfmpegStreamsTypes, ffplayer, transformVideo} from "../bin/ff";
+
+const {ipcRenderer} = window.require('electron');
 
 interface ResourceInfoTypes {
     cover: string;
@@ -20,6 +22,7 @@ interface ResourceInfoTypes {
     size: number;
     type: string;
     width?: number;
+    streams: FfmpegStreamsTypes;
 }
 
 interface CurrentStateTypes {
@@ -36,6 +39,13 @@ enum SuccessStateName {
     pending = "开始转换",
 }
 
+export interface OptTypeOptionsTypes {
+    name: string;
+    type: string;
+    label: string;
+    libs: string;
+}
+
 
 function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.JSX.Element {
     const {info, index} = props;
@@ -46,11 +56,39 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
         current: 0,
         frame: []
     });
+    const [optTypeOptions, setOptTypeOptions] = useState<Array<OptTypeOptionsTypes>>([]);
+    const isH264: boolean = info.streams.codec_name === 'h264'; // 是否h264
+    const isH265: boolean = info.streams.codec_name === 'hevc'; // 是否h265
+    const isVideo: boolean = info.streams.codec_type === 'video'; // 是否视频
+    const isAudio: boolean = info.streams.codec_type === 'audio'; // 是否音频
+    const fileType: string = info.type; // 文件类型
+
+    const getTypeOptions = (): Array<OptTypeOptionsTypes> => {
+        const type: Array<OptTypeOptionsTypes> = [];
+
+        if (isVideo) {
+            VIDEO_TYPE_MAP.forEach(i => {
+                if (i.type !== fileType) {
+                    type.push(i);
+                } else {
+                    if (isH264)
+                        if (!(i.label.includes('264')))
+                            type.push(i);
+                    if (isH265)
+                        if (!(i.label.includes('265')))
+                            type.push(i);
+                }
+            });
+        }
+        setOptTypeOptions(type);
+        return type;
+    }
 
     useEffect((): void => {
+        getTypeOptions();
         dispatch(setSelectedFileOutputType({
             index: index,
-            type: 'mp4'
+            type: ''
         }));
     }, []);
     return (
@@ -87,9 +125,10 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                         <div className={'lmo-app-resource-item-content-in-info-item lmo_flex_box'}>
                             <div className={'lmo_color_white'}>类型：
                                 <select onChange={(e) => {
-                                    const type = VIDEO_TYPE_MAP.find(i => {
+                                    const type = optTypeOptions.find(i => {
                                         return i.label === e.target.value;
                                     });
+
                                     dispatch(setSelectedFileOutputType({
                                         index: index,
                                         type: type?.name,
@@ -97,7 +136,7 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                                     }));
                                 }} name="" id="">
                                     {
-                                        VIDEO_TYPE_MAP.map((i, k) => {
+                                        optTypeOptions.map((i, k) => {
                                             return (
                                                 <option key={k} value={i.label}>
                                                     {i.label}
@@ -124,6 +163,8 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                         (): void => {
                             // 开始处理（状态为等待 || 错误
                             if (successState === 'pending' || successState === 'error') {
+                                if (info.output.type === '')
+                                    return ipcRenderer.send('SHOW-INFO-MESSAGE-BOX', '请选择输出文件类型');
                                 setSuccessState('running');
                                 transformVideo(info, (data: CurrentStateTypes) => {
                                     setCurrentState(data);
@@ -145,7 +186,6 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                                 SuccessStateName[successState]
                             }
                         </div>
-
                     </button>
                 </div>
             </div>
