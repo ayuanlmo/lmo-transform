@@ -12,7 +12,8 @@ export const counterSlice = createSlice({
         selectedFiles: [],
         outputPath: local_output_path === null ? AppConfig.system.tempPath : local_output_path,
         parallelTasksLength: Storage.Get('parallel_tasks_length') || 1,
-        logContent: `[${getCurrentDateTime()}]\n程序启动...\n\n`
+        logContent: `[${getCurrentDateTime()}]\n程序启动...\n\n`,
+        globalType: 'video'
     },
     reducers: {
         // 设置选择的文件
@@ -53,6 +54,10 @@ export const counterSlice = createSlice({
         // 设置全局加载状态
         setGlobalLoading(state, {payload}): void {
             state.globalLoading = payload as boolean;
+        },
+        // 设置全局文件类型
+        setGlobalType(state, {payload}) {
+            state.globalType = payload;
         }
     },
 });
@@ -64,7 +69,8 @@ export const {
     setOutputPath,
     setParallelTasksLen,
     pushLog,
-    setGlobalLoading
+    setGlobalLoading,
+    setGlobalType
 } = counterSlice.actions;
 
 export default counterSlice.reducer;

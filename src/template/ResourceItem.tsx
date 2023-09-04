@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {VIDEO_TYPE_MAP} from "../const/ResourceTypes";
+import {VIDEO_TYPE_MAP, AUDIO_TYPE_MAP} from "../const/ResourceTypes";
 import {useDispatch} from "react-redux";
 import {deleteSelectedFilesItem, setSelectedFileOutputType} from "../lib/Store/AppState";
 import {FormatSec, openOutputPath, ResolveSize} from "../utils";
@@ -8,7 +8,7 @@ import {FfmpegStreamsTypes, ffplayer, transformVideo} from "../bin/ff";
 
 const {ipcRenderer} = window.require('electron');
 
-interface ResourceInfoTypes {
+export interface ResourceInfoTypes {
     cover: string;
     duration: string | number;
     format: string;
@@ -25,14 +25,14 @@ interface ResourceInfoTypes {
     streams: FfmpegStreamsTypes;
 }
 
-interface CurrentStateTypes {
+export interface CurrentStateTypes {
     current: number;
     frame: Array<number>;
 }
 
-type SuccessState = 'running' | 'success' | 'error' | 'pending';
+export type SuccessState = 'running' | 'success' | 'error' | 'pending';
 
-enum SuccessStateName {
+export enum SuccessStateName {
     running = "转换中",
     success = "打开文件夹",
     error = "转换失败",
@@ -42,8 +42,8 @@ enum SuccessStateName {
 export interface OptTypeOptionsTypes {
     name: string;
     type: string;
-    label: string;
-    libs: string;
+    label?: string;
+    libs?: string;
 }
 
 
@@ -80,7 +80,10 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                 }
             });
         }
-        setOptTypeOptions(type);
+        if (isAudio) {
+            setOptTypeOptions(AUDIO_TYPE_MAP);
+        }
+        // setOptTypeOptions(type);
         return type;
     }
 
@@ -131,7 +134,7 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                                     const type = optTypeOptions.find(i => {
                                         return i.label === e.target.value;
                                     });
-
+                                    
                                     dispatch(setSelectedFileOutputType({
                                         index: index,
                                         type: type?.name,
