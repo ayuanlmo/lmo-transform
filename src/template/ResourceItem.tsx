@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {VIDEO_TYPE_MAP, AUDIO_TYPE_MAP} from "../const/ResourceTypes";
+import {AUDIO_TYPE_MAP, VIDEO_TYPE_MAP} from "../const/ResourceTypes";
 import {useDispatch} from "react-redux";
 import {deleteSelectedFilesItem, setSelectedFileOutputType} from "../lib/Store/AppState";
 import {FormatSec, openOutputPath, ResolveSize} from "../utils";
@@ -81,14 +81,19 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
             });
         }
         if (isAudio) {
-            setOptTypeOptions(AUDIO_TYPE_MAP);
+            AUDIO_TYPE_MAP.forEach(i => {
+                if (i.type !== fileType)
+                    type.push(i);
+            })
         }
-        // setOptTypeOptions(type);
+        setOptTypeOptions(type);
         return type;
     }
 
     useEffect((): void => {
         getTypeOptions();
+        console.log(fileType)
+        console.log(info)
         dispatch(setSelectedFileOutputType({
             index: index,
             type: ''
@@ -134,7 +139,7 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                                     const type = optTypeOptions.find(i => {
                                         return i.label === e.target.value;
                                     });
-                                    
+
                                     dispatch(setSelectedFileOutputType({
                                         index: index,
                                         type: type?.name,

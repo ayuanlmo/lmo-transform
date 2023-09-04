@@ -12,7 +12,7 @@ export const VIDEO_TYPE_MAP = [
 ]
 
 export const AUDIO_TYPE_MAP = [
-    {name: 'MP3', type: 'audio/mp3', label: 'MP3'},
+    {name: 'MP3', type: 'audio/mpeg', label: 'MP3'},
     {name: 'FLAC', type: 'audio/flac', label: 'FLAC'},
     {name: 'WAV', type: 'audio/wav', label: 'WAV'},
     {name: 'RA', type: 'audio/vnd.rn-realaudio', label: 'RA'},
