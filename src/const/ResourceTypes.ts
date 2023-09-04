@@ -1,7 +1,6 @@
 export const VIDEO_TYPE_MAP = [
     {name: 'MP4', type: 'video/mp4', label: 'MP4-H.264', libs: '-c:v libx264'},
     {name: 'MP4', type: 'video/mp4', label: 'MP4-H.265', libs: '-c:v libx265'},
-    {name: 'RMVB', type: 'application/vnd.rn-realmedia-vbr', label: 'RMVB', libs: ''},
     {name: 'M3U8', type: 'application/x-mpegurl', label: 'M3U8', libs: ''},
     {name: 'TS', type: 'video/vnd.dlna.mpeg-tts', label: 'TS-H264', libs: '-c:v libx264'},
     {name: 'TS', type: 'video/vnd.dlna.mpeg-tts', label: 'TS-H265', libs: '-c:v libx265'},
