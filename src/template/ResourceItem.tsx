@@ -5,6 +5,8 @@ import {useDispatch} from "react-redux";
 import {deleteSelectedFilesItem, setSelectedFileOutputType} from "../lib/Store/AppState";
 import {FormatSec, openOutputPath, ResolveSize} from "../utils";
 import {FfmpegStreamsTypes, ffplayer, transformVideo} from "../bin/ff";
+import {File} from "../bin/file";
+import Storage from "../lib/Storage";
 
 const {ipcRenderer} = window.require('electron');
 
@@ -172,6 +174,8 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                     </button>
                     <button onClick={
                         (): void => {
+                            if (!File.directoryIs(Storage.Get('output_path')))
+                                return;
                             // 开始处理（状态为等待 || 错误
                             if (successState === 'pending' || successState === 'error') {
                                 if (info.output.type === '')

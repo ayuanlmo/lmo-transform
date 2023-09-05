@@ -19,6 +19,7 @@ function Setting(): React.JSX.Element {
 
     useEffect((): void => {
         setSelectOutputPath(outputPath);
+        dispatch(setOutputPath(selectOutputPath));
         initTmpFileSize();
     }, [showDialog]);
     useEffect((): void => {
