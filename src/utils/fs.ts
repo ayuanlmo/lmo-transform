@@ -1,9 +1,10 @@
 import {getFileInfo, GetFileInfoTypes, getVideoFirstFrame} from "../bin/ff";
 import {ResolvePath} from "./index";
-import {FILE_ERROR_MESSAGE} from "../const/Message";
 import AppConfig from "../conf/AppConfig";
 import store from '../lib/Store/index'
 import {setGlobalLoading} from "../lib/Store/AppState";
+import {FILE_ERROR_MESSAGE} from "../const/Message";
+import {File} from "../bin/file";
 
 const {ipcRenderer} = window.require('electron');
 const fs = window.require('fs');
@@ -40,34 +41,40 @@ export const SelectFile = (): Promise<Array<ResolveFileTypes>> => {
 
 export const resolveFile = async (files: Array<any>): Promise<any[]> => {
     store.dispatch(setGlobalLoading(true));
-    const _ = [];
+    const _: any[] | PromiseLike<any[]> = [];
 
     for (let j = 0; j < files.length; j++) {
         const filePath: string = files[j].path.split('\\').join('/');
-        const fileInfo = await getFileInfo(filePath);
-        const isVideo: boolean = fileInfo.streams.codec_type === 'video';
 
-        try {
-            if (files[j].type !== '')
-                _.push({
-                    name: files[j].name,
-                    path: ResolvePath(files[j].path),
-                    type: files[j].type,
-                    cover: isVideo ? await getVideoFirstFrame(filePath) : '',
-                    lastModified: files[j].lastModified,
-                    ...await getFileInfo(filePath),
-                    output: {
-                        type: '',
-                        libs: ''
-                    }
-                });
-        } catch (e: any) {
-            if (e.err)
-                ipcRenderer.send('SHOW-ERROR-MESSAGE-BOX', {
-                    msg: FILE_ERROR_MESSAGE(e.path, e.msg.toString())
-                });
-        }
+        await getFileInfo(filePath).then(async (fileInfo: GetFileInfoTypes) => {
+            const isVideo: boolean = fileInfo?.streams?.codec_type === 'video';
+
+            console.log(isVideo)
+
+            try {
+                if (files[j].type !== '')
+                    _.push({
+                        name: files[j].name,
+                        path: ResolvePath(files[j].path),
+                        type: files[j].type,
+                        cover: File.isImageFile(filePath) ? filePath : isVideo ? await getVideoFirstFrame(filePath) : '',
+                        lastModified: files[j].lastModified,
+                        ...fileInfo,
+                        output: {
+                            type: '',
+                            libs: ''
+                        }
+                    });
+            } catch (e: any) {
+                store.dispatch(setGlobalLoading(false));
+            }
+        }).catch((e: any): void => {
+            ipcRenderer.send('SHOW-ERROR-MESSAGE-BOX', {
+                msg: FILE_ERROR_MESSAGE(filePath, e.toString())
+            });
+        })
     }
+    console.log('返回')
     store.dispatch(setGlobalLoading(false));
     return _;
 }
