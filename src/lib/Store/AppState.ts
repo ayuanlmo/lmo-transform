@@ -10,7 +10,7 @@ export const counterSlice = createSlice({
     initialState: {
         globalLoading: false,
         selectedFiles: [],
-        outputPath: local_output_path === null ? AppConfig.system.tempPath : local_output_path,
+        outputPath: local_output_path === null ? AppConfig.system.tempPath + `${AppConfig.appName}` : local_output_path,
         parallelTasksLength: Storage.Get('parallel_tasks_length') || 1,
         logContent: `[${getCurrentDateTime()}]\n程序启动...\n\n`,
         globalType: 'video'
