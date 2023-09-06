@@ -1,7 +1,23 @@
-import {app, BrowserWindow, dialog, globalShortcut, ipcMain, MessageBoxOptions} from "electron";
+import {app, BrowserWindow, dialog, globalShortcut, ipcMain, MessageBoxOptions, Notification} from "electron";
 import {join} from "path";
 
 export const electronApi = 'electronApi';
+
+export interface CreateNotification {
+    title: string;
+    body: string;
+}
+
+const createNotification = (params: CreateNotification) => {
+    if (Notification.isSupported()) {
+        new Notification({
+            title: params.title,
+            body: params.body,
+            timeoutType: 'default',
+            icon: './public/icon.png'
+        }).show();
+    }
+}
 
 const createMessageBox = (win: BrowserWindow, opt: {
     type: "warning" | "none" | "info" | "error" | "question",
@@ -36,6 +52,9 @@ export const initIpcMainHandles = (window: BrowserWindow): void => {
     });
     ipcMain.on('SHOW-ERROR-MESSAGE-BOX', (event: any, data: { msg: string; }): void => {
         createMessageBox(window, {message: data.msg, type: 'error', title: '糟糕！出错啦'});
+    });
+    ipcMain.on('CREATE-NOTIFICATION', (event: any, data: CreateNotification): void => {
+        createNotification(data);
     });
     ipcMain.on('SHOW-INFO-MESSAGE-BOX', (event: any, data: string): void => {
         createMessageBox(window, {message: data, type: 'info', icon: join("./public/favicon.ico")});

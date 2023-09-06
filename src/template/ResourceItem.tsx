@@ -2,7 +2,7 @@ import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {AUDIO_TYPE_MAP, VIDEO_TYPE_MAP} from "../const/ResourceTypes";
 import {useDispatch, useSelector} from "react-redux";
-import {deleteSelectedFilesItem, setSelectedFileOutputType,setCurrentParallelTasks} from "../lib/Store/AppState";
+import {deleteSelectedFilesItem, setCurrentParallelTasks, setSelectedFileOutputType} from "../lib/Store/AppState";
 import {FormatSec, openOutputPath, ResolveSize} from "../utils";
 import {FfmpegStreamsTypes, ffplayer, transformVideo} from "../bin/ff";
 import {File} from "../bin/file";
@@ -190,7 +190,8 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                                 setSuccessState('running');
                                 transformVideo(info, (data: CurrentStateTypes) => {
                                     setCurrentState(data);
-                                }).then((res: string) => {
+                                }).then((res: string): void => {
+                                    ipcRenderer.send('CREATE-NOTIFICATION', {title: '转换完成', body: info.name});
                                     dispatch(setCurrentParallelTasks('sub'));
                                     setSuccessState('success');
                                     setResourcePath(res);
