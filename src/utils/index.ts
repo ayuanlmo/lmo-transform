@@ -3,6 +3,7 @@ import Storage from "../lib/Storage";
 
 const __G = global || window || this;
 const {shell} = __G.require('electron');
+const { exec } = __G.require('child_process');
 
 export const RequireNodeModule = (name: string): any => __G.require(name);
 
@@ -110,7 +111,7 @@ export const FormatSec = (sec: number): string => {
 
 // 打开输出路径
 export const openOutputPath = (): void => {
-    shell.openPath(Storage.Get('output_path'));
+    return exec(`start ${Storage.Get('output_path')}`);
 }
 
 // 播放bibi声音
