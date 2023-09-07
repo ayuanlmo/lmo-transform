@@ -1,7 +1,17 @@
-import {app, BrowserWindow, dialog, globalShortcut, ipcMain, MessageBoxOptions, Notification} from "electron";
+import {
+    app,
+    BrowserWindow,
+    dialog,
+    globalShortcut,
+    ipcMain,
+    MessageBoxOptions,
+    Notification,
+    powerSaveBlocker
+} from "electron";
 import {join} from "path";
 
 export const electronApi = 'electronApi';
+let pasId: number | null = null;
 
 export interface CreateNotification {
     title: string;
@@ -62,6 +72,17 @@ export const initIpcMainHandles = (window: BrowserWindow): void => {
     ipcMain.on('SHOW-WARNING-MESSAGE-BOX', (event: any, data: string): void => {
         createMessageBox(window, {message: data, type: 'warning'});
     });
+    ipcMain.on('OPEN-PAS', (event: Electron.IpcMainEvent, open: boolean): void => {
+        if (open) {
+            if (!pasId)
+                pasId = powerSaveBlocker.start('prevent-app-suspension');
+            if (powerSaveBlocker.isStarted(pasId))
+                event.sender.send('PAS-ON');
+        } else {
+            if (pasId && powerSaveBlocker.isStarted(pasId))
+                event.sender.send('PAS-OFF');
+        }
+    });
 };
 
 const showCloseAppConfirmationDialog = async () => {
@@ -77,7 +98,6 @@ const showCloseAppConfirmationDialog = async () => {
 };
 
 export const closeApp = async (instant: boolean = false, exit: boolean = false): Promise<void> => {
-    globalShortcut.unregisterAll();
 
     if (exit) {
         app.exit();
@@ -85,6 +105,9 @@ export const closeApp = async (instant: boolean = false, exit: boolean = false):
         app.quit();
     } else {
         const shouldExit: boolean = await showCloseAppConfirmationDialog();
+        globalShortcut.unregisterAll();
+        if (pasId !== null)
+            powerSaveBlocker.stop(pasId as number);
 
         if (shouldExit && process.platform !== 'darwin')
             app.quit();

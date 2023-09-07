@@ -269,3 +269,11 @@ textarea {
     border-radius: 4px;
     padding: 0 20px;
 }
+
+.lmo-app-setting-item-tips {
+    width: 362px;
+    color: #737373;
+    font-size: 12px;
+    margin-left: 16px;
+    line-height: 30px;
+}
