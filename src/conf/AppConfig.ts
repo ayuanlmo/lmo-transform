@@ -9,7 +9,7 @@ export default {
         namespace: '__lmo__',
         storage: 'local'
     },
-    version: '1.0.0 Beta',
+    version: '1.0.0-Beta1',
     ca: 'x64',
     system: {
         tempPath: `${os.tmpdir().split('\\').join('/')}/`,
