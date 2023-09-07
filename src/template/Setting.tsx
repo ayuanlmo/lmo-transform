@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../lib/Store";
 import {setOutputPath, setParallelTasksLen} from "../lib/Store/AppState";
 import {DeleteTmpFile, GetTmpFileInfo} from "../utils/fs";
+import {YSwitch} from "../components/index";
 
 const {ipcRenderer} = window.require('electron');
 
@@ -16,9 +17,11 @@ function Setting(): React.JSX.Element {
     const [selectOutputPath, setSelectOutputPath] = useState<string>(outputPath);
     const [tmpFileSize, setTmpFileSize] = useState<number>(0);
     const [parallelTasksLength, setParallelTasksLength] = useState<number | string>(parallelTasksLen);
+    const [pds, setPds] = useState(false);
 
     useEffect((): void => {
         setSelectOutputPath(outputPath);
+        dispatch(setOutputPath(selectOutputPath));
         initTmpFileSize();
     }, [showDialog]);
     useEffect((): void => {
@@ -42,7 +45,7 @@ function Setting(): React.JSX.Element {
                 </span>
             </button>
             {
-                showDialog ? <Dialog onConfirm={(): void => {
+                showDialog ? <Dialog height={240} onConfirm={(): void => {
                     serShowDialogState(!showDialog);
                     dispatch(setOutputPath(selectOutputPath));
                     dispatch(setParallelTasksLen(parallelTasksLength));
@@ -85,6 +88,21 @@ function Setting(): React.JSX.Element {
                                     initTmpFileSize();
                                 }} className={'lmo_color_white lmo_cursor_pointer'}>删除
                                 </button>
+                            </div>
+                        </div>
+                        <div className={'lmo-app-setting-item'}>
+                            <div style={{width: '158px'}} className={'lmo-app-setting-item-label lmo_color_white'}>
+                                阻止低功耗模式
+                            </div>
+                            <div style={{
+                                width: '20%'
+                            }} className={'lmo-app-setting-item-content lmo_flex_box'}>
+                                <YSwitch checked={pds} onChange={(e: boolean): void => {
+                                    setPds(e);
+                                    ipcRenderer.send('OPEN-PAS', e);
+                                }}/>
+                            </div>
+                            <div className={'lmo-app-setting-item-tips'}>防止Windows进入待机、暂停等状态，仅本次有效
                             </div>
                         </div>
                     </div>

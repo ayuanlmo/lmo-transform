@@ -64,11 +64,11 @@
     "react-redux": "^8.1.2",
     "react-scripts": "5.0.1",
     "typescript": "^5.1.6",
-    "web-vitals": "^2.1.4",
-    "electron": "^26.0.0",
-    "electron-builder": "^24.6.3"
+    "web-vitals": "^2.1.4"
   },
   "devDependencies": {
+    "electron": "^26.0.0",
+    "electron-builder": "^24.6.3",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",

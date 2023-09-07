@@ -1,10 +1,13 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {AUDIO_TYPE_MAP, VIDEO_TYPE_MAP} from "../const/ResourceTypes";
-import {useDispatch} from "react-redux";
-import {deleteSelectedFilesItem, setSelectedFileOutputType} from "../lib/Store/AppState";
+import {useDispatch, useSelector} from "react-redux";
+import {deleteSelectedFilesItem, setCurrentParallelTasks, setSelectedFileOutputType} from "../lib/Store/AppState";
 import {FormatSec, openOutputPath, ResolveSize} from "../utils";
 import {FfmpegStreamsTypes, ffplayer, transformVideo} from "../bin/ff";
+import {File} from "../bin/file";
+import Storage from "../lib/Storage";
+import {RootState} from "../lib/Store";
 
 const {ipcRenderer} = window.require('electron');
 
@@ -57,6 +60,8 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
         frame: []
     });
     const [optTypeOptions, setOptTypeOptions] = useState<Array<OptTypeOptionsTypes>>([]);
+    const currentParallelTasks: number = useSelector((state: RootState) => state.app.currentParallelTasks);
+    const parallelTasksLength: number = useSelector((state: RootState) => state.app.parallelTasksLength);
     const isH264: boolean = info.streams.codec_name === 'h264'; // 是否h264
     const isH265: boolean = info.streams.codec_name === 'hevc'; // 是否h265
     const isVideo: boolean = info.streams.codec_type === 'video'; // 是否视频
@@ -172,17 +177,26 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                     </button>
                     <button onClick={
                         (): void => {
+                            if (!File.directoryIs(Storage.Get('output_path')))
+                                return;
                             // 开始处理（状态为等待 || 错误
                             if (successState === 'pending' || successState === 'error') {
                                 if (info.output.type === '')
                                     return ipcRenderer.send('SHOW-INFO-MESSAGE-BOX', '请选择输出文件类型');
+                                if (currentParallelTasks === parallelTasksLength)
+                                    return ipcRenderer.send('SHOW-INFO-MESSAGE-BOX', `当前最大并行任务数为：${parallelTasksLength}个`);
+
+                                dispatch(setCurrentParallelTasks('plus'));
                                 setSuccessState('running');
                                 transformVideo(info, (data: CurrentStateTypes) => {
                                     setCurrentState(data);
-                                }).then((res: string) => {
+                                }).then((res: string): void => {
+                                    ipcRenderer.send('CREATE-NOTIFICATION', {title: '转换完成', body: info.name});
+                                    dispatch(setCurrentParallelTasks('sub'));
                                     setSuccessState('success');
                                     setResourcePath(res);
                                 }).catch(e => {
+                                    dispatch(setCurrentParallelTasks('sub'));
                                     setSuccessState('error');
                                     console.log('失败')
                                 })

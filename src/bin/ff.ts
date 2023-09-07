@@ -121,19 +121,19 @@ export const getVideoFirstFrame = (inputFilePath: string): Promise<string> => {
  * **/
 export const getFileInfo = (filePath: string): Promise<GetFileInfoTypes> => {
     return new Promise((resolve, reject) => {
-        ffmpeg.ffprobe(filePath, (e: any, data: any) => {
+        ffmpeg.ffprobe(filePath, (e: any, data: any): void => {
             if (e) {
-                console.log('获取文件信息错误', e);
-                return reject({});
+                reject(e);
+            } else {
+                resolve({
+                    size: data.format.size,
+                    duration: data.format.duration,
+                    width: data.streams[0].width,
+                    height: data.streams[0].height,
+                    format: data.format.format_name,
+                    streams: data.streams[0]
+                });
             }
-            resolve({
-                size: data.format.size,
-                duration: data.format.duration,
-                width: data.streams[0].width,
-                height: data.streams[0].height,
-                format: data.format.format_name,
-                streams: data.streams[0]
-            });
         });
     });
 }

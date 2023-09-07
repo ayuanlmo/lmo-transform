@@ -13,3 +13,8 @@ export const PLAYER_ERROR = (filePath: string, msg: string): string => {
 export const FIRST_FRAME_ERROR = (filePath: string, msg: string): string => {
     return `[${filePath}]成首帧预览图错误：\n\n详细信息：\n\n` + msg;
 }
+
+export const NoSuchFileDirectory = (path: string, msg: string = ''): string => {
+    return `输出路径：[${path}]不存在。` + msg;
+}
+

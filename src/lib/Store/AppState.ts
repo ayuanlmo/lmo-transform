@@ -4,16 +4,18 @@ import Storage from "../Storage";
 import AppConfig from "../../conf/AppConfig";
 
 const local_output_path: string | null = Storage.Get('output_path');
+const pTasksLength: number = Number(Storage.Get('parallel_tasks_length')) || 1
 
 export const counterSlice = createSlice({
     name: 'app',
     initialState: {
         globalLoading: false,
         selectedFiles: [],
-        outputPath: local_output_path === null ? AppConfig.system.tempPath : local_output_path,
-        parallelTasksLength: Storage.Get('parallel_tasks_length') || 1,
+        outputPath: local_output_path === null ? AppConfig.system.tempPath + `${AppConfig.appName}` : local_output_path,
+        parallelTasksLength: pTasksLength,
         logContent: `[${getCurrentDateTime()}]\n程序启动...\n\n`,
-        globalType: 'video'
+        globalType: 'video',
+        currentParallelTasks: 0
     },
     reducers: {
         // 设置选择的文件
@@ -58,6 +60,14 @@ export const counterSlice = createSlice({
         // 设置全局文件类型
         setGlobalType(state, {payload}) {
             state.globalType = payload;
+        },
+        // 设置任务
+        setCurrentParallelTasks(state, {payload}) {
+            if (payload === 'plus') {
+                state.currentParallelTasks++;
+            } else {
+                state.currentParallelTasks--;
+            }
         }
     },
 });
@@ -70,7 +80,8 @@ export const {
     setParallelTasksLen,
     pushLog,
     setGlobalLoading,
-    setGlobalType
+    setGlobalType,
+    setCurrentParallelTasks
 } = counterSlice.actions;
 
 export default counterSlice.reducer;
