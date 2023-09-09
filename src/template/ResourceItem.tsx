@@ -97,8 +97,6 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
 
     useEffect((): void => {
         getTypeOptions();
-        console.log(fileType)
-        console.log(info)
         dispatch(setSelectedFileOutputType({
             index: index,
             type: ''
@@ -198,7 +196,6 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                                 }).catch(e => {
                                     dispatch(setCurrentParallelTasks('sub'));
                                     setSuccessState('error');
-                                    console.log('失败')
                                 })
                             }
                             // 转换成功

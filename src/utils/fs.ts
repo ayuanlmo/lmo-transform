@@ -49,8 +49,6 @@ export const resolveFile = async (files: Array<any>): Promise<any[]> => {
         await getFileInfo(filePath).then(async (fileInfo: GetFileInfoTypes) => {
             const isVideo: boolean = fileInfo?.streams?.codec_type === 'video';
 
-            console.log(isVideo)
-
             try {
                 if (files[j].type !== '')
                     _.push({
@@ -74,7 +72,6 @@ export const resolveFile = async (files: Array<any>): Promise<any[]> => {
             });
         })
     }
-    console.log('返回')
     store.dispatch(setGlobalLoading(false));
     return _;
 }

@@ -170,7 +170,6 @@ export const transformVideo = (data: any, callback: Function): Promise<any> => {
             });
             resolve(optFile);
         })
-        console.log(_ffmpeg);
         _ffmpeg.on('progress', (progress: any) => {
             const currentDuration: number = duration * progress.percent / 100;  // 已转换的视频时长（单位：秒）
             const _ = Number(((currentDuration / duration) * 100).toFixed());
