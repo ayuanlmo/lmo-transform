@@ -60,6 +60,9 @@ export const initIpcMainHandles = (window: BrowserWindow): void => {
                 event.sender.send('SELECTED-DIRECTORY', v.filePaths[0]);
         });
     });
+    ipcMain.on('TO-TOP', (event: Electron.IpcMainEvent, {data}): void => {
+        window.setAlwaysOnTop(data as boolean);
+    });
     ipcMain.on('SHOW-ERROR-MESSAGE-BOX', (event: any, data: { msg: string; }): void => {
         createMessageBox(window, {message: data.msg, type: 'error', title: '糟糕！出错啦'});
     });

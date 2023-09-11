@@ -33,7 +33,7 @@ body{
     width: 60px;
     height: 22px;
     border-radius: 4px;
-    background: #29292D;
+    background-color: #29292D;
     font-size: 12px;
     line-height: 22px;
     margin-right: 20px;
@@ -47,8 +47,12 @@ body{
     top: 2px;
 }
 
+.lmo_header-controls-operation-active-button{
+    background: #229EED !important;
+}
+
 .lmo_header-controls-operation button:hover {
-    background: #229EED;;
+    background: #229EED;
 }
 
 .lmo_header-controls-window-buttons {

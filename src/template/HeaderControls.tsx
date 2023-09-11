@@ -1,6 +1,6 @@
 import AppConfig from "../conf/AppConfig";
 import Setting from "./Setting";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import About from "./About";
 import ShowLog from './ShowLogs';
 
@@ -13,8 +13,17 @@ function HeaderControls(): React.JSX.Element {
     const [miniWindow, setMiniWindow] = useState<boolean>(false);
     const [showAboutDialog, setShowAboutDialog] = useState<boolean>(false);
     const [showLogDialog, setShowLogDialog] = useState<boolean>(false);
+    const [alwaysOnTopStatus, setAlwaysOnTopStatus] = useState<boolean>(false);
 
     ipcRenderer.on('WINDOW-ON-MAX', (e: any, state: boolean): void => setMiniWindow(state));
+
+    const getButtonClass = (isActive: boolean): string => {
+        return `lmo_cursor_pointer lmo_color_white ${isActive ? 'lmo_header-controls-operation-active-button' : ''}`;
+    }
+
+    useEffect((): void => {
+        ipcRenderer.send('TO-TOP', {data: alwaysOnTopStatus});
+    }, [alwaysOnTopStatus]);
 
     return (
         <div className={'lmo_header-controls'}>
@@ -30,6 +39,19 @@ function HeaderControls(): React.JSX.Element {
                 (): void => setShowLogDialog(false)
             }/>
             <div className={'lmo_header-controls-block'}></div>
+
+            <div className={'lmo_header-controls-operation'}>
+                <button onClick={(): void => {
+                    setAlwaysOnTopStatus(!alwaysOnTopStatus);
+                }}
+                        className={getButtonClass(alwaysOnTopStatus)}>
+                   <span>
+                        <img style={{
+                            width: '14px'
+                        }} src={require('../static/svg/header/to-top.svg').default} alt=""/>
+                   </span>
+                </button>
+            </div>
             <div className={'lmo_header-controls-operation'}>
                 <button onClick={() => {
                     setShowLogDialog(true);
