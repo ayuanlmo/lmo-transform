@@ -3,7 +3,7 @@ import Storage from "../lib/Storage";
 
 const __G = global || window || this;
 const {shell} = __G.require('electron');
-const { exec } = __G.require('child_process');
+const {exec} = __G.require('child_process');
 
 export const RequireNodeModule = (name: string): any => __G.require(name);
 
@@ -139,4 +139,14 @@ export const runCommand = (cmd: Array<string>): void => {
         return;
     const {spawn} = window.require('child_process');
     spawn('cmd.exe', ['/c', 'start cmd.exe', '/k', ...cmd], {stdio: 'inherit', shell: true})
+}
+
+// 是否URL
+export const IsURL = (url: string): boolean => {
+    try {
+        new URL(url);
+        return true;
+    } catch (e) {
+        return false;
+    }
 }
