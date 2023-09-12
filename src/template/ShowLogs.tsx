@@ -1,5 +1,5 @@
 import * as React from "react";
-import Dialog from "../template/Dialog";
+import Dialog from "../components/Dialog";
 import {useSelector} from "react-redux";
 import {RootState} from "../lib/Store";
 

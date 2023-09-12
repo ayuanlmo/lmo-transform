@@ -1,6 +1,6 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
-import Dialog from "./Dialog";
+import Dialog from "../components/Dialog";
 import AppConfig from "../conf/AppConfig";
 import {runCommand} from "../utils";
 import {FFMPEG_BIN_PATH} from "../bin/ffmpeg";
