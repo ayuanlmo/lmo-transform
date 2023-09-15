@@ -65,11 +65,11 @@ export interface Codes {
 // 获取视频文件第一帧
 import AppConfig from "../conf/AppConfig";
 import Storage from "../lib/Storage";
-import {FFPLAY_BIN_PATH} from "./ffmpeg";
+import {Ffmpeg, FFPLAY_BIN_PATH} from "./ffmpeg";
 import {FIRST_FRAME_ERROR, PLAYER_ERROR, TRANSFORM_ERROR} from "../const/Message";
 import {playBeep} from "../utils";
 
-const ffmpeg = window.require('fluent-ffmpeg');
+const ffmpeg: Ffmpeg = window.require('fluent-ffmpeg');
 const fs = window.require('fs');
 const {ipcRenderer} = window.require('electron');
 const child_process = window.require('child_process');
@@ -83,7 +83,7 @@ const child_process = window.require('child_process');
  * **/
 export const getVideoFirstFrame = (inputFilePath: string): Promise<string> => {
     return new Promise((resolve, reject) => {
-        const ffmpeg = window.require('fluent-ffmpeg');
+        const ffmpeg: Ffmpeg = window.require('fluent-ffmpeg');
         const tmpPath: string = `${AppConfig.system.tempPath}${AppConfig.appName}`;
         const fileName: string = `lmo-tmp-${new Date().getTime()}.y.png`;
 
