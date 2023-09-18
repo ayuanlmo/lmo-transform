@@ -49,6 +49,7 @@ function Setting(): React.JSX.Element {
                     serShowDialogState(!showDialog);
                     dispatch(setOutputPath(selectOutputPath));
                     dispatch(setParallelTasksLen(parallelTasksLength));
+                    ipcRenderer.send('OPEN-PAS', pds);
                 }} onCancel={(): void => {
                     serShowDialogState(!showDialog);
                 }} show={showDialog} title={'设置'}>
@@ -99,7 +100,6 @@ function Setting(): React.JSX.Element {
                             }} className={'lmo-app-setting-item-content lmo_flex_box'}>
                                 <YSwitch checked={pds} onChange={(e: boolean): void => {
                                     setPds(e);
-                                    ipcRenderer.send('OPEN-PAS', e);
                                 }}/>
                             </div>
                             <div className={'lmo-app-setting-item-tips'}>防止Windows进入待机、暂停等状态，仅本次有效
