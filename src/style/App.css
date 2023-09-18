@@ -80,6 +80,17 @@ textarea {
     background: #1B1B1C;
 }
 
+.lmo-app-content-header {
+    height: 54px;
+    background: #252528;
+    display: flex;
+    justify-content: end;
+}
+
+.lmo-app-content-header button {
+    margin-top: 10px;
+}
+
 
 .lmo-app-footer {
     width: calc(100vw - 260px);

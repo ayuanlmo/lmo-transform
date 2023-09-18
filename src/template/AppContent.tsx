@@ -1,12 +1,16 @@
 import * as React from "react";
+import {useEffect, useState} from "react";
 import AppFooter from "./AppFooter";
 import DropFile from "./DropFile";
 import Resource from "./Resource";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../lib/Store";
-import {useEffect, useState} from "react";
+import {YButton} from '../components';
+import {SelectFile} from "../utils/fs";
+import {clearSelectedFiles, setSelectedFiles} from "../lib/Store/AppState";
 
 function AppContent(): React.JSX.Element {
+    const dispatch = useDispatch();
     const selectedFiles = useSelector((state: RootState) => state.app.selectedFiles);
     const globalType = useSelector((state: RootState) => state.app.globalType);
     const [audioLength, setAudioLength] = useState<number>(0);
@@ -35,6 +39,32 @@ function AppContent(): React.JSX.Element {
 
     return (
         <div className={'lmo-app-content'}>
+            <div className={'lmo-app-content-header'}>
+                <div>
+                    <YButton onClick={
+                        (): void => {
+                            dispatch(clearSelectedFiles());
+                        }
+                    }
+                             icon={require('../static/svg/button-deltet.svg').default}
+                    >
+                        清空所有
+                    </YButton>
+                    <YButton
+                        primary
+                        onClick={
+                            (): void => {
+                                SelectFile().then((res): void => {
+                                    dispatch(setSelectedFiles(res));
+                                });
+                            }
+                        }
+                        icon={require('../static/svg/button-add.svg').default}
+                    >
+                        添加文件
+                    </YButton>
+                </div>
+            </div>
             {
                 selectedFiles.length === 0 ? <DropFile/> : render()
             }
