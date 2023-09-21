@@ -197,7 +197,7 @@ export const transformVideo = (data: any, callback: Function): Promise<any> => {
  * @description 使用ffplay播放
  * **/
 export const ffplayer = (path: string): void => {
-    const cmd: string = `${FFPLAY_BIN_PATH} ${path}`;
+    const cmd: string = `${FFPLAY_BIN_PATH}  -y 800 "${path}"`;
 
     child_process.exec(cmd, (err: any): void => {
         if (err)
