@@ -5,7 +5,7 @@ import DropFile from "./DropFile";
 import Resource from "./Resource";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../lib/Store";
-import {YButton} from '../components';
+import {YButton, YExtendTemplate} from '../components';
 import {SelectFile} from "../utils/fs";
 import {clearSelectedFiles, setSelectedFiles} from "../lib/Store/AppState";
 
@@ -41,17 +41,21 @@ function AppContent(): React.JSX.Element {
         <div className={'lmo-app-content'}>
             <div className={'lmo-app-content-header'}>
                 <div>
-                    <YButton onClick={
-                        (): void => {
-                            dispatch(clearSelectedFiles());
-                        }
-                    }
-                             icon={require('../static/svg/button-deltet.svg').default}
-                    >
-                        清空所有
-                    </YButton>
+                    <YExtendTemplate show={selectedFiles.length > 0}>
+                        <YButton
+                            icon={require('../static/svg/button-deltet.svg').default}
+                            onClick={
+                                (): void => {
+                                    dispatch(clearSelectedFiles());
+                                }
+                            }
+                        >
+                            清空所有
+                        </YButton>
+                    </YExtendTemplate>
                     <YButton
                         primary
+                        icon={require('../static/svg/button-add.svg').default}
                         onClick={
                             (): void => {
                                 SelectFile().then((res): void => {
@@ -59,7 +63,6 @@ function AppContent(): React.JSX.Element {
                                 });
                             }
                         }
-                        icon={require('../static/svg/button-add.svg').default}
                     >
                         添加文件
                     </YButton>
