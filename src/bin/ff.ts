@@ -95,10 +95,10 @@ export const getVideoFirstFrame = (inputFilePath: string): Promise<string> => {
 
         ffmpeg(inputFilePath).screenshots({
             count: 1,
-            timestamps: ['100%', '00:00:00'],
+            timestamps: ['1%', '00:00:00'],
             filename: fileName,
             folder: `${tmpPath}/tmp`,
-            size: '50%'
+            size: '230x130'
         }).on('end', function (e: any) {
             if (e) {
                 ipcRenderer.send('SHOW-ERROR-MESSAGE-BOX', {
