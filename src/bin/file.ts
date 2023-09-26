@@ -1,6 +1,6 @@
 import {NoSuchFileDirectory} from "../const/Message";
 
-export namespace File {
+namespace File {
     const {ipcRenderer} = window.require('electron');
     const {existsSync} = window.require('fs');
     const {extname} = window.require('path');
@@ -21,3 +21,5 @@ export namespace File {
         return ImageFileTypes.includes(extname(path).toLowerCase());
     }
 }
+
+export {File};

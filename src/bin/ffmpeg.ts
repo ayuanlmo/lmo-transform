@@ -1,6 +1,4 @@
-import {FfmpegStreamsTypes} from "./ff";
-
-export interface Ffmpeg {
+interface Ffmpeg {
     (...arg: any): FfmpegCall;
 
     setFfmpegPath(path: string): void;
@@ -17,7 +15,7 @@ export interface Ffmpeg {
 
 }
 
-export interface FfmpegCall {
+interface FfmpegCall {
     inputFormat(format: string): FfmpegCall; // 输入格式
     inputFPS(fps: string | number): FfmpegCall; // 输入帧率
     native(): FfmpegCall; // 原生帧速率输入
@@ -76,11 +74,19 @@ export interface FfmpegCall {
     addInput(source: string): FfmpegCall; // 输入
 }
 
+import {FfmpegStreamsTypes} from "./ff";
+
 const ffmpeg: Ffmpeg = window.require('fluent-ffmpeg');
 const {resolve} = window.require('path');
-export const FFMPEG_BIN_PATH: string = resolve('./ffmpeg/ffmpeg.exe');
-export const FFPROBE_BIN_PATH: string = resolve('./ffmpeg/ffprobe.exe');
-export const FFPLAY_BIN_PATH: string = resolve('./ffmpeg/ffplay.exe');
+const FFMPEG_BIN_PATH: string = resolve('./ffmpeg/ffmpeg.exe');
+const FFPROBE_BIN_PATH: string = resolve('./ffmpeg/ffprobe.exe');
+const FFPLAY_BIN_PATH: string = resolve('./ffmpeg/ffplay.exe');
 
 ffmpeg.setFfmpegPath(FFMPEG_BIN_PATH);
 ffmpeg.setFfprobePath(FFPROBE_BIN_PATH);
+
+export {Ffmpeg};
+export {FfmpegCall};
+export {FFMPEG_BIN_PATH};
+export {FFPROBE_BIN_PATH};
+export {FFPLAY_BIN_PATH};
