@@ -7,10 +7,21 @@ import {RootState} from "./lib/Store";
 import {setSelectedFiles} from "./lib/Store/AppState";
 import {resolveFile} from "./utils/fs";
 import GlobalLoading from "./template/GlobalLoading";
+import * as React from "react";
 
 require('./style/lmo-default.t.css');
 require('./style/App.css');
 require('./style/animate.min.css');
+
+interface File {
+    lastModified: number;
+    lastModifiedDate: Date;
+    name: string;
+    path: string;
+    size: number
+    type: string;
+    webkitRelativePath: string;
+}
 
 function Root(): React.JSX.Element {
     const selectedFiles = useSelector((state: RootState) => state.app.selectedFiles);
@@ -20,7 +31,7 @@ function Root(): React.JSX.Element {
         const handleDragOver = (e: Event) => e.preventDefault();
         const handleDrop = async (e: any) => {
             e.preventDefault();
-            const files = Array.from(e.dataTransfer.files).filter((i: any) => i.path !== '');
+            const files: Array<File> = [...e.dataTransfer.files].filter((i: File): boolean => i.path !== '');
             // 输入文件
             dispatch(setSelectedFiles([...selectedFiles, ...await resolveFile(files)]));
         };
