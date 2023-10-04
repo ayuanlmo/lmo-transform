@@ -16,11 +16,28 @@ export interface AboutProps {
 function About(props: AboutProps): React.JSX.Element {
     const {show, onConfirm} = props as AboutProps;
     const [showFfmpegDecoders, setShowFfmpegDecoders] = useState<boolean>(true);
+    const [showLicenseView, setShowLicenseView] = useState<boolean>(false);
+    const [licenseText, setLicenseText] = useState<string>('');
 
-    useEffect(() => {
-        if (!show)
+
+    useEffect((): void => {
+        if (!show) {
             setShowFfmpegDecoders(true);
+            setShowLicenseView(false);
+        }
     }, [show]);
+
+    useEffect((): void => {
+        if (!showLicenseView || licenseText !== '') return;
+
+        ((): void => {
+            fetch(require('../static/PackageLicense.txt')).then((res: Response): void => {
+                res.text().then((text: string): void => {
+                    setLicenseText(text);
+                });
+            });
+        })();
+    }, [showLicenseView]);
 
     return (
         show ? <Dialog
@@ -31,6 +48,7 @@ function About(props: AboutProps): React.JSX.Element {
             title={'About'}
             showCancel={false}
             confirmLabel={'关闭'}
+            preventKeyboardEvent={showLicenseView}
             onConfirm={
                 (): void => {
                     onConfirm && onConfirm()
@@ -68,6 +86,38 @@ function About(props: AboutProps): React.JSX.Element {
                         </button>
                     </div> : <></>
                 }
+                {
+                    showLicenseView ?
+                        <Dialog
+                            showCancel={false}
+                            onConfirm={(): void => {
+                                setShowLicenseView(false)
+                            }}
+                            height={550}
+                            index={9}
+                            show={showLicenseView}
+                            confirmLabel={'关闭'}
+                            title={'元件许可'}
+                            titleAlign={'start'}
+                        >
+                            <textarea
+                                readOnly
+                                cols={70}
+                                rows={32}
+                                defaultValue={licenseText}
+                                className={'lmo_color_white'}
+                            />
+                        </Dialog> : <></>
+                }
+                <button
+                    onClick={
+                        (): void => setShowLicenseView(true)}
+                    style={{
+                        margin: '4px'
+                    }}
+                    className={'lmo_color_white'}>
+                    查看元件许可证
+                </button>
             </div>
         </Dialog> : <></>
     );
