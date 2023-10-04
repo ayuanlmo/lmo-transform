@@ -20,8 +20,9 @@ function Root(): React.JSX.Element {
         const handleDragOver = (e: Event) => e.preventDefault();
         const handleDrop = async (e: any) => {
             e.preventDefault();
+            const files = Array.from(e.dataTransfer.files).filter((i: any) => i.path !== '');
             // 输入文件
-            dispatch(setSelectedFiles([...selectedFiles, ...await resolveFile(e.dataTransfer.files)]));
+            dispatch(setSelectedFiles([...selectedFiles, ...await resolveFile(files)]));
         };
         document.body.addEventListener('dragover', handleDragOver);
         document.body.addEventListener('drop', handleDrop);
@@ -32,7 +33,7 @@ function Root(): React.JSX.Element {
     }, []);
     return (
         <div>
-            <GlobalLoading />
+            <GlobalLoading/>
             <HeaderControls/>
             <div className={'lmo_app-content lmo_none_user_select'}>
                 <LeftMenu/>
