@@ -13,7 +13,7 @@ require('./style/lmo-default.t.css');
 require('./style/App.css');
 require('./style/animate.min.css');
 
-interface File {
+export interface File {
     lastModified: number;
     lastModifiedDate: Date;
     name: string;

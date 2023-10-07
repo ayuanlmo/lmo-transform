@@ -5,7 +5,7 @@ import store from '../lib/Store/index'
 import {setGlobalLoading} from "../lib/Store/AppState";
 import {FILE_ERROR_MESSAGE} from "../const/Message";
 import {File} from "../bin/file";
-
+import * as Root from "../Root";
 
 const {ipcRenderer} = window.require('electron');
 const fs = window.require('fs');
@@ -40,7 +40,7 @@ const SelectFile = (): Promise<Array<ResolveFileTypes>> => {
     });
 }
 
-const resolveFile = async (files: Array<any>): Promise<any[]> => {
+const resolveFile = async (files: Array<Root.File>): Promise<any[]> => {
     store.dispatch(setGlobalLoading(true));
     const _: any[] | PromiseLike<any[]> = [];
 
