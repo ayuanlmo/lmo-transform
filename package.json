@@ -48,7 +48,7 @@
   },
   "scripts": {
     "start": "tsc && concurrently \"yarn react-start\" \"set NODE_ENV=development && electron build/electron-app.js \"",
-    "build": "tsc && set NODE_ENV=production && electron-builder",
+    "build": "tsc && set NODE_ENV=production && electron-builder && node build/generate-hash.js",
     "react-start": "set BROWSER=none&&set PORT=3000&&react-scripts start",
     "react-build": "react-scripts build",
     "react-test": "react-scripts test",
