@@ -1,13 +1,12 @@
 import Storage from "../lib/Storage";
 
-
 const __G = global || window || this;
 const {shell} = __G.require('electron');
-const { exec } = __G.require('child_process');
+const {exec} = __G.require('child_process');
 
-export const RequireNodeModule = (name: string): any => __G.require(name);
+const RequireNodeModule = (name: string): any => __G.require(name);
 
-export const ToString = <T>(data: T): string => {
+const ToString = <T>(data: T): string => {
     const typeHandlers = {
         boolean: (data: boolean) => `${data}`,
         string: (data: string) => data,
@@ -24,13 +23,13 @@ export const ToString = <T>(data: T): string => {
     return '';
 }
 
-export const IsArray = (arr: Array<any>): boolean => Object.prototype.toString.call(arr) === "[object Array]";
+const IsArray = (arr: Array<any>): boolean => Object.prototype.toString.call(arr) === "[object Array]";
 
-export const IsString = (str: string): boolean => typeof str === 'string';
+const IsString = (str: string): boolean => typeof str === 'string';
 
-export const Stringify = (data: Object): string => data === null ? 'null' : JSON.stringify(data);
+const Stringify = (data: Object): string => data === null ? 'null' : JSON.stringify(data);
 
-export const IsObject = (data: Object): boolean => typeof data === 'object' && data !== null && !Array.isArray(data);
+const IsObject = (data: Object): boolean => typeof data === 'object' && data !== null && !Array.isArray(data);
 
 /**
  * @method CMD_Exists
@@ -40,7 +39,7 @@ export const IsObject = (data: Object): boolean => typeof data === 'object' && d
  * @description cmd 是否存在于操作系统
  * **/
 // 命令是否存在于操作系统
-export const CMD_Exists = (cmd: string): boolean => {
+const CMD_Exists = (cmd: string): boolean => {
     try {
         RequireNodeModule('child_process').execSync(RequireNodeModule('os').platform() === 'win32'
             ? `cmd /c "(help ${cmd} > nul || exit 0) && where ${cmd} > nul 2> nul"`
@@ -58,7 +57,7 @@ export const CMD_Exists = (cmd: string): boolean => {
  * @returns {Promise}
  * @description 执行cmd命令
  * **/
-export const Exec_CMD = (cmd: string, opt?: any): Promise<any> => {
+const Exec_CMD = (cmd: string, opt?: any): Promise<any> => {
     return new Promise((resolve, reject) => {
         try {
             RequireNodeModule('child_process').exec(cmd, opt, (e: any, stdout: string) => {
@@ -72,12 +71,12 @@ export const Exec_CMD = (cmd: string, opt?: any): Promise<any> => {
 }
 
 // 转换路径
-export const ResolvePath = (path: string) => {
+const ResolvePath = (path: string) => {
     return path.split('\\').join('/')
 }
 
 // 移除Array中某一项
-export const SpliceArray = <T>(arr: Array<T>, index: number): Array<T> => {
+const SpliceArray = <T>(arr: Array<T>, index: number): Array<T> => {
     if (index > -1 && index < arr.length)
         return arr.slice(0, index).concat(arr.slice(index + 1));
     return arr;
@@ -90,7 +89,7 @@ export const SpliceArray = <T>(arr: Array<T>, index: number): Array<T> => {
  * @author ayuanlmo
  * @description 文件大小转换成兆
  * **/
-export const ResolveSize = (size: number): string => {
+const ResolveSize = (size: number): string => {
     return (size / 1024 / 1024).toFixed(2).toString() + 'M';
 }
 
@@ -101,7 +100,7 @@ export const ResolveSize = (size: number): string => {
  * @author ayuanlmo
  * @description 格式化秒(HH:MM:SS)
  * **/
-export const FormatSec = (sec: number): string => {
+const FormatSec = (sec: number): string => {
     const h: number = Math.floor(sec / 3600);
     const m: number = Math.floor((sec % 3600) / 60);
     const s: number = Math.floor(sec % 60);
@@ -110,17 +109,17 @@ export const FormatSec = (sec: number): string => {
 };
 
 // 打开输出路径
-export const openOutputPath = (): void => {
+const openOutputPath = (): void => {
     return exec(`start ${Storage.Get('output_path')}`);
 }
 
 // 播放bibi声音
-export const playBeep = (): void => {
+const playBeep = (): void => {
     shell.beep();
 }
 
 // 获取当前时间
-export const getCurrentDateTime = (): string => {
+const getCurrentDateTime = (): string => {
     const now: Date = new Date();
     const year: number = now.getFullYear();
     const month: string = String(now.getMonth() + 1).padStart(2, '0');
@@ -134,9 +133,37 @@ export const getCurrentDateTime = (): string => {
 
 //
 
-export const runCommand = (cmd: Array<string>): void => {
+const runCommand = (cmd: Array<string>): void => {
     if (cmd.length === 0)
         return;
     const {spawn} = window.require('child_process');
     spawn('cmd.exe', ['/c', 'start cmd.exe', '/k', ...cmd], {stdio: 'inherit', shell: true})
 }
+
+// 是否URL
+const IsURL = (url: string): boolean => {
+    try {
+        new URL(url);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+export {RequireNodeModule};
+export {ToString};
+export {IsArray};
+export {IsString};
+export {Stringify};
+export {IsObject};
+export {CMD_Exists};
+export {Exec_CMD};
+export {ResolvePath};
+export {SpliceArray};
+export {ResolveSize};
+export {FormatSec};
+export {openOutputPath};
+export {playBeep};
+export {getCurrentDateTime};
+export {runCommand};
+export {IsURL};

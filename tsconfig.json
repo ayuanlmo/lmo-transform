@@ -21,6 +21,7 @@
         "electron-app.ts",
         "electron-main.ts",
         "renderer.d.ts",
+        "generate-hash.ts"
     ],
     "exclude": [
         "src",

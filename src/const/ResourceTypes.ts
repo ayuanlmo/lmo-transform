@@ -1,4 +1,11 @@
-export const VIDEO_TYPE_MAP = [
+interface RESOURCE_TYPES {
+    name: string;
+    type: string;
+    label: string;
+    libs?: string;
+}
+
+const VIDEO_TYPE_MAP: RESOURCE_TYPES[] = [
     {name: 'MP4', type: 'video/mp4', label: 'MP4-H.264', libs: '-c:v libx264'},
     {name: 'MP4', type: 'video/mp4', label: 'MP4-H.265', libs: '-c:v libx265'},
     {name: 'M3U8', type: 'application/x-mpegurl', label: 'M3U8', libs: ''},
@@ -11,10 +18,16 @@ export const VIDEO_TYPE_MAP = [
     {name: 'MKV', type: 'video/x-matroska', label: 'MKV-H.265', libs: '-c:v libx265'}
 ]
 
-export const AUDIO_TYPE_MAP = [
+const AUDIO_TYPE_MAP: RESOURCE_TYPES[] = [
     {name: 'MP3', type: 'audio/mpeg', label: 'MP3'},
     {name: 'FLAC', type: 'audio/flac', label: 'FLAC'},
     {name: 'WAV', type: 'audio/wav', label: 'WAV'},
     {name: 'RA', type: 'audio/vnd.rn-realaudio', label: 'RA'},
     {name: 'MP2', type: 'audio/mp2', label: 'MP2'}
-]
+];
+
+
+export {VIDEO_TYPE_MAP};
+export {AUDIO_TYPE_MAP};
+export {RESOURCE_TYPES};
+export default [...VIDEO_TYPE_MAP, AUDIO_TYPE_MAP] as RESOURCE_TYPES[];

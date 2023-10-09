@@ -20,6 +20,8 @@ export interface DialogProps {
     readonly titleAlign?: TitleAlign;
     style?: object;
     readonly escape?: boolean;
+    readonly index?: number | string;
+    preventKeyboardEvent?: boolean;
 }
 
 function Dialog(props: DialogProps): React.JSX.Element {
@@ -37,12 +39,14 @@ function Dialog(props: DialogProps): React.JSX.Element {
         height = 210,
         titleAlign = 'start',
         style = {},
-        escape = true
+        escape = true,
+        index = 5,
+        preventKeyboardEvent = false
     } = props;
 
     useEffect((): () => void => {
         const escapeHandle = (event: KeyboardEvent): void => {
-            if (event.key === 'Escape' && escape) {
+            if (event.key === 'Escape' && escape && (!preventKeyboardEvent)) {
                 onConfirm && onConfirm();
                 onCancel && onCancel();
             }
@@ -51,10 +55,13 @@ function Dialog(props: DialogProps): React.JSX.Element {
         document.addEventListener('keydown', escapeHandle);
 
         return (): void => document.removeEventListener('keydown', escapeHandle);
-    }, [show]);
+    }, [show, preventKeyboardEvent]);
 
     return ReactDOM.createPortal((
-        <dialog style={style} open={show}>
+        <dialog style={{
+            zIndex: index,
+            ...style
+        }} open={show}>
             <div className={'dialog animated bounceIn'} style={{
                 width: `${width}px`,
                 top: `calc((100vh - ${height + 200}px) / 2)`,

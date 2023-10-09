@@ -1,4 +1,4 @@
-export interface FfmpegStreamsTypes {
+interface FfmpegStreamsTypes {
     avg_frame_rate: string;// 帧速率
     bit_rate: number; // 比特率
     bits_per_raw_sample: number; // 原始样本
@@ -43,7 +43,7 @@ export interface FfmpegStreamsTypes {
     width: number; // 宽度
 }
 
-export interface GetFileInfoTypes {
+interface GetFileInfoTypes {
     size: number | string;
     duration: number;
     width: number;
@@ -52,7 +52,7 @@ export interface GetFileInfoTypes {
     streams: FfmpegStreamsTypes;
 }
 
-export interface Codes {
+interface Codes {
     canDecode: boolean; // 可解码
     canEncode: boolean;// 可编码
     description: string;// 描述
@@ -65,11 +65,11 @@ export interface Codes {
 // 获取视频文件第一帧
 import AppConfig from "../conf/AppConfig";
 import Storage from "../lib/Storage";
-import {FFPLAY_BIN_PATH} from "./ffmpeg";
+import {Ffmpeg, FFPLAY_BIN_PATH} from "./ffmpeg";
 import {FIRST_FRAME_ERROR, PLAYER_ERROR, TRANSFORM_ERROR} from "../const/Message";
 import {playBeep} from "../utils";
 
-const ffmpeg = window.require('fluent-ffmpeg');
+const ffmpeg: Ffmpeg = window.require('fluent-ffmpeg');
 const fs = window.require('fs');
 const {ipcRenderer} = window.require('electron');
 const child_process = window.require('child_process');
@@ -81,9 +81,9 @@ const child_process = window.require('child_process');
  * @author ayuanlmo
  * @description 获取视频第一帧
  * **/
-export const getVideoFirstFrame = (inputFilePath: string): Promise<string> => {
+const getVideoFirstFrame = (inputFilePath: string): Promise<string> => {
     return new Promise((resolve, reject) => {
-        const ffmpeg = window.require('fluent-ffmpeg');
+        const ffmpeg: Ffmpeg = window.require('fluent-ffmpeg');
         const tmpPath: string = `${AppConfig.system.tempPath}${AppConfig.appName}`;
         const fileName: string = `lmo-tmp-${new Date().getTime()}.y.png`;
 
@@ -95,10 +95,10 @@ export const getVideoFirstFrame = (inputFilePath: string): Promise<string> => {
 
         ffmpeg(inputFilePath).screenshots({
             count: 1,
-            timestamps: ['100%', '00:00:00'],
+            timestamps: ['1%', '00:00:00'],
             filename: fileName,
             folder: `${tmpPath}/tmp`,
-            size: '50%'
+            size: '230x130'
         }).on('end', function (e: any) {
             if (e) {
                 ipcRenderer.send('SHOW-ERROR-MESSAGE-BOX', {
@@ -119,7 +119,7 @@ export const getVideoFirstFrame = (inputFilePath: string): Promise<string> => {
  * @returns {Promise<{size:number,duration:number,width:number,height:number,format:[],streams:<FfmpegStreamsTypes>>}>}
  * @description 获取文件信息
  * **/
-export const getFileInfo = (filePath: string): Promise<GetFileInfoTypes> => {
+const getFileInfo = (filePath: string): Promise<GetFileInfoTypes> => {
     return new Promise((resolve, reject) => {
         ffmpeg.ffprobe(filePath, (e: any, data: any): void => {
             if (e) {
@@ -147,7 +147,7 @@ export const getFileInfo = (filePath: string): Promise<GetFileInfoTypes> => {
  * @returns {Promise<string>}
  * @description 转换视频
  * **/
-export const transformVideo = (data: any, callback: Function): Promise<any> => {
+const transformVideo = (data: any, callback: Function): Promise<any> => {
     const inputFile: string = data.path;
     const libs: string = data.output.libs;
     const outputPath: string = Storage.Get('output_path') as string;
@@ -170,7 +170,6 @@ export const transformVideo = (data: any, callback: Function): Promise<any> => {
             });
             resolve(optFile);
         })
-        console.log(_ffmpeg);
         _ffmpeg.on('progress', (progress: any) => {
             const currentDuration: number = duration * progress.percent / 100;  // 已转换的视频时长（单位：秒）
             const _ = Number(((currentDuration / duration) * 100).toFixed());
@@ -197,8 +196,8 @@ export const transformVideo = (data: any, callback: Function): Promise<any> => {
  * @param {string} path - 文件路径
  * @description 使用ffplay播放
  * **/
-export const ffplayer = (path: string): void => {
-    const cmd: string = `${FFPLAY_BIN_PATH} ${path}`;
+const ffplayer = (path: string): void => {
+    const cmd: string = `${FFPLAY_BIN_PATH}  -y 800 "${path}"`;
 
     child_process.exec(cmd, (err: any): void => {
         if (err)
@@ -209,7 +208,7 @@ export const ffplayer = (path: string): void => {
 }
 
 // 获取可用的编解码器
-export const getAvailableCodecs = (): Promise<Array<Codes>> => {
+const getAvailableCodecs = (): Promise<Array<Codes>> => {
     return new Promise((resolve): void => {
         ffmpeg.getAvailableCodecs(function (err: any, codes: any) {
             const _: Array<Codes> = [];
@@ -228,3 +227,12 @@ export const getAvailableCodecs = (): Promise<Array<Codes>> => {
         })
     });
 }
+
+export {FfmpegStreamsTypes};
+export {GetFileInfoTypes};
+export {Codes};
+export {getVideoFirstFrame};
+export {getFileInfo};
+export {transformVideo};
+export {ffplayer};
+export {getAvailableCodecs};

@@ -23,6 +23,10 @@ export const counterSlice = createSlice({
             // @ts-ignore
             state.selectedFiles.push(...payload);
         },
+        // 清空选择的文件
+        clearSelectedFiles(state): void {
+            state.selectedFiles = [];
+        },
         // 删除某个删除的文件
         deleteSelectedFilesItem: (state, {payload}): void => {
             state.selectedFiles = SpliceArray(state.selectedFiles, payload);
@@ -74,6 +78,7 @@ export const counterSlice = createSlice({
 
 export const {
     setSelectedFiles,
+    clearSelectedFiles,
     deleteSelectedFilesItem,
     setSelectedFileOutputType,
     setOutputPath,

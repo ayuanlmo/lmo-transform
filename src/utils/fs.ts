@@ -5,11 +5,12 @@ import store from '../lib/Store/index'
 import {setGlobalLoading} from "../lib/Store/AppState";
 import {FILE_ERROR_MESSAGE} from "../const/Message";
 import {File} from "../bin/file";
+import * as Root from "../Root";
 
 const {ipcRenderer} = window.require('electron');
 const fs = window.require('fs');
 
-export interface ResolveFileTypes extends GetFileInfoTypes {
+interface ResolveFileTypes extends GetFileInfoTypes {
     name: string;
     path: string;
     type: string;
@@ -26,7 +27,7 @@ export interface ResolveFileTypes extends GetFileInfoTypes {
  *     ResolveFileTypes
  * }]>}
  * **/
-export const SelectFile = (): Promise<Array<ResolveFileTypes>> => {
+const SelectFile = (): Promise<Array<ResolveFileTypes>> => {
     return new Promise((resolve, reject): void => {
         const i: any = document.createElement('input');
         i.type = 'file';
@@ -39,7 +40,7 @@ export const SelectFile = (): Promise<Array<ResolveFileTypes>> => {
     });
 }
 
-export const resolveFile = async (files: Array<any>): Promise<any[]> => {
+const resolveFile = async (files: Array<Root.File>): Promise<any[]> => {
     store.dispatch(setGlobalLoading(true));
     const _: any[] | PromiseLike<any[]> = [];
 
@@ -48,8 +49,6 @@ export const resolveFile = async (files: Array<any>): Promise<any[]> => {
 
         await getFileInfo(filePath).then(async (fileInfo: GetFileInfoTypes) => {
             const isVideo: boolean = fileInfo?.streams?.codec_type === 'video';
-
-            console.log(isVideo)
 
             try {
                 if (files[j].type !== '')
@@ -74,12 +73,11 @@ export const resolveFile = async (files: Array<any>): Promise<any[]> => {
             });
         })
     }
-    console.log('返回')
     store.dispatch(setGlobalLoading(false));
     return _;
 }
 
-export const GetTmpFileInfo = (): { total: number; size: number; } => {
+const GetTmpFileInfo = (): { total: number; size: number; } => {
     const path: string = AppConfig.system.tempPath + AppConfig.appName + '/tmp';
     const files: Array<string> = fs.readdirSync(path);
     let size: number = 0;
@@ -95,7 +93,7 @@ export const GetTmpFileInfo = (): { total: number; size: number; } => {
     }
 }
 
-export const DeleteTmpFile = (file: string = '') => {
+const DeleteTmpFile = (file: string = '') => {
     const path: string = file === '' ? AppConfig.system.tempPath + AppConfig.appName + '/tmp' : file;
     const files: Array<string> = fs.readdirSync(path);
 
@@ -111,3 +109,9 @@ export const DeleteTmpFile = (file: string = '') => {
         ipcRenderer.send('SHOW-INFO-MESSAGE-BOX', '删除完成');
     }
 }
+
+export {ResolveFileTypes}
+export {SelectFile}
+export {resolveFile}
+export {GetTmpFileInfo}
+export {DeleteTmpFile}
