@@ -8,6 +8,7 @@ import {setSelectedFiles} from "./lib/Store/AppState";
 import {resolveFile} from "./utils/fs";
 import GlobalLoading from "./template/GlobalLoading";
 import * as React from "react";
+import './lib/UsrLocalConfig';
 
 require('./style/lmo-default.t.css');
 require('./style/App.css');
