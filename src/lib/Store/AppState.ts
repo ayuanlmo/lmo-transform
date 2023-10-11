@@ -1,10 +1,10 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {getCurrentDateTime, SpliceArray} from "../../utils";
-import Storage from "../Storage";
 import AppConfig from "../../conf/AppConfig";
+import UsrLocalConfig from "../UsrLocalConfig";
 
-const local_output_path: string | null = Storage.Get('output_path');
-const pTasksLength: number = Number(Storage.Get('parallel_tasks_length')) || 1
+const local_output_path: string = UsrLocalConfig.getLocalUserConf('output_path') as string;
+const pTasksLength: number = UsrLocalConfig.getLocalUserConf('parallel_tasks_length') as number;
 
 export const counterSlice = createSlice({
     name: 'app',
@@ -41,12 +41,10 @@ export const counterSlice = createSlice({
         // 设置系统输出路径
         setOutputPath: (state, {payload}): void => {
             state.outputPath = payload as string;
-            Storage.Set('output_path', payload as string);
         },
         // 设置并行任务数量
         setParallelTasksLen(state, {payload}): void {
             state.parallelTasksLength = payload as number;
-            Storage.Set('parallel_tasks_length', payload as string);
         },
         // 添加日志内容
         pushLog(state, {payload}): void {

@@ -6,6 +6,7 @@ import {RootState} from "../lib/Store";
 import {setOutputPath, setParallelTasksLen} from "../lib/Store/AppState";
 import {DeleteTmpFile, GetTmpFileInfo} from "../utils/fs";
 import {YSwitch} from "../components/index";
+import UsrLocalConfig from "../lib/UsrLocalConfig";
 
 const {ipcRenderer} = window.require('electron');
 
@@ -24,6 +25,7 @@ function Setting(): React.JSX.Element {
         dispatch(setOutputPath(selectOutputPath));
         initTmpFileSize();
     }, [showDialog]);
+
     useEffect((): void => {
         if (parallelTasksLength === '')
             setParallelTasksLength(1);
@@ -49,6 +51,10 @@ function Setting(): React.JSX.Element {
                     serShowDialogState(!showDialog);
                     dispatch(setOutputPath(selectOutputPath));
                     dispatch(setParallelTasksLen(parallelTasksLength));
+                    UsrLocalConfig.createLocalUserConfFile({
+                        'output_path': selectOutputPath,
+                        'parallel_tasks_length': parallelTasksLength
+                    })
                     ipcRenderer.send('OPEN-PAS', pds);
                 }} onCancel={(): void => {
                     serShowDialogState(!showDialog);
@@ -70,6 +76,7 @@ function Setting(): React.JSX.Element {
                             <div className={'lmo-app-setting-item-content'}>
                                 <input
                                     defaultValue={parallelTasksLength}
+                                    value={parallelTasksLength}
                                     className={'lmo_color_white lmo_cursor_pointer'}
                                     min={1}
                                     max={5}
