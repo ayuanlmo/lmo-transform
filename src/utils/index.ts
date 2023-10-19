@@ -151,6 +151,10 @@ const IsURL = (url: string): boolean => {
     }
 }
 
+const StartBrowser = (url: string): void => {
+    exec(`start ${url}`);
+}
+
 export {ToString};
 export {IsArray};
 export {IsString};
@@ -167,3 +171,4 @@ export {playBeep};
 export {getCurrentDateTime};
 export {runCommand};
 export {IsURL};
+export {StartBrowser};
