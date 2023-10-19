@@ -7,8 +7,10 @@ import {setOutputPath, setParallelTasksLen} from "../lib/Store/AppState";
 import {DeleteTmpFile, GetTmpFileInfo} from "../utils/fs";
 import {YSwitch} from "../components/index";
 import UsrLocalConfig from "../lib/UsrLocalConfig";
+import * as Electron from 'electron';
+import Global from "../lib/Global";
 
-const {ipcRenderer} = window.require('electron');
+const {ipcRenderer} = Global.requireNodeModule<typeof Electron>('electron');
 
 function Setting(): React.JSX.Element {
     const dispatch = useDispatch();

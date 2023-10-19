@@ -8,8 +8,10 @@ import {FfmpegStreamsTypes, ffplayer, transformVideo} from "../bin/ff";
 import {File} from "../bin/file";
 import Storage from "../lib/Storage";
 import {RootState} from "../lib/Store";
+import * as Electron from 'electron';
+import Global from "../lib/Global";
 
-const {ipcRenderer} = window.require('electron');
+const {ipcRenderer} = Global.requireNodeModule<typeof Electron>('electron');
 
 export interface ResourceInfoTypes {
     cover: string;

@@ -75,9 +75,11 @@ interface FfmpegCall {
 }
 
 import {FfmpegStreamsTypes} from "./ff";
+import Global from "../lib/Global";
+import * as Path from 'path';
 
-const ffmpeg: Ffmpeg = window.require('fluent-ffmpeg');
-const {resolve} = window.require('path');
+const ffmpeg: Ffmpeg = Global.requireNodeModule('fluent-ffmpeg');
+const {resolve} = Global.requireNodeModule<typeof Path>('path');
 const FFMPEG_BIN_PATH: string = resolve('./ffmpeg/ffmpeg.exe');
 const FFPROBE_BIN_PATH: string = resolve('./ffmpeg/ffprobe.exe');
 const FFPLAY_BIN_PATH: string = resolve('./ffmpeg/ffplay.exe');

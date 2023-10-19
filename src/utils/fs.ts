@@ -6,9 +6,12 @@ import {setGlobalLoading} from "../lib/Store/AppState";
 import {FILE_ERROR_MESSAGE} from "../const/Message";
 import {File} from "../bin/file";
 import * as Root from "../Root";
+import * as Electron from 'electron';
+import * as FS from 'fs';
+import Global from "../lib/Global";
 
-const {ipcRenderer} = window.require('electron');
-const fs = window.require('fs');
+const {ipcRenderer} = Global.requireNodeModule<typeof Electron>('electron');
+const fs = Global.requireNodeModule<typeof FS>('fs');
 
 interface ResolveFileTypes extends GetFileInfoTypes {
     name: string;

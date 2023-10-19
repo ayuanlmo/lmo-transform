@@ -1,3 +1,13 @@
+import AppConfig from "../conf/AppConfig";
+import Storage from "../lib/Storage";
+import {Ffmpeg, FFPLAY_BIN_PATH} from "./ffmpeg";
+import {FIRST_FRAME_ERROR, PLAYER_ERROR, TRANSFORM_ERROR} from "../const/Message";
+import {playBeep} from "../utils";
+import * as FS from 'fs';
+import * as Electron from 'electron';
+import * as ChildProcess from 'child_process';
+import Global from "../lib/Global";
+
 interface FfmpegStreamsTypes {
     avg_frame_rate: string;// 帧速率
     bit_rate: number; // 比特率
@@ -62,17 +72,10 @@ interface Codes {
     intraFrameOnly?: boolean;// 仅帧内
 }
 
-// 获取视频文件第一帧
-import AppConfig from "../conf/AppConfig";
-import Storage from "../lib/Storage";
-import {Ffmpeg, FFPLAY_BIN_PATH} from "./ffmpeg";
-import {FIRST_FRAME_ERROR, PLAYER_ERROR, TRANSFORM_ERROR} from "../const/Message";
-import {playBeep} from "../utils";
-
-const ffmpeg: Ffmpeg = window.require('fluent-ffmpeg');
-const fs = window.require('fs');
-const {ipcRenderer} = window.require('electron');
-const child_process = window.require('child_process');
+const ffmpeg: Ffmpeg = Global.requireNodeModule('fluent-ffmpeg');
+const fs = Global.requireNodeModule<typeof FS>('fs');
+const {ipcRenderer} = Global.requireNodeModule<typeof Electron>('electron');
+const child_process = Global.requireNodeModule<typeof ChildProcess>('child_process');
 
 /**
  * @method getVideoFirstFrame
@@ -83,13 +86,14 @@ const child_process = window.require('child_process');
  * **/
 const getVideoFirstFrame = (inputFilePath: string): Promise<string> => {
     return new Promise((resolve, reject) => {
-        const ffmpeg: Ffmpeg = window.require('fluent-ffmpeg');
+        const ffmpeg: Ffmpeg = Global.requireNodeModule<Ffmpeg>('fluent-ffmpeg');
         const tmpPath: string = `${AppConfig.system.tempPath}${AppConfig.appName}`;
         const fileName: string = `lmo-tmp-${new Date().getTime()}.y.png`;
 
         // 可能会存在文件还未正常写入磁盘，导致的页面无显示问题
         // 所以这里放一个侦听器，让页面等待这个侦听器
-        fs.watch(`${tmpPath}/tmp`, (type: string, name: string) => {
+        // @ts-ignore
+        fs.watch(`${tmpPath}/tmp`, (type: name, name: string): void => {
             resolve(`${tmpPath}/tmp/${name}`);
         });
 
@@ -107,7 +111,7 @@ const getVideoFirstFrame = (inputFilePath: string): Promise<string> => {
                 console.log('生成首帧图错误', e);
             }
 
-        }).on('error', function (e: any) {
+        }).on('error', function (e: any): void {
             reject({err: true, msg: e, file: inputFilePath});
         })
     })
@@ -137,7 +141,6 @@ const getFileInfo = (filePath: string): Promise<GetFileInfoTypes> => {
         });
     });
 }
-
 
 /**
  * @method transformVideo
@@ -172,7 +175,7 @@ const transformVideo = (data: any, callback: Function): Promise<any> => {
         })
         _ffmpeg.on('progress', (progress: any) => {
             const currentDuration: number = duration * progress.percent / 100;  // 已转换的视频时长（单位：秒）
-            const _ = Number(((currentDuration / duration) * 100).toFixed());
+            const _: number = Number(((currentDuration / duration) * 100).toFixed());
 
             if (current !== _) {
                 current = _;
@@ -207,7 +210,12 @@ const ffplayer = (path: string): void => {
     });
 }
 
-// 获取可用的编解码器
+/**
+ * @method getAvailableCodecs
+ * @author ayuanlmo
+ * @description 获取可用的编解码器
+ * @return Promise<Array<Codes>>
+ * **/
 const getAvailableCodecs = (): Promise<Array<Codes>> => {
     return new Promise((resolve): void => {
         ffmpeg.getAvailableCodecs(function (err: any, codes: any) {
@@ -227,6 +235,7 @@ const getAvailableCodecs = (): Promise<Array<Codes>> => {
         })
     });
 }
+
 
 export {FfmpegStreamsTypes};
 export {GetFileInfoTypes};

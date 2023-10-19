@@ -1,21 +1,32 @@
 import AppConfig from "../conf/AppConfig";
 import {ToString} from "../utils";
+import * as OS from 'os';
+import * as FS from 'fs';
+import Global from "./Global";
+
+type PlayerTypes = 'ffplay' | 'vlc' | 'wmp';
 
 interface DefaultUserConfig {
     output_path: string;
     parallel_tasks_length: number;
     use_hardware_acceleration: boolean;
+    player: PlayerTypes,
+    vlc_media_player_local_path: string;
+    windows_media_player_local_path: string;
 }
 
 const defaultUserConfig: DefaultUserConfig = {
-    output_path: '',
-    parallel_tasks_length: 2,
-    use_hardware_acceleration: false
+    output_path: `${AppConfig.system.tempPath}${AppConfig.appName}`, // 输出路径
+    parallel_tasks_length: 2, // 并行任务个数
+    use_hardware_acceleration: false, // 使用硬件加速
+    player: 'ffplay', // 播放器类型
+    vlc_media_player_local_path: '', // vlc播放器路径
+    windows_media_player_local_path: 'C:/Program Files (x86)/Windows Media Player/wmplayer.exe' // Windows media player路径
 } as const;
 
 namespace UsrLocalConfig {
-    const {homedir} = window.require('os'),
-        {existsSync, mkdirSync, writeFileSync, readFileSync} = window.require('fs'),
+    const {homedir} = Global.requireNodeModule<typeof OS>('os'),
+        {existsSync, mkdirSync, writeFileSync, readFileSync} = Global.requireNodeModule<typeof FS>('fs'),
         AppPath: string = homedir() + '\\AppData\\Local\\' + AppConfig.appName,
         AppConfigFilePath: string = AppPath + '\\user-conf.y.json';
 
@@ -23,7 +34,7 @@ namespace UsrLocalConfig {
         return existsSync(AppConfigFilePath);
     }
 
-    export const getLocalUserConf = (key: keyof DefaultUserConfig | '' = ''): DefaultUserConfig | string | boolean | number => {
+    export const getLocalUserConf = <T>(key: keyof DefaultUserConfig | '' = ''): DefaultUserConfig | string | boolean | number | T => {
         if (confFileIsExists()) {
             const data: DefaultUserConfig = JSON.parse(readFileSync(AppConfigFilePath, 'utf8')) as DefaultUserConfig;
 
@@ -59,6 +70,7 @@ namespace UsrLocalConfig {
     })();
 }
 
-export {DefaultUserConfig};
 export {defaultUserConfig};
+export {DefaultUserConfig};
+export {PlayerTypes};
 export default UsrLocalConfig;

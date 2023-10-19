@@ -1,10 +1,11 @@
 import Storage from "../lib/Storage";
+import * as Electron from 'electron';
+import * as ChildProcess from 'child_process';
+import * as OS from 'os';
+import Global from "../lib/Global";
 
-const __G = global || window || this;
-const {shell} = __G.require('electron');
-const {exec} = __G.require('child_process');
-
-const RequireNodeModule = (name: string): any => __G.require(name);
+const {shell} = Global.requireNodeModule<typeof Electron>('electron');
+const {exec} = Global.requireNodeModule<typeof ChildProcess>('child_process');
 
 const ToString = <T>(data: T): string => {
     const typeHandlers = {
@@ -41,7 +42,7 @@ const IsObject = (data: Object): boolean => typeof data === 'object' && data !==
 // 命令是否存在于操作系统
 const CMD_Exists = (cmd: string): boolean => {
     try {
-        RequireNodeModule('child_process').execSync(RequireNodeModule('os').platform() === 'win32'
+        Global.requireNodeModule<typeof ChildProcess>('child_process').execSync(Global.requireNodeModule<typeof OS>('os').platform() === 'win32'
             ? `cmd /c "(help ${cmd} > nul || exit 0) && where ${cmd} > nul 2> nul"`
             : `command -v ${cmd}`);
         return true;
@@ -60,7 +61,7 @@ const CMD_Exists = (cmd: string): boolean => {
 const Exec_CMD = (cmd: string, opt?: any): Promise<any> => {
     return new Promise((resolve, reject) => {
         try {
-            RequireNodeModule('child_process').exec(cmd, opt, (e: any, stdout: string) => {
+            Global.requireNodeModule<typeof ChildProcess>('child_process').exec(cmd, opt, (e: any, stdout: string) => {
                 if (!e)
                     resolve(stdout);
             });
@@ -110,7 +111,7 @@ const FormatSec = (sec: number): string => {
 
 // 打开输出路径
 const openOutputPath = (): void => {
-    return exec(`start ${Storage.Get('output_path')}`);
+    exec(`start ${Storage.Get('output_path')}`);
 }
 
 // 播放bibi声音
@@ -136,7 +137,7 @@ const getCurrentDateTime = (): string => {
 const runCommand = (cmd: Array<string>): void => {
     if (cmd.length === 0)
         return;
-    const {spawn} = window.require('child_process');
+    const {spawn} = Global.requireNodeModule<typeof ChildProcess>('child_process');
     spawn('cmd.exe', ['/c', 'start cmd.exe', '/k', ...cmd], {stdio: 'inherit', shell: true})
 }
 
@@ -150,7 +151,6 @@ const IsURL = (url: string): boolean => {
     }
 }
 
-export {RequireNodeModule};
 export {ToString};
 export {IsArray};
 export {IsString};

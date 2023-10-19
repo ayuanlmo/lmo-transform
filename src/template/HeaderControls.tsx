@@ -3,11 +3,13 @@ import Setting from "./Setting";
 import {useEffect, useState} from "react";
 import About from "./About";
 import ShowLog from './ShowLogs';
+import * as Electron from 'electron'
+import Global from "../lib/Global";
 
 require('../style/HeaderControls.css');
 require('../style/Global.css');
 
-const {ipcRenderer} = window.require('electron');
+const {ipcRenderer} = Global.requireNodeModule<typeof Electron>('electron');
 
 function HeaderControls(): React.JSX.Element {
     const [miniWindow, setMiniWindow] = useState<boolean>(false);

@@ -4,9 +4,12 @@ import Dialog from "../components/Dialog";
 import AppConfig from "../conf/AppConfig";
 import {runCommand} from "../utils";
 import {FFMPEG_BIN_PATH} from "../bin/ffmpeg";
+import * as Process from 'process';
+import * as OS from 'os';
+import Global from "../lib/Global";
 
-const process = window.require('process');
-const os = window.require('os');
+const process: NodeJS.Process = Global.requireNodeModule<typeof Process>('process');
+const os = Global.requireNodeModule<typeof OS>('os');
 
 export interface AboutProps {
     show: boolean;
@@ -18,7 +21,6 @@ function About(props: AboutProps): React.JSX.Element {
     const [showFfmpegDecoders, setShowFfmpegDecoders] = useState<boolean>(true);
     const [showLicenseView, setShowLicenseView] = useState<boolean>(false);
     const [licenseText, setLicenseText] = useState<string>('');
-
 
     useEffect((): void => {
         if (!show) {
