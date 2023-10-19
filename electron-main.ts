@@ -18,10 +18,13 @@ const ShortcutKey = [
 const isDev: boolean = process.env.NODE_ENV?.trim() === 'development';
 
 export const main = (): void => {
-    app.on('ready', async (): Promise<void> => {
-        await onReady(isDev ? 'dev' : 'prod');
-        appListens();
-    });
+    if (!app.requestSingleInstanceLock())
+        return app.exit();
+    else
+        app.on('ready', async (): Promise<void> => {
+            await onReady(isDev ? 'dev' : 'prod');
+            appListens();
+        });
 }
 
 const onReady = async (type: APP_RUN_TYPES): Promise<void> => {
