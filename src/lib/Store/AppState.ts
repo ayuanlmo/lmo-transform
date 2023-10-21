@@ -1,7 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {getCurrentDateTime, SpliceArray} from "../../utils";
 import AppConfig from "../../conf/AppConfig";
-import UsrLocalConfig from "../UsrLocalConfig";
+import UsrLocalConfig, {DefaultUserConfig, defaultUserConfig} from "../UsrLocalConfig";
 
 const local_output_path: string = UsrLocalConfig.getLocalUserConf('output_path') as string;
 const pTasksLength: number = UsrLocalConfig.getLocalUserConf('parallel_tasks_length') as number;
@@ -15,9 +15,22 @@ export const counterSlice = createSlice({
         parallelTasksLength: pTasksLength,
         logContent: `[${getCurrentDateTime()}]\n程序启动...\n\n`,
         globalType: 'video',
-        currentParallelTasks: 0
+        currentParallelTasks: 0,
+        appConfig: defaultUserConfig
     },
     reducers: {
+        // 设置配置文件
+        setConfig: (state, {payload}): void => {
+            const _payload = payload as { key: keyof DefaultUserConfig, data: never } | DefaultUserConfig;
+
+            if ('key' in _payload)
+                state.appConfig[_payload.key] = _payload.data;
+            else
+                state.appConfig = _payload;
+        },
+        initConfig: (state): void => {
+            state.appConfig = UsrLocalConfig.getLocalUserConf<DefaultUserConfig>() as DefaultUserConfig;
+        },
         // 设置选择的文件
         setSelectedFiles: (state, {payload}): void => {
             // @ts-ignore
@@ -75,6 +88,8 @@ export const counterSlice = createSlice({
 });
 
 export const {
+    setConfig,
+    initConfig,
     setSelectedFiles,
     clearSelectedFiles,
     deleteSelectedFilesItem,
