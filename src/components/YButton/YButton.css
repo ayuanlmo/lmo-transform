@@ -4,12 +4,12 @@
     margin-right: 20px;
 }
 
-.YButton img{
+.YButton img {
     position: relative;
     top: 2px;
 }
 
-.YButton-primary{
+.YButton-primary {
     background-color: #229EED;
 }
 

@@ -1,4 +1,4 @@
-interface Ffmpeg {
+export interface Ffmpeg {
     (...arg: any): FfmpegCall;
 
     setFfmpegPath(path: string): void;
@@ -15,7 +15,7 @@ interface Ffmpeg {
 
 }
 
-interface FfmpegCall {
+export interface FfmpegCall {
     inputFormat(format: string): FfmpegCall; // 输入格式
     inputFPS(fps: string | number): FfmpegCall; // 输入帧率
     native(): FfmpegCall; // 原生帧速率输入
@@ -80,15 +80,10 @@ import * as Path from 'path';
 
 const ffmpeg: Ffmpeg = Global.requireNodeModule('fluent-ffmpeg');
 const {resolve} = Global.requireNodeModule<typeof Path>('path');
-const FFMPEG_BIN_PATH: string = resolve('./ffmpeg/ffmpeg.exe');
-const FFPROBE_BIN_PATH: string = resolve('./ffmpeg/ffprobe.exe');
-const FFPLAY_BIN_PATH: string = resolve('./ffmpeg/ffplay.exe');
+export const FFMPEG_BIN_PATH: string = resolve('./ffmpeg/ffmpeg.exe');
+export const FFPROBE_BIN_PATH: string = resolve('./ffmpeg/ffprobe.exe');
+export const FFPLAY_BIN_PATH: string = resolve('./ffmpeg/ffplay.exe');
 
 ffmpeg.setFfmpegPath(FFMPEG_BIN_PATH);
 ffmpeg.setFfprobePath(FFPROBE_BIN_PATH);
 
-export {Ffmpeg};
-export {FfmpegCall};
-export {FFMPEG_BIN_PATH};
-export {FFPROBE_BIN_PATH};
-export {FFPLAY_BIN_PATH};

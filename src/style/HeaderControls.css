@@ -1,6 +1,7 @@
-body{
+body {
     overflow: hidden;
 }
+
 .lmo_header-controls {
     width: 100%;
     height: 40px;
@@ -47,7 +48,7 @@ body{
     top: 2px;
 }
 
-.lmo_header-controls-operation-active-button{
+.lmo_header-controls-operation-active-button {
     background: #229EED !important;
 }
 

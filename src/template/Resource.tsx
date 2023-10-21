@@ -1,8 +1,10 @@
-import * as React from 'react';``
+import * as React from 'react';
 import ResourceItem, {ResourceInfoTypes} from "./ResourceItem";
 import {useSelector} from "react-redux";
 import {RootState} from "../lib/Store";
 import {GetFileInfoTypes} from "../bin/ff";
+
+``
 
 function Resource(): React.JSX.Element {
     const selectedFiles: Array<GetFileInfoTypes> = useSelector((state: RootState) => state.app.selectedFiles);

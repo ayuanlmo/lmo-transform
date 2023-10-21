@@ -6,11 +6,11 @@ import {
     VlcPlayerPathDoesNotExist,
     WindowsMediaPlayerPathDoesNotExist
 } from "../const/Message";
-import getLocalUserConf = UsrLocalConfig.getLocalUserConf;
 import * as Electron from 'electron';
 import * as FS from 'fs';
 import * as ChildProcess from 'child_process';
 import Global from "../lib/Global";
+import getLocalUserConf = UsrLocalConfig.getLocalUserConf;
 
 namespace Player {
     const {ipcRenderer} = Global.requireNodeModule<typeof Electron>('electron');

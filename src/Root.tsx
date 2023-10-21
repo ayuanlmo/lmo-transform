@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {useEffect} from 'react';
 import HeaderControls from "./template/HeaderControls";
 import LeftMenu from "./template/LeftMenu";
@@ -7,7 +8,6 @@ import {RootState} from "./lib/Store";
 import {setSelectedFiles} from "./lib/Store/AppState";
 import {resolveFile} from "./utils/fs";
 import GlobalLoading from "./template/GlobalLoading";
-import * as React from "react";
 import './lib/UsrLocalConfig';
 
 require('./style/lmo-default.t.css');

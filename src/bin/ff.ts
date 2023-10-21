@@ -8,7 +8,7 @@ import * as Electron from 'electron';
 import * as ChildProcess from 'child_process';
 import Global from "../lib/Global";
 
-interface FfmpegStreamsTypes {
+export interface FfmpegStreamsTypes {
     avg_frame_rate: string;// 帧速率
     bit_rate: number; // 比特率
     bits_per_raw_sample: number; // 原始样本
@@ -53,7 +53,7 @@ interface FfmpegStreamsTypes {
     width: number; // 宽度
 }
 
-interface GetFileInfoTypes {
+export interface GetFileInfoTypes {
     size: number | string;
     duration: number;
     width: number;
@@ -62,7 +62,7 @@ interface GetFileInfoTypes {
     streams: FfmpegStreamsTypes;
 }
 
-interface Codes {
+export interface Codes {
     canDecode: boolean; // 可解码
     canEncode: boolean;// 可编码
     description: string;// 描述
@@ -84,7 +84,7 @@ const child_process = Global.requireNodeModule<typeof ChildProcess>('child_proce
  * @author ayuanlmo
  * @description 获取视频第一帧
  * **/
-const getVideoFirstFrame = (inputFilePath: string): Promise<string> => {
+export const getVideoFirstFrame = (inputFilePath: string): Promise<string> => {
     return new Promise((resolve, reject) => {
         const ffmpeg: Ffmpeg = Global.requireNodeModule<Ffmpeg>('fluent-ffmpeg');
         const tmpPath: string = `${AppConfig.system.tempPath}${AppConfig.appName}`;
@@ -123,7 +123,7 @@ const getVideoFirstFrame = (inputFilePath: string): Promise<string> => {
  * @returns {Promise<{size:number,duration:number,width:number,height:number,format:[],streams:<FfmpegStreamsTypes>>}>}
  * @description 获取文件信息
  * **/
-const getFileInfo = (filePath: string): Promise<GetFileInfoTypes> => {
+export const getFileInfo = (filePath: string): Promise<GetFileInfoTypes> => {
     return new Promise((resolve, reject) => {
         ffmpeg.ffprobe(filePath, (e: any, data: any): void => {
             if (e) {
@@ -150,7 +150,7 @@ const getFileInfo = (filePath: string): Promise<GetFileInfoTypes> => {
  * @returns {Promise<string>}
  * @description 转换视频
  * **/
-const transformVideo = (data: any, callback: Function): Promise<any> => {
+export const transformVideo = (data: any, callback: Function): Promise<any> => {
     const inputFile: string = data.path;
     const libs: string = data.output.libs;
     const outputPath: string = Storage.Get('output_path') as string;
@@ -199,7 +199,7 @@ const transformVideo = (data: any, callback: Function): Promise<any> => {
  * @param {string} path - 文件路径
  * @description 使用ffplay播放
  * **/
-const ffplayer = (path: string): void => {
+export const ffplayer = (path: string): void => {
     const cmd: string = `${FFPLAY_BIN_PATH}  -y 800 "${path}"`;
 
     child_process.exec(cmd, (err: any): void => {
@@ -216,7 +216,7 @@ const ffplayer = (path: string): void => {
  * @description 获取可用的编解码器
  * @return Promise<Array<Codes>>
  * **/
-const getAvailableCodecs = (): Promise<Array<Codes>> => {
+export const getAvailableCodecs = (): Promise<Array<Codes>> => {
     return new Promise((resolve): void => {
         ffmpeg.getAvailableCodecs(function (err: any, codes: any) {
             const _: Array<Codes> = [];
@@ -235,13 +235,3 @@ const getAvailableCodecs = (): Promise<Array<Codes>> => {
         })
     });
 }
-
-
-export {FfmpegStreamsTypes};
-export {GetFileInfoTypes};
-export {Codes};
-export {getVideoFirstFrame};
-export {getFileInfo};
-export {transformVideo};
-export {ffplayer};
-export {getAvailableCodecs};
