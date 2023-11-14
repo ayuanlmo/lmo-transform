@@ -42,7 +42,9 @@
       {
         "from": "ffmpeg",
         "to": "ffmpeg",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       }
     ]
   },
@@ -59,6 +61,7 @@
     "concurrently": "^8.2.0",
     "fluent-ffmpeg": "^2.1.2",
     "fs": "^0.0.1-security",
+    "ini": "^4.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.1.2",
@@ -67,8 +70,6 @@
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
-    "electron": "^26.0.0",
-    "electron-builder": "^24.6.3",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -76,7 +77,9 @@
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.39",
     "@types/react": "^18.2.17",
-    "@types/react-dom": "^18.2.7"
+    "@types/react-dom": "^18.2.7",
+    "electron": "^26.0.0",
+    "electron-builder": "^24.6.3"
   },
   "browserslist": {
     "production": [
