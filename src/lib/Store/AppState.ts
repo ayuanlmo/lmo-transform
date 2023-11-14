@@ -1,18 +1,14 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {getCurrentDateTime, SpliceArray} from "../../utils";
-import AppConfig from "../../conf/AppConfig";
-import UsrLocalConfig, {DefaultUserConfig, defaultUserConfig} from "../UsrLocalConfig";
-
-const local_output_path: string = UsrLocalConfig.getLocalUserConf('output_path') as string;
-const pTasksLength: number = UsrLocalConfig.getLocalUserConf('parallel_tasks_length') as number;
+import UsrLocalConfig, {defaultUserConfig} from "../UsrLocalConfig";
 
 export const counterSlice = createSlice({
     name: 'app',
     initialState: {
         globalLoading: false,
         selectedFiles: [],
-        outputPath: local_output_path === null ? AppConfig.system.tempPath + `${AppConfig.appName}` : local_output_path,
-        parallelTasksLength: pTasksLength,
+        outputPath: '',
+        parallelTasksLength: 2,
         logContent: `[${getCurrentDateTime()}]\n程序启动...\n\n`,
         globalType: 'video',
         currentParallelTasks: 0,
@@ -21,15 +17,12 @@ export const counterSlice = createSlice({
     reducers: {
         // 设置配置文件
         setConfig: (state, {payload}): void => {
-            const _payload = payload as { key: keyof DefaultUserConfig, data: never } | DefaultUserConfig;
-
-            if ('key' in _payload)
-                state.appConfig[_payload.key] = _payload.data;
-            else
-                state.appConfig = _payload;
+            state.appConfig = payload;
         },
         initConfig: (state): void => {
-            state.appConfig = UsrLocalConfig.getLocalUserConf<DefaultUserConfig>() as DefaultUserConfig;
+            state.appConfig = UsrLocalConfig.getLocalUserConf();
+            state.outputPath = state.appConfig.output_path;
+            state.parallelTasksLength = state.appConfig.parallel_tasks_length;
         },
         // 设置选择的文件
         setSelectedFiles: (state, {payload}): void => {

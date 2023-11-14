@@ -3,19 +3,21 @@ import * as React from "react";
 import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../lib/Store";
-import {setOutputPath, setParallelTasksLen} from "../lib/Store/AppState";
+import {setConfig, setOutputPath, setParallelTasksLen} from "../lib/Store/AppState";
 import {DeleteTmpFile, GetTmpFileInfo} from "../utils/fs";
 import {YSwitch} from "../components/index";
-import UsrLocalConfig from "../lib/UsrLocalConfig";
 import * as Electron from 'electron';
 import Global from "../lib/Global";
+import UsrLocalConfig, {DefaultUserConfig} from "../lib/UsrLocalConfig";
+import {Dispatch} from "@reduxjs/toolkit";
 
 const {ipcRenderer} = Global.requireNodeModule<typeof Electron>('electron');
 
 function Setting(): React.JSX.Element {
-    const dispatch = useDispatch();
-    const outputPath = useSelector((state: RootState) => state.app.outputPath);
-    const parallelTasksLen = useSelector((state: RootState) => state.app.parallelTasksLength);
+    const dispatch: Dispatch = useDispatch();
+    const outputPath: string = useSelector((state: RootState) => state.app.outputPath);
+    const appConf: DefaultUserConfig = useSelector((state: RootState) => state.app.appConfig);
+    const parallelTasksLen: number = useSelector((state: RootState) => state.app.parallelTasksLength);
     const [showDialog, serShowDialogState] = useState<boolean>(false);
     const [selectOutputPath, setSelectOutputPath] = useState<string>(outputPath);
     const [tmpFileSize, setTmpFileSize] = useState<number>(0);
@@ -49,15 +51,29 @@ function Setting(): React.JSX.Element {
                 </span>
             </button>
             {
-                showDialog ? <Dialog height={240} onConfirm={(): void => {
+                showDialog ? <Dialog height={240} onConfirm={async (): Promise<void> => {
                     serShowDialogState(!showDialog);
                     dispatch(setOutputPath(selectOutputPath));
                     dispatch(setParallelTasksLen(parallelTasksLength));
-                    UsrLocalConfig.createLocalUserConfFile({
-                        'output_path': selectOutputPath,
-                        'parallel_tasks_length': parallelTasksLength
+                    dispatch(setConfig({
+                        ...appConf,
+                        parallel_tasks_length: parallelTasksLength,
+                        output_path: selectOutputPath
+                    }));
+
+                    console.log('appConf', {
+                        ...appConf,
+                        parallel_tasks_length: parallelTasksLength,
+                        output_path: selectOutputPath
                     })
+
                     ipcRenderer.send('OPEN-PAS', pds);
+
+                    await UsrLocalConfig.setConfig(UsrLocalConfig.keyData({
+                        ...appConf,
+                        parallel_tasks_length: parallelTasksLength,
+                        output_path: selectOutputPath
+                    } as DefaultUserConfig));
                 }} onCancel={(): void => {
                     serShowDialogState(!showDialog);
                 }} show={showDialog} title={'设置'}>
