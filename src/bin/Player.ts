@@ -1,4 +1,4 @@
-import UsrLocalConfig, {DefaultUserConfig, PlayerTypes} from "../lib/UsrLocalConfig";
+import UsrLocalConfig, {PlayerTypes} from "../lib/UsrLocalConfig";
 import {ffplayer} from "./ff";
 import {
     NoVlcPlayerPath,
@@ -18,7 +18,7 @@ namespace Player {
     const {exec} = Global.requireNodeModule<typeof ChildProcess>('child_process');
 
     export const useVlcMediaPlayerToPlay = (path: string): void => {
-        const vlcPath: string = getLocalUserConf<DefaultUserConfig>('vlc_media_player_local_path') as string;
+        const vlcPath: string = getLocalUserConf().vlc_media_player_local_path;
 
         if (vlcPath === '')
             return ipcRenderer.send('SHOW-ERROR-MESSAGE-BOX', {
@@ -33,7 +33,7 @@ namespace Player {
     }
 
     export const useWindowsMediaPlayerToPlay = (path: string): void => {
-        const wmpPath: string = getLocalUserConf<DefaultUserConfig>('windows_media_player_local_path') as string;
+        const wmpPath: string = getLocalUserConf().windows_media_player_local_path;
 
         if (wmpPath === '')
             return ipcRenderer.send('SHOW-ERROR-MESSAGE-BOX', {
@@ -48,7 +48,7 @@ namespace Player {
     }
 
     export const usePlayerToPlay = (filePath: string): void => {
-        const playerType: PlayerTypes = getLocalUserConf<DefaultUserConfig>('player') as PlayerTypes;
+        const playerType: PlayerTypes = getLocalUserConf().player;
 
         if (playerType === 'ffplay')
             ffplayer(filePath);

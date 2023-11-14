@@ -4,12 +4,13 @@ import {AUDIO_TYPE_MAP, VIDEO_TYPE_MAP} from "../const/ResourceTypes";
 import {useDispatch, useSelector} from "react-redux";
 import {deleteSelectedFilesItem, setCurrentParallelTasks, setSelectedFileOutputType} from "../lib/Store/AppState";
 import {FormatSec, openOutputPath, ResolveSize} from "../utils";
-import {FfmpegStreamsTypes, ffplayer, transformVideo} from "../bin/ff";
+import {FfmpegStreamsTypes, transformVideo} from "../bin/ff";
 import {File} from "../bin/file";
 import Storage from "../lib/Storage";
 import {RootState} from "../lib/Store";
 import * as Electron from 'electron';
 import Global from "../lib/Global";
+import {Player} from "../bin/Player";
 
 const {ipcRenderer} = Global.requireNodeModule<typeof Electron>('electron');
 
@@ -109,7 +110,7 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
             <div className={'lmo-app-resource-item-content lmo_flex_box'}>
                 <div className={'lmo-app-resource-item-content-in-info lmo_flex_box'}>
                     <div className={'lmo_cursor_pointer lmo_position_relative'} onClick={(): void => {
-                        ffplayer(info.path);
+                        Player.usePlayerToPlay(info.path);
                     }}>
                         {
                             isAudio ? <img src={require('../static/svg/audio.svg').default} alt={'icon'}/> : isVideo ?
