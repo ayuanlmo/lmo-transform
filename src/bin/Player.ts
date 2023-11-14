@@ -10,6 +10,7 @@ import * as Electron from 'electron';
 import * as FS from 'fs';
 import * as ChildProcess from 'child_process';
 import Global from "../lib/Global";
+import {IsURL} from "../utils";
 import getLocalUserConf = UsrLocalConfig.getLocalUserConf;
 
 namespace Player {
@@ -19,6 +20,7 @@ namespace Player {
 
     export const useVlcMediaPlayerToPlay = (path: string): void => {
         const vlcPath: string = getLocalUserConf().vlc_media_player_local_path;
+        const isUrl: boolean = IsURL(path);
 
         if (vlcPath === '')
             return ipcRenderer.send('SHOW-ERROR-MESSAGE-BOX', {
@@ -29,7 +31,18 @@ namespace Player {
                 msg: VlcPlayerPathDoesNotExist
             });
 
-        exec(`"${vlcPath}" file:///"${path}" -f`);
+
+        let protocol: string = 'file:';
+        let pathname: string = path;
+
+        if (isUrl) {
+            const url: URL = new URL(path);
+
+            protocol = url.protocol;
+            pathname = url.origin.replace(url.protocol, '') + url.pathname;
+        }
+
+        exec(`"${vlcPath}" ${protocol}"${pathname}" -f`);
     }
 
     export const useWindowsMediaPlayerToPlay = (path: string): void => {
