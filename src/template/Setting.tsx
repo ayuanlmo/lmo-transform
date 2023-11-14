@@ -8,12 +8,14 @@ import {DeleteTmpFile, GetTmpFileInfo} from "../utils/fs";
 import {YSwitch} from "../components/index";
 import * as Electron from 'electron';
 import Global from "../lib/Global";
-import UsrLocalConfig, {DefaultUserConfig} from "../lib/UsrLocalConfig";
+import UsrLocalConfig, {DefaultUserConfig, PlayerTypes} from "../lib/UsrLocalConfig";
 import {Dispatch} from "@reduxjs/toolkit";
+import {YExtendTemplate} from "../components";
 
 const {ipcRenderer} = Global.requireNodeModule<typeof Electron>('electron');
 
 function Setting(): React.JSX.Element {
+    const LocalConfig: DefaultUserConfig = UsrLocalConfig.getLocalUserConf();
     const dispatch: Dispatch = useDispatch();
     const outputPath: string = useSelector((state: RootState) => state.app.outputPath);
     const appConf: DefaultUserConfig = useSelector((state: RootState) => state.app.appConfig);
@@ -23,6 +25,9 @@ function Setting(): React.JSX.Element {
     const [tmpFileSize, setTmpFileSize] = useState<number>(0);
     const [parallelTasksLength, setParallelTasksLength] = useState<number | string>(parallelTasksLen);
     const [pds, setPds] = useState(false);
+    const [playerType, setPlayerType] = useState<PlayerTypes>(LocalConfig.player);
+    const [windowsMediaPlayerPath, setWindowsMediaPlayerPath] = useState<string>(LocalConfig.windows_media_player_local_path);
+    const [vlcMediaPlayerPath, setVlcMediaPlayerPath] = useState<string>(LocalConfig.vlc_media_player_local_path);
 
     useEffect((): void => {
         setSelectOutputPath(outputPath);
@@ -40,6 +45,28 @@ function Setting(): React.JSX.Element {
     ipcRenderer.on('SELECTED-DIRECTORY', (event: any, path: string): void => setSelectOutputPath(path));
     const selectPath = (): void => ipcRenderer.send('OPEN-DIRECTORY');
 
+    const saveConfig = async (): Promise<void> => {
+        serShowDialogState(!showDialog);
+        dispatch(setOutputPath(selectOutputPath));
+        dispatch(setParallelTasksLen(parallelTasksLength));
+        dispatch(setConfig({
+            ...appConf,
+            parallel_tasks_length: parallelTasksLength,
+            output_path: selectOutputPath
+        }));
+
+        ipcRenderer.send('OPEN-PAS', pds);
+
+        await UsrLocalConfig.setConfig(UsrLocalConfig.keyData({
+            ...appConf,
+            parallel_tasks_length: parallelTasksLength,
+            player: playerType,
+            windows_media_player_local_path: windowsMediaPlayerPath,
+            vlc_media_player_local_path: vlcMediaPlayerPath,
+            output_path: selectOutputPath
+        } as DefaultUserConfig));
+    }
+
     return (
         <>
             <button onClick={(): void => {
@@ -51,30 +78,7 @@ function Setting(): React.JSX.Element {
                 </span>
             </button>
             {
-                showDialog ? <Dialog height={240} onConfirm={async (): Promise<void> => {
-                    serShowDialogState(!showDialog);
-                    dispatch(setOutputPath(selectOutputPath));
-                    dispatch(setParallelTasksLen(parallelTasksLength));
-                    dispatch(setConfig({
-                        ...appConf,
-                        parallel_tasks_length: parallelTasksLength,
-                        output_path: selectOutputPath
-                    }));
-
-                    console.log('appConf', {
-                        ...appConf,
-                        parallel_tasks_length: parallelTasksLength,
-                        output_path: selectOutputPath
-                    })
-
-                    ipcRenderer.send('OPEN-PAS', pds);
-
-                    await UsrLocalConfig.setConfig(UsrLocalConfig.keyData({
-                        ...appConf,
-                        parallel_tasks_length: parallelTasksLength,
-                        output_path: selectOutputPath
-                    } as DefaultUserConfig));
-                }} onCancel={(): void => {
+                showDialog ? <Dialog height={300} onConfirm={saveConfig} onCancel={(): void => {
                     serShowDialogState(!showDialog);
                 }} show={showDialog} title={'设置'}>
                     <div className={'lmo-app-setting'}>
@@ -93,7 +97,6 @@ function Setting(): React.JSX.Element {
                             <div className={'lmo-app-setting-item-label lmo_color_white'}>并行任务</div>
                             <div className={'lmo-app-setting-item-content'}>
                                 <input
-                                    defaultValue={parallelTasksLength}
                                     value={parallelTasksLength}
                                     className={'lmo_color_white lmo_cursor_pointer'}
                                     min={1}
@@ -105,6 +108,47 @@ function Setting(): React.JSX.Element {
                                 />
                             </div>
                         </div>
+                        <div className={'lmo-app-setting-item'}>
+                            <div className={'lmo-app-setting-item-label lmo_color_white'}>默认媒体播放器</div>
+                            <div className={'lmo-app-setting-item-content'}>
+                                <select
+                                    value={playerType}
+                                    onChange={(e: React.ChangeEvent<HTMLSelectElement>): void => {
+                                        setPlayerType(e.target.value as PlayerTypes);
+                                    }}>
+                                    <option value="ffplay">ffmpeg player</option>
+                                    <option value="wmp">Windows Media Player</option>
+                                    <option value="vlc">VLC Media Player</option>
+                                </select>
+                            </div>
+                        </div>
+                        <YExtendTemplate show={playerType !== 'ffplay'}>
+                            <div className={'lmo-app-setting-item'}>
+                                <div className={'lmo-app-setting-item-label lmo_color_white'}>播放器路径</div>
+                                <div className={'lmo-app-setting-item-content'}>
+                                    <YExtendTemplate show={playerType === 'vlc'}>
+                                        <input
+                                            value={vlcMediaPlayerPath}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                                                setVlcMediaPlayerPath(e.target.value);
+                                            }}
+                                            className={'lmo_color_white lmo_cursor_pointer'}
+                                            type="text"
+                                        />
+                                    </YExtendTemplate>
+                                    <YExtendTemplate show={playerType === 'wmp'}>
+                                        <input
+                                            value={windowsMediaPlayerPath}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                                                setWindowsMediaPlayerPath(e.target.value);
+                                            }}
+                                            className={'lmo_color_white lmo_cursor_pointer'}
+                                            type="text"
+                                        />
+                                    </YExtendTemplate>
+                                </div>
+                            </div>
+                        </YExtendTemplate>
                         <div className={'lmo-app-setting-item'}>
                             <div className={'lmo-app-setting-item-label lmo_color_white'}>临时文件</div>
                             <div className={'lmo-app-setting-item-content lmo_flex_box'}>
