@@ -115,6 +115,12 @@ textarea {
     left: calc(((100vw - 260px) - 540px) / 2);
     top: calc(((100vh - 40px) - 360px) / 2);
     padding: 155px 118px;
+    transition: all .2s;
+}
+
+.lmo-app-content-drop-file:hover {
+    border: 1px dashed #229EED;
+    transform: scale(1.01);
 }
 
 .lmo-app-content-drop-file-select-file-icon {
@@ -244,6 +250,7 @@ textarea {
 .lmo-app-setting-item {
     display: flex;
     margin-bottom: 20px;
+    justify-content: space-between;
 }
 
 .lmo-app-setting-item-content {
@@ -268,12 +275,21 @@ textarea {
     line-height: 36px;
 }
 
+.lmo-app-setting-item-content select {
+    height: 36px;
+    width: 100%;
+}
+
+.lmo-app-setting-item-content select option {
+    padding: 4px 0;
+}
+
 .lmo-app-setting-item-label {
     margin-top: 8px;
 }
 
 .lmo-app-setting-item input {
-    width: 100%;
+    width: 88%;
     background: #343337;
     border: 0;
     height: 36px;
@@ -284,7 +300,7 @@ textarea {
 .lmo-app-setting-item-tips {
     width: 362px;
     color: #737373;
-    font-size: 12px;
+    font-size: 10px;
     margin-left: 16px;
     line-height: 30px;
 }

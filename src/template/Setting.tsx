@@ -78,7 +78,7 @@ function Setting(): React.JSX.Element {
                 </span>
             </button>
             {
-                showDialog ? <Dialog height={300} onConfirm={saveConfig} onCancel={(): void => {
+                showDialog ? <Dialog height={310} onConfirm={saveConfig} onCancel={(): void => {
                     serShowDialogState(!showDialog);
                 }} show={showDialog} title={'设置'}>
                     <div className={'lmo-app-setting'}>
@@ -113,6 +113,7 @@ function Setting(): React.JSX.Element {
                             <div className={'lmo-app-setting-item-content'}>
                                 <select
                                     value={playerType}
+                                    className={'lmo_cursor_pointer'}
                                     onChange={(e: React.ChangeEvent<HTMLSelectElement>): void => {
                                         setPlayerType(e.target.value as PlayerTypes);
                                     }}>
@@ -164,14 +165,14 @@ function Setting(): React.JSX.Element {
                             <div style={{width: '158px'}} className={'lmo-app-setting-item-label lmo_color_white'}>
                                 阻止低功耗模式
                             </div>
-                            <div style={{
-                                width: '20%'
-                            }} className={'lmo-app-setting-item-content lmo_flex_box'}>
-                                <YSwitch checked={pds} onChange={(e: boolean): void => {
-                                    setPds(e);
-                                }}/>
-                            </div>
-                            <div className={'lmo-app-setting-item-tips'}>防止Windows进入待机、暂停等状态，仅本次有效
+                            <div className={'lmo-app-setting-item-content lmo_flex_box'}>
+                                <div>
+                                    <YSwitch checked={pds} onChange={(e: boolean): void => {
+                                        setPds(e);
+                                    }}/>
+                                </div>
+                                <div className={'lmo-app-setting-item-tips'}>防止Windows进入待机、暂停等状态，仅本次有效
+                                </div>
                             </div>
                         </div>
                     </div>
