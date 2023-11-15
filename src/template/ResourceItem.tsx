@@ -2,15 +2,22 @@ import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {AUDIO_TYPE_MAP, VIDEO_TYPE_MAP} from "../const/ResourceTypes";
 import {useDispatch, useSelector} from "react-redux";
-import {deleteSelectedFilesItem, setCurrentParallelTasks, setSelectedFileOutputType} from "../lib/Store/AppState";
+import {
+    deleteSelectedFilesItem,
+    setCurrentParallelTasks,
+    setSelectedFileCurrentSchedule,
+    setSelectedFileOptPath,
+    setSelectedFileOutputType,
+    setSelectedFileStatus
+} from "../lib/Store/AppState";
 import {FormatSec, openOutputPath, ResolveSize} from "../utils";
 import {FfmpegStreamsTypes, transformVideo} from "../bin/ff";
 import {File} from "../bin/file";
-import Storage from "../lib/Storage";
 import {RootState} from "../lib/Store";
 import * as Electron from 'electron';
 import Global from "../lib/Global";
 import {Player} from "../bin/Player";
+import {DefaultUserConfig} from "../lib/UsrLocalConfig";
 
 const {ipcRenderer} = Global.requireNodeModule<typeof Electron>('electron');
 
@@ -29,6 +36,9 @@ export interface ResourceInfoTypes {
     type: string;
     width?: number;
     streams: FfmpegStreamsTypes;
+    status: SuccessState;
+    currentSchedule: number,
+    optPath: string;
 }
 
 export interface CurrentStateTypes {
@@ -52,18 +62,19 @@ export interface OptTypeOptionsTypes {
     libs?: string;
 }
 
+export interface ResourceItemProps {
+    info: ResourceInfoTypes;
+    index: number;
+}
 
-function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.JSX.Element {
-    const {info, index} = props;
+function ResourceItem(props: ResourceItemProps): React.JSX.Element {
+    const {index} = props;
+    const [info, setInfo] = useState<ResourceInfoTypes>(props.info);
     const dispatch = useDispatch();
-    const [successState, setSuccessState] = useState<SuccessState>('pending');
-    const [resourcePath, setResourcePath] = useState<string>('');
-    const [currentState, setCurrentState] = useState<CurrentStateTypes>({
-        current: 0,
-        frame: []
-    });
+    const selectedFiles = useSelector((state: RootState) => state.app.selectedFiles);
     const [optTypeOptions, setOptTypeOptions] = useState<Array<OptTypeOptionsTypes>>([]);
     const currentParallelTasks: number = useSelector((state: RootState) => state.app.currentParallelTasks);
+    const appConfig: DefaultUserConfig = useSelector((state: RootState) => state.app.appConfig);
     const parallelTasksLength: number = useSelector((state: RootState) => state.app.parallelTasksLength);
     const isH264: boolean = info.streams.codec_name === 'h264'; // 是否h264
     const isH265: boolean = info.streams.codec_name === 'hevc'; // 是否h265
@@ -105,6 +116,12 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
             type: ''
         }));
     }, []);
+
+    useEffect((): void => {
+        requestAnimationFrame((): void => {
+            setInfo(selectedFiles[index])
+        });
+    }, [selectedFiles]);
     return (
         <div className={'lmo-app-resource-item'}>
             <div className={'lmo-app-resource-item-content lmo_flex_box'}>
@@ -116,7 +133,7 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                             isAudio ? <img src={require('../static/svg/audio.svg').default} alt={'icon'}/> : isVideo ?
                                 <img src={info.cover} alt={info.cover}/> : <></>
                         }
-                        <div style={{width: `${currentState.current}%`}}
+                        <div style={{width: `${info.currentSchedule}%`}}
                              className={'lmo-app-resource-item-content-in-info-bg'}></div>
                     </div>
                     <div className={'lmo-app-resource-item-content-in-info-box'}>
@@ -178,37 +195,37 @@ function ResourceItem(props: { info: ResourceInfoTypes, index: number }): React.
                     </button>
                     <button onClick={
                         (): void => {
-                            if (!File.directoryIs(Storage.Get('output_path')))
+                            if (!File.directoryIs(appConfig.output_path))
                                 return;
                             // 开始处理（状态为等待 || 错误
-                            if (successState === 'pending' || successState === 'error') {
+                            if (info.status === 'pending' || info.status === 'error') {
                                 if (info.output.type === '')
                                     return ipcRenderer.send('SHOW-INFO-MESSAGE-BOX', '请选择输出文件类型');
                                 if (currentParallelTasks === parallelTasksLength)
                                     return ipcRenderer.send('SHOW-INFO-MESSAGE-BOX', `当前最大并行任务数为：${parallelTasksLength}个`);
 
                                 dispatch(setCurrentParallelTasks('plus'));
-                                setSuccessState('running');
+                                dispatch(setSelectedFileStatus({index, status: 'running'}));
                                 transformVideo(info, (data: CurrentStateTypes) => {
-                                    setCurrentState(data);
-                                }).then((res: string): void => {
+                                    dispatch(setSelectedFileCurrentSchedule({index, data: data.current}));
+                                }, appConfig.output_path).then((res: string): void => {
                                     ipcRenderer.send('CREATE-NOTIFICATION', {title: '转换完成', body: info.name});
+                                    dispatch(setSelectedFileOptPath({index, data: res}));
                                     dispatch(setCurrentParallelTasks('sub'));
-                                    setSuccessState('success');
-                                    setResourcePath(res);
+                                    dispatch(setSelectedFileStatus({index, status: 'success'}));
                                 }).catch(e => {
                                     dispatch(setCurrentParallelTasks('sub'));
-                                    setSuccessState('error');
+                                    dispatch(setSelectedFileStatus({index, status: 'error'}));
                                 })
                             }
                             // 转换成功
-                            if (successState === 'success')
-                                openOutputPath();
+                            if (info.status === 'success')
+                                openOutputPath(info.optPath);
                         }
                     } className={'lmo_theme_color_border lmo_position_relative'}>
                         <div>
                             {
-                                SuccessStateName[successState]
+                                SuccessStateName[info.status]
                             }
                         </div>
                     </button>

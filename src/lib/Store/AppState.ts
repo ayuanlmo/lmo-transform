@@ -44,6 +44,21 @@ export const counterSlice = createSlice({
             // @ts-ignore
             state.selectedFiles[payload.index].output.libs = payload.libs;
         },
+        // 设置状态
+        setSelectedFileStatus(state, {payload}): void {
+            // @ts-ignore
+            state.selectedFiles[payload.index].status = payload.status as string;
+        },
+        // 设置当前进度
+        setSelectedFileCurrentSchedule(state, {payload}): void {
+            // @ts-ignore
+            state.selectedFiles[payload.index].currentSchedule = payload.data as string;
+        },
+        // 设置输出文件路径
+        setSelectedFileOptPath(state, {payload}): void {
+            // @ts-ignore
+            state.selectedFiles[payload.index].optPath = payload.data as string;
+        },
         // 设置系统输出路径
         setOutputPath: (state, {payload}): void => {
             state.outputPath = payload as string;
@@ -87,6 +102,9 @@ export const {
     clearSelectedFiles,
     deleteSelectedFilesItem,
     setSelectedFileOutputType,
+    setSelectedFileStatus,
+    setSelectedFileCurrentSchedule,
+    setSelectedFileOptPath,
     setOutputPath,
     setParallelTasksLen,
     pushLog,

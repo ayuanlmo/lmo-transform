@@ -8,6 +8,7 @@ import {RootState} from "../lib/Store";
 import {YButton, YExtendTemplate, YUrlPromptInput} from '../components';
 import {resolveUrlFile, SelectFile} from "../utils/fs";
 import {clearSelectedFiles, setSelectedFiles} from "../lib/Store/AppState";
+import StartAll from "./StartAll";
 
 function AppContent(): React.JSX.Element {
     const dispatch = useDispatch();
@@ -40,6 +41,9 @@ function AppContent(): React.JSX.Element {
 
     return (
         <div className={'lmo-app-content'}>
+            <YExtendTemplate show={selectedFiles.length !== 0}>
+                <StartAll/>
+            </YExtendTemplate>
             <div className={'lmo-app-content-header'}>
                 <YExtendTemplate show={showUrlInput}>
                     <YUrlPromptInput

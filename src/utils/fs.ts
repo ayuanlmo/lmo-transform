@@ -65,7 +65,10 @@ const resolveFile = async (files: Array<Root.File>): Promise<any[]> => {
                         output: {
                             type: '',
                             libs: ''
-                        }
+                        },
+                        status: 'pending',
+                        currentSchedule: 0,
+                        optPath: ''
                     });
             } catch (e: any) {
                 store.dispatch(setGlobalLoading(false));
@@ -102,7 +105,10 @@ const resolveUrlFile = async (urls: Array<string>): Promise<any> => {
                     output: {
                         type: '',
                         libs: ''
-                    }
+                    },
+                    status: 'pending',
+                    currentSchedule: 0,
+                    optPath: ''
                 });
             });
         } catch (e: any) {
