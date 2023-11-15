@@ -153,7 +153,11 @@ function Setting(): React.JSX.Element {
                         <div className={'lmo-app-setting-item'}>
                             <div className={'lmo-app-setting-item-label lmo_color_white'}>临时文件</div>
                             <div className={'lmo-app-setting-item-content lmo_flex_box'}>
-                                <span className={'lmo_theme_color'}>{tmpFileSize + 'kb'}</span>
+                                <span
+                                    className={'lmo_theme_color'}
+                                >
+                                    {tmpFileSize > 1024 ? (tmpFileSize / 1024).toFixed(2) + 'M' : tmpFileSize + 'KB'}
+                                </span>
                                 <button onClick={(): void => {
                                     DeleteTmpFile();
                                     initTmpFileSize();
