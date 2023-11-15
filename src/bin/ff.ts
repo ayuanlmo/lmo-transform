@@ -1,5 +1,4 @@
 import AppConfig from "../conf/AppConfig";
-import Storage from "../lib/Storage";
 import {Ffmpeg, FFPLAY_BIN_PATH} from "./ffmpeg";
 import {FIRST_FRAME_ERROR, PLAYER_ERROR, TRANSFORM_ERROR} from "../const/Message";
 import {playBeep} from "../utils";
@@ -146,15 +145,16 @@ export const getFileInfo = (filePath: string): Promise<GetFileInfoTypes> => {
  * @method transformVideo
  * @param {Object} data - 视频基本信息(通过getFileInfo 获取)
  * @param {Function} callback - 转换进度回调
+ * @param {String} opt_path - 输出路径
  * @author ayuanlmo
  * @returns {Promise<string>}
  * @description 转换视频
  * **/
-export const transformVideo = (data: any, callback: Function): Promise<any> => {
+export const transformVideo = (data: any, callback: Function, opt_path: string): Promise<any> => {
     const inputFile: string = data.path;
     const libs: string = data.output.libs;
-    const outputPath: string = Storage.Get('output_path') as string;
-
+    const outputPath: string = opt_path;
+    
     return new Promise((resolve, reject) => {
         const optFile: string = outputPath + "\\" + data.name.split('.')[0] + '.' + data.output.type;
         const duration: number = parseFloat(data.duration);
