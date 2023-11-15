@@ -8,7 +8,7 @@ export interface YUrlPromptInputProps {
     show: boolean;
     readonly placeholder?: string;
     readonly title?: string;
-    readonly onConfirm?: null | (<T>(urls: T) => T);
+    readonly onConfirm?: null | ((urls: Array<string>) => void);
     readonly onCancel?: null | ((e?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void);
 }
 
@@ -29,22 +29,23 @@ function YUrlPromptInput(props: YUrlPromptInputProps): React.JSX.Element {
                 onCancel={onCancel}
                 show={show}
                 title={title}
-                onConfirm={(): void => {
+                onConfirm={() => {
                     if (value === '')
-                        return
+                        return [];
 
                     const _: Array<string> = value.split(('\n')).filter((i: string) => {
                         return i !== '' && IsURL(i);
                     });
 
-                    onConfirm?.<Array<string>>(_);
+                    onConfirm?.(_);
+                    setValue('');
                 }}
             >
             <textarea
                 cols={70}
                 rows={11}
                 value={value}
-                defaultValue={value}
+                className={'lmo_color_white'}
                 placeholder={placeholder}
                 onChange={
                     (e: React.ChangeEvent<HTMLTextAreaElement>): void => {

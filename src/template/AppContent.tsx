@@ -5,8 +5,8 @@ import DropFile from "./DropFile";
 import Resource from "./Resource";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../lib/Store";
-import {YButton, YExtendTemplate} from '../components';
-import {SelectFile} from "../utils/fs";
+import {YButton, YExtendTemplate, YUrlPromptInput} from '../components';
+import {resolveUrlFile, SelectFile} from "../utils/fs";
 import {clearSelectedFiles, setSelectedFiles} from "../lib/Store/AppState";
 
 function AppContent(): React.JSX.Element {
@@ -15,6 +15,7 @@ function AppContent(): React.JSX.Element {
     const globalType = useSelector((state: RootState) => state.app.globalType);
     const [audioLength, setAudioLength] = useState<number>(0);
     const [videoLength, setVideoLength] = useState<number>(0);
+    const [showUrlInput, setShowUrlInput] = useState<boolean>(false);
 
     useEffect((): void => {
         setAudioLength(selectedFiles.filter((i: {
@@ -40,7 +41,28 @@ function AppContent(): React.JSX.Element {
     return (
         <div className={'lmo-app-content'}>
             <div className={'lmo-app-content-header'}>
+                <YExtendTemplate show={showUrlInput}>
+                    <YUrlPromptInput
+                        show={showUrlInput}
+                        title={'打开串流媒体'}
+                        placeholder={'请输入网络串流URL , 一行一个\n\nrtp://@:8081 \n' +
+                            'rtsp://example.fi/video-play \n' +
+                            'rtmp://example.fi/video-play \n' +
+                            'https://www.example.fi/video.mp4'}
+                        onConfirm={async (urls: string[]): Promise<void> => {
+                            if (urls.length === 0)
+                                return setShowUrlInput(false);
+
+                            dispatch(setSelectedFiles([...selectedFiles, ...await resolveUrlFile(urls)]));
+                            setShowUrlInput(false);
+                        }}
+                        onCancel={(): void => {
+                            setShowUrlInput(false);
+                        }}
+                    />
+                </YExtendTemplate>
                 <div>
+
                     <YExtendTemplate show={selectedFiles.length > 0}>
                         <YButton
                             icon={require('../static/svg/button-deltet.svg').default}
@@ -64,7 +86,15 @@ function AppContent(): React.JSX.Element {
                             }
                         }
                     >
-                        添加文件
+                        打开文件
+                    </YButton>
+                    <YButton
+                        icon={require('../static/svg/button-add.svg').default}
+                        onClick={
+                            (): void => setShowUrlInput(true)
+                        }
+                    >
+                        打开网络串流
                     </YButton>
                 </div>
             </div>

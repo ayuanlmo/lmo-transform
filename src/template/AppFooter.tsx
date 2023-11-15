@@ -14,7 +14,7 @@ function AppFooter(): React.JSX.Element {
                 onClick={(e: React.MouseEvent<HTMLAnchorElement>): void => {
                     openBrowser(e, AppConfig.openSource.github)
                 }}
-                className={'lmo_color_white lmo_hover_theme_color'}
+                className={'lmo_color_white lmo_hover_theme_color lmo_cursor_pointer'}
             >{AppConfig.appName}</a>  &nbsp;
             <span>Design by 阿柒</span>
             <span> Powered by
@@ -22,13 +22,13 @@ function AppFooter(): React.JSX.Element {
                     onClick={(e: React.MouseEvent<HTMLAnchorElement>): void => {
                         openBrowser(e, 'https://www.electronjs.org/')
                     }}
-                    className={'lmo_color_white lmo_hover_theme_color'}>Electron
+                    className={'lmo_color_white lmo_hover_theme_color lmo_cursor_pointer'}>Electron
                 </a> and
                 <a
                     onClick={(e: React.MouseEvent<HTMLAnchorElement>): void => {
                         openBrowser(e, 'https://ffmpeg.org/')
                     }}
-                    className={'lmo_color_white lmo_hover_theme_color'}
+                    className={'lmo_color_white lmo_hover_theme_color lmo_cursor_pointer'}
                 >ffmpeg
                 </a> on Microsoft Windows</span>
         </div>

@@ -77,6 +77,45 @@ const resolveFile = async (files: Array<Root.File>): Promise<any[]> => {
         })
     }
     store.dispatch(setGlobalLoading(false));
+
+    return _;
+}
+
+const resolveUrlFile = async (urls: Array<string>): Promise<any> => {
+    store.dispatch(setGlobalLoading(true));
+    const _: any[] | PromiseLike<any[]> = [];
+
+    for (let i: number = 0; i < urls.length; i++) {
+        const file: string = urls[i];
+
+        try {
+            await getFileInfo(urls[i]).then(async (fileInfo: GetFileInfoTypes) => {
+                const isVideo: boolean = fileInfo?.streams?.codec_type === 'video';
+
+                _.push({
+                    name: file,
+                    path: file,
+                    type: fileInfo.streams.codec_tag_string,
+                    cover: File.isImageFile(file) ? file : isVideo ? await getVideoFirstFrame(file) : '',
+                    lastModified: '',
+                    ...fileInfo,
+                    output: {
+                        type: '',
+                        libs: ''
+                    }
+                });
+            });
+        } catch (e: any) {
+            e = e.toString();
+
+            ipcRenderer.send('SHOW-ERROR-MESSAGE-BOX', {
+                msg: e.includes('I/O error') ? `请检查${[file]}串流地址是否正确` : FILE_ERROR_MESSAGE(file, e.toString())
+            });
+        }
+
+    }
+    store.dispatch(setGlobalLoading(false));
+
     return _;
 }
 
@@ -116,5 +155,6 @@ const DeleteTmpFile = (file: string = '') => {
 export {ResolveFileTypes}
 export {SelectFile}
 export {resolveFile}
+export {resolveUrlFile}
 export {GetTmpFileInfo}
 export {DeleteTmpFile}
