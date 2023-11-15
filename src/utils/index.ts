@@ -1,4 +1,3 @@
-import Storage from "../lib/Storage";
 import * as Electron from 'electron';
 import * as ChildProcess from 'child_process';
 import * as OS from 'os';
@@ -110,8 +109,8 @@ const FormatSec = (sec: number): string => {
 };
 
 // 打开输出路径
-const openOutputPath = (): void => {
-    exec(`start ${Storage.Get('output_path')}`);
+const openOutputPath = (path: string = ''): void => {
+    exec(`explorer /select, "${path}"`);
 }
 
 // 播放bibi声音
