@@ -6,6 +6,7 @@
 
 .YButton img {
     position: relative;
+    padding: 0 4px;
     top: 2px;
 }
 
