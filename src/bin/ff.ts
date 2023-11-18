@@ -60,7 +60,7 @@ export interface GetFileInfoTypes {
     width: number;
     height: number;
     format: Array<string>;
-    streams: FfmpegStreamsTypes;
+    streams: FfmpegStreamsTypes[];
 }
 
 export interface Codes {
@@ -137,7 +137,7 @@ export const getFileInfo = (filePath: string): Promise<GetFileInfoTypes> => {
                     width: data.streams[0].width,
                     height: data.streams[0].height,
                     format: data.format.format_name,
-                    streams: data.streams[0]
+                    streams: data.streams
                 });
             }
         });

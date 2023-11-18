@@ -6,9 +6,10 @@ import Resource from "./Resource";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../lib/Store";
 import * as Components from '../components';
-import {resolveUrlFile, SelectFile} from "../utils/fs";
+import {resolveUrlFile, SelectFile, targetIs} from "../utils/fs";
 import {clearSelectedFiles, setSelectedFiles} from "../lib/Store/AppState";
 import StartAll from "./StartAll";
+import {FfmpegStreamsTypes} from "../bin/ff";
 
 function AppContent(): React.JSX.Element {
     const dispatch = useDispatch();
@@ -20,14 +21,14 @@ function AppContent(): React.JSX.Element {
 
     useEffect((): void => {
         setAudioLength(selectedFiles.filter((i: {
-            streams: { codec_type: string }
+            streams: FfmpegStreamsTypes[]
         }): boolean => {
-            return i.streams.codec_type === 'audio';
+            return targetIs(i.streams, 'audio');
         }).length);
         setVideoLength(selectedFiles.filter((i: {
-            streams: { codec_type: string }
+            streams: FfmpegStreamsTypes[]
         }): boolean => {
-            return i.streams.codec_type === 'video';
+            return targetIs(i.streams, 'video');
         }).length);
     }, [selectedFiles]);
 

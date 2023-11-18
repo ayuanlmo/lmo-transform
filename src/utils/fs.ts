@@ -1,4 +1,4 @@
-import {getFileInfo, GetFileInfoTypes, getVideoFirstFrame} from "../bin/ff";
+import {FfmpegStreamsTypes, getFileInfo, GetFileInfoTypes, getVideoFirstFrame} from "../bin/ff";
 import {ResolvePath} from "./index";
 import AppConfig from "../conf/AppConfig";
 import store from '../lib/Store/index'
@@ -43,6 +43,17 @@ const SelectFile = (): Promise<Array<ResolveFileTypes>> => {
     });
 }
 
+export function targetIs(streams: FfmpegStreamsTypes[], type: 'video' | 'audio' | string): boolean {
+    if (streams.length === 0)
+        return false;
+
+    // 没有音频的视频下，流的长度可能为1
+    if (type === 'audio' && streams.length === 1 || type === 'video' && streams.length === 1)
+        return streams[0].codec_type === type;
+
+    return type === 'video' && streams.length > 1;
+}
+
 const resolveFile = async (files: Array<Root.File>): Promise<any[]> => {
     store.dispatch(setGlobalLoading(true));
     const _: any[] | PromiseLike<any[]> = [];
@@ -51,7 +62,7 @@ const resolveFile = async (files: Array<Root.File>): Promise<any[]> => {
         const filePath: string = files[j].path.split('\\').join('/');
 
         await getFileInfo(filePath).then(async (fileInfo: GetFileInfoTypes) => {
-            const isVideo: boolean = fileInfo?.streams?.codec_type === 'video';
+            const isVideo: boolean = targetIs(fileInfo.streams, 'video');
 
             try {
                 if (files[j].type !== '')
@@ -93,12 +104,12 @@ const resolveUrlFile = async (urls: Array<string>): Promise<any> => {
 
         try {
             await getFileInfo(urls[i]).then(async (fileInfo: GetFileInfoTypes) => {
-                const isVideo: boolean = fileInfo?.streams?.codec_type === 'video';
+                const isVideo: boolean = targetIs(fileInfo.streams, 'video');
 
                 _.push({
                     name: file,
                     path: file,
-                    type: fileInfo.streams.codec_tag_string,
+                    type: '',
                     cover: File.isImageFile(file) ? file : isVideo ? await getVideoFirstFrame(file) : '',
                     lastModified: '',
                     ...fileInfo,
