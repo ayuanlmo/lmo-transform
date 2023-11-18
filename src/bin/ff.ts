@@ -6,6 +6,8 @@ import * as FS from 'fs';
 import * as Electron from 'electron';
 import * as ChildProcess from 'child_process';
 import Global from "../lib/Global";
+import Store from "../lib/Store";
+import {pushLog} from "../lib/Store/AppState";
 
 export interface FfmpegStreamsTypes {
     avg_frame_rate: string;// 帧速率
@@ -107,6 +109,7 @@ export const getVideoFirstFrame = (inputFilePath: string): Promise<string> => {
                 ipcRenderer.send('SHOW-ERROR-MESSAGE-BOX', {
                     msg: FIRST_FRAME_ERROR(inputFilePath, e.toString())
                 });
+                Store.dispatch(pushLog(`[${inputFilePath}]:${e.toString()}`));
                 console.log('生成首帧图错误', e);
             }
 
@@ -154,7 +157,7 @@ export const transformVideo = (data: any, callback: Function, opt_path: string):
     const inputFile: string = data.path;
     const libs: string = data.output.libs;
     const outputPath: string = opt_path;
-    
+
     return new Promise((resolve, reject) => {
         const optFile: string = outputPath + "\\" + data.name.split('.')[0] + '.' + data.output.type;
         const duration: number = parseFloat(data.duration);
@@ -173,7 +176,8 @@ export const transformVideo = (data: any, callback: Function, opt_path: string):
             });
             resolve(optFile);
         })
-        _ffmpeg.on('progress', (progress: any) => {
+        _ffmpeg.on('progress', (progress: any): void => {
+            Store.dispatch(pushLog(`[${inputFile}]:${progress.currentFps} / ${progress.frames} / ${progress.timemark}`));
             const currentDuration: number = duration * progress.percent / 100;  // 已转换的视频时长（单位：秒）
             const _: number = Number(((currentDuration / duration) * 100).toFixed());
 
@@ -185,8 +189,9 @@ export const transformVideo = (data: any, callback: Function, opt_path: string):
                 });
             }
         })
-        _ffmpeg.on('error', function (err: any) {
+        _ffmpeg.on('error', function (err: any): void {
             reject('error');
+            Store.dispatch(pushLog(`[${inputFile}]:${err}`))
             ipcRenderer.send('SHOW-ERROR-MESSAGE-BOX', {
                 msg: TRANSFORM_ERROR(inputFile, err)
             });
