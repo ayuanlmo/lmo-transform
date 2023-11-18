@@ -159,7 +159,7 @@ export const transformVideo = (data: any, callback: Function, opt_path: string):
     const outputPath: string = opt_path;
 
     return new Promise((resolve, reject) => {
-        const optFile: string = outputPath + "\\" + data.name.split('.')[0] + '.' + data.output.type;
+        const optFile: string = outputPath + "\\" + `lmo-opt-${new Date().getTime()}` + '.' + data.output.type.toLowerCase();
         const duration: number = parseFloat(data.duration);
         let current: number = 0;
         const _ffmpeg = ffmpeg(inputFile);
