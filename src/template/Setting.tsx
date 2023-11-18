@@ -1,16 +1,14 @@
-import Dialog from "../components/Dialog";
 import * as React from "react";
+import * as Electron from 'electron';
+import * as Components from '../components';
 import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../lib/Store";
 import {setConfig, setOutputPath, setParallelTasksLen} from "../lib/Store/AppState";
 import {DeleteTmpFile, GetTmpFileInfo} from "../utils/fs";
-import {YSwitch} from "../components/index";
-import * as Electron from 'electron';
 import Global from "../lib/Global";
 import UsrLocalConfig, {DefaultUserConfig, PlayerTypes} from "../lib/UsrLocalConfig";
 import {Dispatch} from "@reduxjs/toolkit";
-import {YExtendTemplate} from "../components";
 
 const {ipcRenderer} = Global.requireNodeModule<typeof Electron>('electron');
 
@@ -78,7 +76,7 @@ function Setting(): React.JSX.Element {
                 </span>
             </button>
             {
-                showDialog ? <Dialog height={310} onConfirm={saveConfig} onCancel={(): void => {
+                showDialog ? <Components.Dialog height={310} onConfirm={saveConfig} onCancel={(): void => {
                     serShowDialogState(!showDialog);
                 }} show={showDialog} title={'设置'}>
                     <div className={'lmo-app-setting'}>
@@ -123,11 +121,11 @@ function Setting(): React.JSX.Element {
                                 </select>
                             </div>
                         </div>
-                        <YExtendTemplate show={playerType !== 'ffplay'}>
+                        <Components.YExtendTemplate show={playerType !== 'ffplay'}>
                             <div className={'lmo-app-setting-item'}>
                                 <div className={'lmo-app-setting-item-label lmo_color_white'}>播放器路径</div>
                                 <div className={'lmo-app-setting-item-content'}>
-                                    <YExtendTemplate show={playerType === 'vlc'}>
+                                    <Components.YExtendTemplate show={playerType === 'vlc'}>
                                         <input
                                             value={vlcMediaPlayerPath}
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -136,8 +134,8 @@ function Setting(): React.JSX.Element {
                                             className={'lmo_color_white lmo_cursor_pointer'}
                                             type="text"
                                         />
-                                    </YExtendTemplate>
-                                    <YExtendTemplate show={playerType === 'wmp'}>
+                                    </Components.YExtendTemplate>
+                                    <Components.YExtendTemplate show={playerType === 'wmp'}>
                                         <input
                                             value={windowsMediaPlayerPath}
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -146,10 +144,10 @@ function Setting(): React.JSX.Element {
                                             className={'lmo_color_white lmo_cursor_pointer'}
                                             type="text"
                                         />
-                                    </YExtendTemplate>
+                                    </Components.YExtendTemplate>
                                 </div>
                             </div>
-                        </YExtendTemplate>
+                        </Components.YExtendTemplate>
                         <div className={'lmo-app-setting-item'}>
                             <div className={'lmo-app-setting-item-label lmo_color_white'}>临时文件</div>
                             <div className={'lmo-app-setting-item-content lmo_flex_box'}>
@@ -171,7 +169,7 @@ function Setting(): React.JSX.Element {
                             </div>
                             <div className={'lmo-app-setting-item-content lmo_flex_box'}>
                                 <div>
-                                    <YSwitch checked={pds} onChange={(e: boolean): void => {
+                                    <Components.YSwitch checked={pds} onChange={(e: boolean): void => {
                                         setPds(e);
                                     }}/>
                                 </div>
@@ -180,7 +178,7 @@ function Setting(): React.JSX.Element {
                             </div>
                         </div>
                     </div>
-                </Dialog> : <></>
+                </Components.Dialog> : <></>
             }
         </>
     );

@@ -5,7 +5,7 @@ import DropFile from "./DropFile";
 import Resource from "./Resource";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../lib/Store";
-import {YButton, YExtendTemplate, YUrlPromptInput} from '../components';
+import * as Components from '../components';
 import {resolveUrlFile, SelectFile} from "../utils/fs";
 import {clearSelectedFiles, setSelectedFiles} from "../lib/Store/AppState";
 import StartAll from "./StartAll";
@@ -41,12 +41,12 @@ function AppContent(): React.JSX.Element {
 
     return (
         <div className={'lmo-app-content'}>
-            <YExtendTemplate show={selectedFiles.length !== 0}>
+            <Components.YExtendTemplate show={selectedFiles.length !== 0}>
                 <StartAll/>
-            </YExtendTemplate>
+            </Components.YExtendTemplate>
             <div className={'lmo-app-content-header'}>
-                <YExtendTemplate show={showUrlInput}>
-                    <YUrlPromptInput
+                <Components.YExtendTemplate show={showUrlInput}>
+                    <Components.YUrlPromptInput
                         show={showUrlInput}
                         title={'打开串流媒体'}
                         placeholder={'请输入网络串流URL , 一行一个\n\nrtp://@:8081 \n' +
@@ -64,11 +64,10 @@ function AppContent(): React.JSX.Element {
                             setShowUrlInput(false);
                         }}
                     />
-                </YExtendTemplate>
+                </Components.YExtendTemplate>
                 <div>
-
-                    <YExtendTemplate show={selectedFiles.length > 0}>
-                        <YButton
+                    <Components.YExtendTemplate show={selectedFiles.length > 0}>
+                        <Components.YButton
                             icon={require('../static/svg/button-deltet.svg').default}
                             onClick={
                                 (): void => {
@@ -77,9 +76,9 @@ function AppContent(): React.JSX.Element {
                             }
                         >
                             清空所有
-                        </YButton>
-                    </YExtendTemplate>
-                    <YButton
+                        </Components.YButton>
+                    </Components.YExtendTemplate>
+                    <Components.YButton
                         primary
                         icon={require('../static/svg/button-add.svg').default}
                         onClick={
@@ -91,15 +90,15 @@ function AppContent(): React.JSX.Element {
                         }
                     >
                         打开文件
-                    </YButton>
-                    <YButton
+                    </Components.YButton>
+                    <Components.YButton
                         icon={require('../static/svg/button-add.svg').default}
                         onClick={
                             (): void => setShowUrlInput(true)
                         }
                     >
                         打开网络串流
-                    </YButton>
+                    </Components.YButton>
                 </div>
             </div>
             {
