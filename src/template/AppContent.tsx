@@ -42,7 +42,7 @@ function AppContent(): React.JSX.Element {
 
     return (
         <div className={'lmo-app-content'}>
-            <Components.YExtendTemplate show={selectedFiles.length !== 0}>
+            <Components.YExtendTemplate show={globalType === 'video' ? videoLength !== 0 : audioLength !== 0}>
                 <StartAll/>
             </Components.YExtendTemplate>
             <div className={'lmo-app-content-header'}>

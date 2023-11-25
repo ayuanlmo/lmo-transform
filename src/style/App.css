@@ -314,8 +314,8 @@ button {
     width: 20px;
     height: 72px;
     background: #409feea3;
-    z-index: 9;
-    right: 0rem;
+    z-index: 2;
+    right: 0;
     bottom: 6rem;
     font-size: 14px;
     transition: all .2s;
