@@ -47,11 +47,17 @@ export function targetIs(streams: FfmpegStreamsTypes[], type: 'video' | 'audio' 
     if (streams.length === 0)
         return false;
 
-    // 没有音频的视频下，流的长度可能为1
-    if (type === 'audio' && streams.length === 1 || type === 'video' && streams.length === 1)
+    // 只存在一根轨道
+    if (streams.length === 1)
         return streams[0].codec_type === type;
 
-    return type === 'video' && streams.length > 1;
+    // 多轨道的情况- 直接寻找对应的类型
+    if (type === 'video') {
+        return streams.filter(i => {
+            return i.codec_type === "video";
+        }).length > 0;
+    }
+    return false;
 }
 
 const resolveFile = async (files: Array<Root.File>): Promise<any[]> => {

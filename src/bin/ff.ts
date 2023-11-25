@@ -43,12 +43,14 @@ export interface FfmpegStreamsTypes {
     nb_frames: number; // 视频流中的帧数（包含 I帧 、P帧 、 B帧
     start_pts: number; // 开始时间戳
     start_time: number;// 开始时间
-    tags: {
+    tags?: {
+        comment: string;
         creation_time: string; // 创建时间
         encoder: string; // 编码器
         handler_name: string; // 处理程序名
         language: string; // 语言
         vendor_id: string; // ?
+        APIC: string;
     }
     time_base: string; // 时基
     width: number; // 宽度
