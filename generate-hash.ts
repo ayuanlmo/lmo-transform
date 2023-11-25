@@ -4,7 +4,7 @@ import * as FS from 'fs';
 ((): void => {
     let isExists: boolean = false;
 
-    const FILE_NAME: string = 'lmo-Transform Setup.exe',
+    const FILE_NAME: string = `lmo-Transform-${require('./package.json').version} Setup.exe`,
         FILE_PATH: string = './dist/' + FILE_NAME,
         HASH_MD5: Hash = createHash('md5'),
         HASH_SHA256: Hash = createHash('sha256');
