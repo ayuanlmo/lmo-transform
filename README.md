@@ -32,6 +32,7 @@ lmo-Transform，一款开源的格式转换工具，支持主流的视频、音�
 ---
 
 ## 开发相关
+
 首先，如果您有更好的idea，我们非常欢迎您的PR。
 
 您需要注意的是：本项目基于NT操作系统开发。并未对其他操作系统做适配、兼容处理，
@@ -46,16 +47,20 @@ lmo-Transform，一款开源的格式转换工具，支持主流的视频、音�
 由于使用了`Node.js API`，所以 react app并不能运行在您的浏览器上。
 
 开始开发：
+
 ```bash
 # 启动开发环境
 yarn start
 ```
+
 构建：
+
 ```bash
 yarn build
 ```
 
 其他：
+
 ```bash
 # 
 yarn react-start
@@ -71,3 +76,10 @@ yarn react-eject
 ## 有问题吗？
 
 可通过[YouTrack](https://ayuanlmo.youtrack.cloud/)向我们提问，或者您可以发送issues
+
+## 特别感谢
+
+由衷地感谢 [JetBrains](https://www.jetbrains.com/)团队,
+为此项目赞助了免费的[许可证](https://www.jetbrains.com/community/opensource/)
+
+![JetBrainsLogo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)
