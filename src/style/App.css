@@ -60,6 +60,8 @@ button {
     font-weight: 500;
     line-height: normal;
     margin-bottom: 28px;
+    cursor: pointer;
+    transition: all .2s;
 }
 
 .lmo-app-left-menu-item-active {
