@@ -173,6 +173,7 @@ button {
 .lmo-app-resource-item-content-in-info {
     width: 45%;
     height: 130px;
+    overflow: hidden;
 }
 
 .lmo-app-resource-item-content-in-info img {
@@ -182,12 +183,15 @@ button {
 }
 
 .lmo-app-resource-item-content-in-info-bg {
-    height: 100%;
+    width: 230px;
+    height: 130px;
     position: absolute;
     background: #00000066;
     top: 0;
     z-index: 4;
     border-radius: 10px;
+    transition: all .2s;
+    transform: translate3d(-230px, 0px, 0px);
 }
 
 .lmo-app-resource-item-content-in-info-box {

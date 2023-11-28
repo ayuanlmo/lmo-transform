@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {AUDIO_TYPE_MAP, VIDEO_TYPE_MAP} from "../const/ResourceTypes";
 import {useDispatch, useSelector} from "react-redux";
 import {
@@ -82,6 +82,7 @@ function ResourceItem(props: ResourceItemProps): React.JSX.Element {
     const isH264: boolean = isAudio ? false : info.streams.length === 1 ? info.streams[0].codec_name === 'h264' : info.streams[1].codec_name === 'h264'; // 是否h264
     const isH265: boolean = isAudio ? false : info.streams.length === 1 ? info.streams[0].codec_name === 'hevc' : info.streams[1].codec_name === 'hevc'; // 是否h265
     const fileType: string = info.type; // 文件类型
+    const scheduleRef = useRef<HTMLDivElement>(null);
 
     const getTypeOptions = (): Array<OptTypeOptionsTypes> => {
         const type: Array<OptTypeOptionsTypes> = [];
@@ -120,21 +121,32 @@ function ResourceItem(props: ResourceItemProps): React.JSX.Element {
 
     useEffect((): void => {
         requestAnimationFrame((): void => {
-            setInfo(selectedFiles[index])
+            setInfo(selectedFiles[index]);
         });
     }, [selectedFiles]);
+
+    useEffect((): void => {
+        requestAnimationFrame((): void => {
+            scheduleRef.current?.setAttribute(
+                'style',
+                `transform: translate3d(${-230 + (info.currentSchedule * 2.3)}px, 0px, 0px);`
+            );
+        });
+    }, [info.currentSchedule]);
     return (
         <div className={'lmo-app-resource-item'}>
             <div className={'lmo-app-resource-item-content lmo_flex_box'}>
                 <div className={'lmo-app-resource-item-content-in-info lmo_flex_box'}>
-                    <div className={'lmo_cursor_pointer lmo_position_relative'} onClick={(): void => {
-                        Player.usePlayerToPlay(info.path);
-                    }}>
+                    <div
+                        className={'lmo-app-resource-item-content-in-info-cover lmo_cursor_pointer lmo_position_relative'}
+                        onClick={(): void => {
+                            Player.usePlayerToPlay(info.path);
+                        }}>
                         {
                             isAudio ? <img src={require('../static/svg/audio.svg').default} alt={'icon'}/> : isVideo ?
                                 <img src={info.cover} alt={info.cover}/> : <></>
                         }
-                        <div style={{width: `${info.currentSchedule}%`}}
+                        <div ref={scheduleRef}
                              className={'lmo-app-resource-item-content-in-info-bg'}></div>
                     </div>
                     <div className={'lmo-app-resource-item-content-in-info-box'}>
