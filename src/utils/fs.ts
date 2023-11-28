@@ -51,13 +51,13 @@ export function targetIs(streams: FfmpegStreamsTypes[], type: 'video' | 'audio' 
     if (streams.length === 1)
         return streams[0].codec_type === type;
 
-    // 多轨道的情况- 直接寻找对应的类型
-    if (type === 'video') {
-        return streams.filter(i => {
-            return i.codec_type === "video";
-        }).length > 0;
-    }
-    return false;
+    /**
+     * 多轨道的情况- 直接寻找对应的类型
+     * 带有封面图的音频文件存在一个mjpeg的轨道，但是他的类型为video，需要排除掉，否则会误判成为视频文件
+     * **/
+    return streams.filter((i: FfmpegStreamsTypes) => {
+        return i.codec_type === type && i.codec_name !== 'mjpeg';
+    }).length > 0;
 }
 
 const resolveFile = async (files: Array<Root.File>): Promise<any[]> => {
