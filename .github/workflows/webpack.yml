@@ -10,6 +10,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      - uses: actions/checkout@v2
       - name: Install Node.js
         with:
           node-version: '18.x'
