@@ -9,7 +9,7 @@ import * as Components from '../components';
 import {resolveUrlFile, SelectFile, targetIs} from "../utils/fs";
 import {clearSelectedFiles, setSelectedFiles} from "../lib/Store/AppState";
 import StartAll from "./StartAll";
-import {FfmpegStreamsTypes} from "../bin/ff";
+import {FfmpegStreamsTypes, GetFileInfoTypes} from "../bin/ff";
 
 function AppContent(): React.JSX.Element {
     const dispatch = useDispatch();
@@ -23,12 +23,12 @@ function AppContent(): React.JSX.Element {
         setAudioLength(selectedFiles.filter((i: {
             streams: FfmpegStreamsTypes[]
         }): boolean => {
-            return targetIs(i.streams, 'audio');
+            return targetIs(i as GetFileInfoTypes, 'audio');
         }).length);
         setVideoLength(selectedFiles.filter((i: {
             streams: FfmpegStreamsTypes[]
         }): boolean => {
-            return targetIs(i.streams, 'video');
+            return targetIs(i as GetFileInfoTypes, 'video');
         }).length);
     }, [selectedFiles]);
 

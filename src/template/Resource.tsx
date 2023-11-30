@@ -14,7 +14,7 @@ function Resource(): React.JSX.Element {
             <div className={'lmo-app-resource-content'}>
                 {
                     selectedFiles.map((item, index) => {
-                        if ((targetIs(item.streams, 'audio') && globalType === 'audio') || (targetIs(item.streams, 'video') && globalType === 'video')) {
+                        if ((targetIs(item, 'audio') && globalType === 'audio') || (targetIs(item, 'video') && globalType === 'video')) {
                             return (
                                 <ResourceItem index={index} info={item as unknown as ResourceInfoTypes} key={index}/>
                             )

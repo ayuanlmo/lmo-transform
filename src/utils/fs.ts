@@ -9,6 +9,7 @@ import * as Root from "../Root";
 import * as Electron from 'electron';
 import * as FS from 'fs';
 import Global from "../lib/Global";
+import {ResourceInfoTypes} from "../template/ResourceItem";
 
 const {ipcRenderer} = Global.requireNodeModule<typeof Electron>('electron');
 const fs = Global.requireNodeModule<typeof FS>('fs');
@@ -43,21 +44,27 @@ const SelectFile = (): Promise<Array<ResolveFileTypes>> => {
     });
 }
 
-export function targetIs(streams: FfmpegStreamsTypes[], type: 'video' | 'audio' | string): boolean {
-    if (streams.length === 0)
-        return false;
+export function targetIs(info: GetFileInfoTypes | ResourceInfoTypes, type: "video" | "audio" | string): boolean {
+    const {streams} = info;
+    if (streams.length === 0) return false;
 
-    // 只存在一根轨道
+    // 如果只有一条轨道，判断其编解码类型是否与目标类型相符
     if (streams.length === 1)
         return streams[0].codec_type === type;
 
-    /**
-     * 多轨道的情况- 直接寻找对应的类型
-     * 带有封面图的音频文件存在一个mjpeg的轨道，但是他的类型为video，需要排除掉，否则会误判成为视频文件
-     * **/
-    return streams.filter((i: FfmpegStreamsTypes) => {
-        return i.codec_type === type && i.codec_name !== 'mjpeg';
-    }).length > 0;
+    if (type === 'video') {
+        // 存在宽度和高度信息，或者媒体类型中包含 video
+        return !!(info.width && info.height) || ("type" in info && info.type.includes('video'));
+    } else if (type === 'audio') {
+        // 是否存在非mjpeg的视频轨道（带有封面图的音频文件存在一个或多个mjpeg的轨道，但是他的轨道类型为video，需要排除掉）
+        const hasMjpegVideoTrack: boolean = streams.some((i: FfmpegStreamsTypes): boolean => i.codec_type === 'video' && i.codec_name !== 'mjpeg');
+        // 检查是否存在音频轨道
+        const hasAudioTrack: boolean = streams.some((i: FfmpegStreamsTypes): boolean => i.codec_type === 'audio');
+
+        return !hasMjpegVideoTrack && hasAudioTrack;
+    }
+
+    return false;
 }
 
 const resolveFile = async (files: Array<Root.File>): Promise<any[]> => {
@@ -68,7 +75,7 @@ const resolveFile = async (files: Array<Root.File>): Promise<any[]> => {
         const filePath: string = files[j].path.split('\\').join('/');
 
         await getFileInfo(filePath).then(async (fileInfo: GetFileInfoTypes) => {
-            const isVideo: boolean = targetIs(fileInfo.streams, 'video');
+            const isVideo: boolean = targetIs(fileInfo, 'video');
 
             try {
                 if (files[j].type !== '')
@@ -110,7 +117,7 @@ const resolveUrlFile = async (urls: Array<string>): Promise<any> => {
 
         try {
             await getFileInfo(urls[i]).then(async (fileInfo: GetFileInfoTypes) => {
-                const isVideo: boolean = targetIs(fileInfo.streams, 'video');
+                const isVideo: boolean = targetIs(fileInfo, 'video');
 
                 _.push({
                     name: file,

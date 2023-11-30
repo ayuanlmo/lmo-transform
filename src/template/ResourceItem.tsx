@@ -77,8 +77,8 @@ function ResourceItem(props: ResourceItemProps): React.JSX.Element {
     const currentParallelTasks: number = useSelector((state: RootState) => state.app.currentParallelTasks);
     const appConfig: DefaultUserConfig = useSelector((state: RootState) => state.app.appConfig);
     const parallelTasksLength: number = useSelector((state: RootState) => state.app.parallelTasksLength);
-    const isVideo: boolean = targetIs(info.streams, 'video'); // 是否视频
-    const isAudio: boolean = targetIs(info.streams, 'audio'); // 是否音频
+    const isVideo: boolean = targetIs(info, 'video'); // 是否视频
+    const isAudio: boolean = targetIs(info, 'audio'); // 是否音频
     const isH264: boolean = isAudio ? false : info.streams.length === 1 ? info.streams[0].codec_name === 'h264' : info.streams[1].codec_name === 'h264'; // 是否h264
     const isH265: boolean = isAudio ? false : info.streams.length === 1 ? info.streams[0].codec_name === 'hevc' : info.streams[1].codec_name === 'hevc'; // 是否h265
     const fileType: string = info.type; // 文件类型
