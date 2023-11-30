@@ -1,8 +1,9 @@
-import * as React from 'react';``
+import * as React from 'react';
 import ResourceItem, {ResourceInfoTypes} from "./ResourceItem";
 import {useSelector} from "react-redux";
 import {RootState} from "../lib/Store";
 import {GetFileInfoTypes} from "../bin/ff";
+import {targetIs} from "../utils/fs";
 
 function Resource(): React.JSX.Element {
     const selectedFiles: Array<GetFileInfoTypes> = useSelector((state: RootState) => state.app.selectedFiles);
@@ -13,9 +14,10 @@ function Resource(): React.JSX.Element {
             <div className={'lmo-app-resource-content'}>
                 {
                     selectedFiles.map((item, index) => {
-                        if (item.streams.codec_type === globalType) {
+                        if ((targetIs(item, 'audio') && globalType === 'audio') || (targetIs(item, 'video') && globalType === 'video')) {
                             return (
-                                <ResourceItem index={index} info={item as unknown as ResourceInfoTypes} key={index}/>)
+                                <ResourceItem index={index} info={item as unknown as ResourceInfoTypes} key={index}/>
+                            )
                         }
                     })
                 }

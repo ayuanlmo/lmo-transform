@@ -1,13 +1,14 @@
+import * as React from 'react';
 import {useEffect} from 'react';
 import HeaderControls from "./template/HeaderControls";
 import LeftMenu from "./template/LeftMenu";
 import AppContent from "./template/AppContent";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "./lib/Store";
-import {setSelectedFiles} from "./lib/Store/AppState";
+import {initConfig, setSelectedFiles} from "./lib/Store/AppState";
 import {resolveFile} from "./utils/fs";
 import GlobalLoading from "./template/GlobalLoading";
-import * as React from "react";
+import './lib/UsrLocalConfig';
 
 require('./style/lmo-default.t.css');
 require('./style/App.css');
@@ -26,6 +27,8 @@ export interface File {
 function Root(): React.JSX.Element {
     const selectedFiles = useSelector((state: RootState) => state.app.selectedFiles);
     const dispatch = useDispatch();
+
+    dispatch(initConfig());
 
     useEffect(() => {
         const handleDragOver = (e: Event) => e.preventDefault();

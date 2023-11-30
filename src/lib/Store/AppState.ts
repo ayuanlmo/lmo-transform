@@ -1,23 +1,29 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {getCurrentDateTime, SpliceArray} from "../../utils";
-import Storage from "../Storage";
-import AppConfig from "../../conf/AppConfig";
-
-const local_output_path: string | null = Storage.Get('output_path');
-const pTasksLength: number = Number(Storage.Get('parallel_tasks_length')) || 1
+import UsrLocalConfig, {defaultUserConfig} from "../UsrLocalConfig";
 
 export const counterSlice = createSlice({
     name: 'app',
     initialState: {
         globalLoading: false,
         selectedFiles: [],
-        outputPath: local_output_path === null ? AppConfig.system.tempPath + `${AppConfig.appName}` : local_output_path,
-        parallelTasksLength: pTasksLength,
+        outputPath: '',
+        parallelTasksLength: 2,
         logContent: `[${getCurrentDateTime()}]\n程序启动...\n\n`,
         globalType: 'video',
-        currentParallelTasks: 0
+        currentParallelTasks: 0,
+        appConfig: defaultUserConfig
     },
     reducers: {
+        // 设置配置文件
+        setConfig: (state, {payload}): void => {
+            state.appConfig = payload;
+        },
+        initConfig: (state): void => {
+            state.appConfig = UsrLocalConfig.getLocalUserConf();
+            state.outputPath = state.appConfig.output_path;
+            state.parallelTasksLength = state.appConfig.parallel_tasks_length;
+        },
         // 设置选择的文件
         setSelectedFiles: (state, {payload}): void => {
             // @ts-ignore
@@ -38,15 +44,28 @@ export const counterSlice = createSlice({
             // @ts-ignore
             state.selectedFiles[payload.index].output.libs = payload.libs;
         },
+        // 设置状态
+        setSelectedFileStatus(state, {payload}): void {
+            // @ts-ignore
+            state.selectedFiles[payload.index].status = payload.status as string;
+        },
+        // 设置当前进度
+        setSelectedFileCurrentSchedule(state, {payload}): void {
+            // @ts-ignore
+            state.selectedFiles[payload.index].currentSchedule = payload.data as string;
+        },
+        // 设置输出文件路径
+        setSelectedFileOptPath(state, {payload}): void {
+            // @ts-ignore
+            state.selectedFiles[payload.index].optPath = payload.data as string;
+        },
         // 设置系统输出路径
         setOutputPath: (state, {payload}): void => {
             state.outputPath = payload as string;
-            Storage.Set('output_path', payload as string);
         },
         // 设置并行任务数量
         setParallelTasksLen(state, {payload}): void {
             state.parallelTasksLength = payload as number;
-            Storage.Set('parallel_tasks_length', payload as string);
         },
         // 添加日志内容
         pushLog(state, {payload}): void {
@@ -77,10 +96,15 @@ export const counterSlice = createSlice({
 });
 
 export const {
+    setConfig,
+    initConfig,
     setSelectedFiles,
     clearSelectedFiles,
     deleteSelectedFilesItem,
     setSelectedFileOutputType,
+    setSelectedFileStatus,
+    setSelectedFileCurrentSchedule,
+    setSelectedFileOptPath,
     setOutputPath,
     setParallelTasksLen,
     pushLog,

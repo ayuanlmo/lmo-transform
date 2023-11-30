@@ -1,9 +1,9 @@
 --------------------
-FFmpeg
+FFMPEG
 --------------------
 https://www.ffmpeg.org/
 
-Copyright (c) 2000-2022 the FFmpeg developers
+Copyright (c) 2000-2022 the ffmpeg developers
 
 Licensed under LGPL license
 
@@ -68,4 +68,12 @@ https://github.com/reduxjs/react-redux
 Copyright (c) 2015-present Dan Abramov
 
 Licensed under MIT license
+
+
+--------------------
+ini
+--------------------
+https://github.com/npm/ini
+
+Licensed under ISC license
 

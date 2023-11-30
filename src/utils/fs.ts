@@ -1,4 +1,4 @@
-import {getFileInfo, GetFileInfoTypes, getVideoFirstFrame} from "../bin/ff";
+import {FfmpegStreamsTypes, getFileInfo, GetFileInfoTypes, getVideoFirstFrame} from "../bin/ff";
 import {ResolvePath} from "./index";
 import AppConfig from "../conf/AppConfig";
 import store from '../lib/Store/index'
@@ -6,9 +6,13 @@ import {setGlobalLoading} from "../lib/Store/AppState";
 import {FILE_ERROR_MESSAGE} from "../const/Message";
 import {File} from "../bin/file";
 import * as Root from "../Root";
+import * as Electron from 'electron';
+import * as FS from 'fs';
+import Global from "../lib/Global";
+import {ResourceInfoTypes} from "../template/ResourceItem";
 
-const {ipcRenderer} = window.require('electron');
-const fs = window.require('fs');
+const {ipcRenderer} = Global.requireNodeModule<typeof Electron>('electron');
+const fs = Global.requireNodeModule<typeof FS>('fs');
 
 interface ResolveFileTypes extends GetFileInfoTypes {
     name: string;
@@ -40,6 +44,29 @@ const SelectFile = (): Promise<Array<ResolveFileTypes>> => {
     });
 }
 
+export function targetIs(info: GetFileInfoTypes | ResourceInfoTypes, type: "video" | "audio" | string): boolean {
+    const {streams} = info;
+    if (streams.length === 0) return false;
+
+    // 如果只有一条轨道，判断其编解码类型是否与目标类型相符
+    if (streams.length === 1)
+        return streams[0].codec_type === type;
+
+    if (type === 'video') {
+        // 存在宽度和高度信息，或者媒体类型中包含 video
+        return !!(info.width && info.height) || ("type" in info && info.type.includes('video'));
+    } else if (type === 'audio') {
+        // 是否存在非mjpeg的视频轨道（带有封面图的音频文件存在一个或多个mjpeg的轨道，但是他的轨道类型为video，需要排除掉）
+        const hasMjpegVideoTrack: boolean = streams.some((i: FfmpegStreamsTypes): boolean => i.codec_type === 'video' && i.codec_name !== 'mjpeg');
+        // 检查是否存在音频轨道
+        const hasAudioTrack: boolean = streams.some((i: FfmpegStreamsTypes): boolean => i.codec_type === 'audio');
+
+        return !hasMjpegVideoTrack && hasAudioTrack;
+    }
+
+    return false;
+}
+
 const resolveFile = async (files: Array<Root.File>): Promise<any[]> => {
     store.dispatch(setGlobalLoading(true));
     const _: any[] | PromiseLike<any[]> = [];
@@ -48,7 +75,7 @@ const resolveFile = async (files: Array<Root.File>): Promise<any[]> => {
         const filePath: string = files[j].path.split('\\').join('/');
 
         await getFileInfo(filePath).then(async (fileInfo: GetFileInfoTypes) => {
-            const isVideo: boolean = fileInfo?.streams?.codec_type === 'video';
+            const isVideo: boolean = targetIs(fileInfo, 'video');
 
             try {
                 if (files[j].type !== '')
@@ -62,7 +89,10 @@ const resolveFile = async (files: Array<Root.File>): Promise<any[]> => {
                         output: {
                             type: '',
                             libs: ''
-                        }
+                        },
+                        status: 'pending',
+                        currentSchedule: 0,
+                        optPath: ''
                     });
             } catch (e: any) {
                 store.dispatch(setGlobalLoading(false));
@@ -74,6 +104,48 @@ const resolveFile = async (files: Array<Root.File>): Promise<any[]> => {
         })
     }
     store.dispatch(setGlobalLoading(false));
+
+    return _;
+}
+
+const resolveUrlFile = async (urls: Array<string>): Promise<any> => {
+    store.dispatch(setGlobalLoading(true));
+    const _: any[] | PromiseLike<any[]> = [];
+
+    for (let i: number = 0; i < urls.length; i++) {
+        const file: string = urls[i];
+
+        try {
+            await getFileInfo(urls[i]).then(async (fileInfo: GetFileInfoTypes) => {
+                const isVideo: boolean = targetIs(fileInfo, 'video');
+
+                _.push({
+                    name: file,
+                    path: file,
+                    type: '',
+                    cover: File.isImageFile(file) ? file : isVideo ? await getVideoFirstFrame(file) : '',
+                    lastModified: '',
+                    ...fileInfo,
+                    output: {
+                        type: '',
+                        libs: ''
+                    },
+                    status: 'pending',
+                    currentSchedule: 0,
+                    optPath: ''
+                });
+            });
+        } catch (e: any) {
+            e = e.toString();
+
+            ipcRenderer.send('SHOW-ERROR-MESSAGE-BOX', {
+                msg: e.includes('I/O error') ? `请检查${[file]}串流地址是否正确` : FILE_ERROR_MESSAGE(file, e.toString())
+            });
+        }
+
+    }
+    store.dispatch(setGlobalLoading(false));
+
     return _;
 }
 
@@ -113,5 +185,6 @@ const DeleteTmpFile = (file: string = '') => {
 export {ResolveFileTypes}
 export {SelectFile}
 export {resolveFile}
+export {resolveUrlFile}
 export {GetTmpFileInfo}
 export {DeleteTmpFile}

@@ -1,4 +1,15 @@
-interface FfmpegStreamsTypes {
+import AppConfig from "../conf/AppConfig";
+import {Ffmpeg, FFPLAY_BIN_PATH} from "./ffmpeg";
+import {FIRST_FRAME_ERROR, PLAYER_ERROR, TRANSFORM_ERROR} from "../const/Message";
+import {playBeep} from "../utils";
+import * as FS from 'fs';
+import * as Electron from 'electron';
+import * as ChildProcess from 'child_process';
+import Global from "../lib/Global";
+import Store from "../lib/Store";
+import {pushLog} from "../lib/Store/AppState";
+
+export interface FfmpegStreamsTypes {
     avg_frame_rate: string;// 帧速率
     bit_rate: number; // 比特率
     bits_per_raw_sample: number; // 原始样本
@@ -32,27 +43,29 @@ interface FfmpegStreamsTypes {
     nb_frames: number; // 视频流中的帧数（包含 I帧 、P帧 、 B帧
     start_pts: number; // 开始时间戳
     start_time: number;// 开始时间
-    tags: {
+    tags?: {
+        comment: string;
         creation_time: string; // 创建时间
         encoder: string; // 编码器
         handler_name: string; // 处理程序名
         language: string; // 语言
         vendor_id: string; // ?
+        APIC: string;
     }
     time_base: string; // 时基
     width: number; // 宽度
 }
 
-interface GetFileInfoTypes {
+export interface GetFileInfoTypes {
     size: number | string;
     duration: number;
     width: number;
     height: number;
     format: Array<string>;
-    streams: FfmpegStreamsTypes;
+    streams: FfmpegStreamsTypes[];
 }
 
-interface Codes {
+export interface Codes {
     canDecode: boolean; // 可解码
     canEncode: boolean;// 可编码
     description: string;// 描述
@@ -62,17 +75,10 @@ interface Codes {
     intraFrameOnly?: boolean;// 仅帧内
 }
 
-// 获取视频文件第一帧
-import AppConfig from "../conf/AppConfig";
-import Storage from "../lib/Storage";
-import {Ffmpeg, FFPLAY_BIN_PATH} from "./ffmpeg";
-import {FIRST_FRAME_ERROR, PLAYER_ERROR, TRANSFORM_ERROR} from "../const/Message";
-import {playBeep} from "../utils";
-
-const ffmpeg: Ffmpeg = window.require('fluent-ffmpeg');
-const fs = window.require('fs');
-const {ipcRenderer} = window.require('electron');
-const child_process = window.require('child_process');
+const ffmpeg: Ffmpeg = Global.requireNodeModule('fluent-ffmpeg');
+const fs = Global.requireNodeModule<typeof FS>('fs');
+const {ipcRenderer} = Global.requireNodeModule<typeof Electron>('electron');
+const child_process = Global.requireNodeModule<typeof ChildProcess>('child_process');
 
 /**
  * @method getVideoFirstFrame
@@ -81,15 +87,16 @@ const child_process = window.require('child_process');
  * @author ayuanlmo
  * @description 获取视频第一帧
  * **/
-const getVideoFirstFrame = (inputFilePath: string): Promise<string> => {
+export const getVideoFirstFrame = (inputFilePath: string): Promise<string> => {
     return new Promise((resolve, reject) => {
-        const ffmpeg: Ffmpeg = window.require('fluent-ffmpeg');
+        const ffmpeg: Ffmpeg = Global.requireNodeModule<Ffmpeg>('fluent-ffmpeg');
         const tmpPath: string = `${AppConfig.system.tempPath}${AppConfig.appName}`;
         const fileName: string = `lmo-tmp-${new Date().getTime()}.y.png`;
 
         // 可能会存在文件还未正常写入磁盘，导致的页面无显示问题
         // 所以这里放一个侦听器，让页面等待这个侦听器
-        fs.watch(`${tmpPath}/tmp`, (type: string, name: string) => {
+        // @ts-ignore
+        fs.watch(`${tmpPath}/tmp`, (type: name, name: string): void => {
             resolve(`${tmpPath}/tmp/${name}`);
         });
 
@@ -104,10 +111,11 @@ const getVideoFirstFrame = (inputFilePath: string): Promise<string> => {
                 ipcRenderer.send('SHOW-ERROR-MESSAGE-BOX', {
                     msg: FIRST_FRAME_ERROR(inputFilePath, e.toString())
                 });
+                Store.dispatch(pushLog(`[${inputFilePath}]:${e.toString()}`));
                 console.log('生成首帧图错误', e);
             }
 
-        }).on('error', function (e: any) {
+        }).on('error', function (e: any): void {
             reject({err: true, msg: e, file: inputFilePath});
         })
     })
@@ -119,7 +127,7 @@ const getVideoFirstFrame = (inputFilePath: string): Promise<string> => {
  * @returns {Promise<{size:number,duration:number,width:number,height:number,format:[],streams:<FfmpegStreamsTypes>>}>}
  * @description 获取文件信息
  * **/
-const getFileInfo = (filePath: string): Promise<GetFileInfoTypes> => {
+export const getFileInfo = (filePath: string): Promise<GetFileInfoTypes> => {
     return new Promise((resolve, reject) => {
         ffmpeg.ffprobe(filePath, (e: any, data: any): void => {
             if (e) {
@@ -131,29 +139,29 @@ const getFileInfo = (filePath: string): Promise<GetFileInfoTypes> => {
                     width: data.streams[0].width,
                     height: data.streams[0].height,
                     format: data.format.format_name,
-                    streams: data.streams[0]
+                    streams: data.streams
                 });
             }
         });
     });
 }
 
-
 /**
  * @method transformVideo
  * @param {Object} data - 视频基本信息(通过getFileInfo 获取)
  * @param {Function} callback - 转换进度回调
+ * @param {String} opt_path - 输出路径
  * @author ayuanlmo
  * @returns {Promise<string>}
  * @description 转换视频
  * **/
-const transformVideo = (data: any, callback: Function): Promise<any> => {
+export const transformVideo = (data: any, callback: Function, opt_path: string): Promise<any> => {
     const inputFile: string = data.path;
     const libs: string = data.output.libs;
-    const outputPath: string = Storage.Get('output_path') as string;
+    const outputPath: string = opt_path;
 
     return new Promise((resolve, reject) => {
-        const optFile: string = outputPath + "\\" + data.name.split('.')[0] + '.' + data.output.type;
+        const optFile: string = outputPath + "\\" + `lmo-opt-${new Date().getTime()}` + '.' + data.output.type.toLowerCase();
         const duration: number = parseFloat(data.duration);
         let current: number = 0;
         const _ffmpeg = ffmpeg(inputFile);
@@ -170,9 +178,10 @@ const transformVideo = (data: any, callback: Function): Promise<any> => {
             });
             resolve(optFile);
         })
-        _ffmpeg.on('progress', (progress: any) => {
+        _ffmpeg.on('progress', (progress: any): void => {
+            Store.dispatch(pushLog(`[${inputFile}]:${progress.currentFps} / ${progress.frames} / ${progress.timemark}`));
             const currentDuration: number = duration * progress.percent / 100;  // 已转换的视频时长（单位：秒）
-            const _ = Number(((currentDuration / duration) * 100).toFixed());
+            const _: number = Number(((currentDuration / duration) * 100).toFixed());
 
             if (current !== _) {
                 current = _;
@@ -182,8 +191,9 @@ const transformVideo = (data: any, callback: Function): Promise<any> => {
                 });
             }
         })
-        _ffmpeg.on('error', function (err: any) {
+        _ffmpeg.on('error', function (err: any): void {
             reject('error');
+            Store.dispatch(pushLog(`[${inputFile}]:${err}`))
             ipcRenderer.send('SHOW-ERROR-MESSAGE-BOX', {
                 msg: TRANSFORM_ERROR(inputFile, err)
             });
@@ -196,7 +206,7 @@ const transformVideo = (data: any, callback: Function): Promise<any> => {
  * @param {string} path - 文件路径
  * @description 使用ffplay播放
  * **/
-const ffplayer = (path: string): void => {
+export const ffplayer = (path: string): void => {
     const cmd: string = `${FFPLAY_BIN_PATH}  -y 800 "${path}"`;
 
     child_process.exec(cmd, (err: any): void => {
@@ -207,8 +217,13 @@ const ffplayer = (path: string): void => {
     });
 }
 
-// 获取可用的编解码器
-const getAvailableCodecs = (): Promise<Array<Codes>> => {
+/**
+ * @method getAvailableCodecs
+ * @author ayuanlmo
+ * @description 获取可用的编解码器
+ * @return Promise<Array<Codes>>
+ * **/
+export const getAvailableCodecs = (): Promise<Array<Codes>> => {
     return new Promise((resolve): void => {
         ffmpeg.getAvailableCodecs(function (err: any, codes: any) {
             const _: Array<Codes> = [];
@@ -227,12 +242,3 @@ const getAvailableCodecs = (): Promise<Array<Codes>> => {
         })
     });
 }
-
-export {FfmpegStreamsTypes};
-export {GetFileInfoTypes};
-export {Codes};
-export {getVideoFirstFrame};
-export {getFileInfo};
-export {transformVideo};
-export {ffplayer};
-export {getAvailableCodecs};

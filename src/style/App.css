@@ -25,6 +25,10 @@ textarea {
     resize: none;
 }
 
+button {
+    transition: all .2s;
+}
+
 .lmo-app-text-ellipsis {
     white-space: nowrap;
     overflow: hidden;
@@ -56,6 +60,8 @@ textarea {
     font-weight: 500;
     line-height: normal;
     margin-bottom: 28px;
+    cursor: pointer;
+    transition: all .2s;
 }
 
 .lmo-app-left-menu-item-active {
@@ -115,6 +121,12 @@ textarea {
     left: calc(((100vw - 260px) - 540px) / 2);
     top: calc(((100vh - 40px) - 360px) / 2);
     padding: 155px 118px;
+    transition: all .2s;
+}
+
+.lmo-app-content-drop-file:hover {
+    border: 1px dashed #229EED;
+    transform: scale(1.01);
 }
 
 .lmo-app-content-drop-file-select-file-icon {
@@ -163,6 +175,7 @@ textarea {
 .lmo-app-resource-item-content-in-info {
     width: 45%;
     height: 130px;
+    overflow: hidden;
 }
 
 .lmo-app-resource-item-content-in-info img {
@@ -172,12 +185,15 @@ textarea {
 }
 
 .lmo-app-resource-item-content-in-info-bg {
-    height: 100%;
+    width: 230px;
+    height: 130px;
     position: absolute;
     background: #00000066;
     top: 0;
-    z-index: 9;
+    z-index: 4;
     border-radius: 10px;
+    transition: all .2s;
+    transform: translate3d(-230px, 0px, 0px);
 }
 
 .lmo-app-resource-item-content-in-info-box {
@@ -244,6 +260,7 @@ textarea {
 .lmo-app-setting-item {
     display: flex;
     margin-bottom: 20px;
+    justify-content: space-between;
 }
 
 .lmo-app-setting-item-content {
@@ -268,12 +285,21 @@ textarea {
     line-height: 36px;
 }
 
+.lmo-app-setting-item-content select {
+    height: 36px;
+    width: 100%;
+}
+
+.lmo-app-setting-item-content select option {
+    padding: 4px 0;
+}
+
 .lmo-app-setting-item-label {
     margin-top: 8px;
 }
 
 .lmo-app-setting-item input {
-    width: 100%;
+    width: 88%;
     background: #343337;
     border: 0;
     height: 36px;
@@ -284,7 +310,40 @@ textarea {
 .lmo-app-setting-item-tips {
     width: 362px;
     color: #737373;
-    font-size: 12px;
+    font-size: 10px;
     margin-left: 16px;
     line-height: 30px;
+}
+
+.lmo-app-start-all {
+    position: absolute;
+    width: 20px;
+    height: 72px;
+    background: #409feea3;
+    z-index: 2;
+    right: 0;
+    bottom: 6rem;
+    font-size: 14px;
+    transition: all .2s;
+    color: #FFFFFF;
+    overflow: hidden;
+    border-bottom-left-radius: 4px;
+    border-top-left-radius: 4px;
+    writing-mode: vertical-lr;
+    text-align: center;
+    padding-left: 4px;
+}
+
+.lmo-app-start-all:hover {
+    background-color: #409fee;
+    box-shadow: #ffffff2b 0px 10px 12px;
+    width: 100px;
+    writing-mode: rl-tb;
+    text-align: center;
+    line-height: 72px;
+    padding-left: 0;
+}
+
+.lmo-app-start-all span {
+    line-height: 82px;
 }

@@ -17,4 +17,7 @@ export const FIRST_FRAME_ERROR = (filePath: string, msg: string): string => {
 export const NoSuchFileDirectory = (path: string, msg: string = ''): string => {
     return `输出路径：[${path}]不存在。` + msg;
 }
-
+export const NoVlcPlayerPath: string = '请设置VLC Media Player路径';
+export const VlcPlayerPathDoesNotExist: string = 'VLC Media Player貌似不存在，请检查设置';
+export const NoWindowsMediaPlayerPath: string = '请设置Windows Media Player路径';
+export const WindowsMediaPlayerPathDoesNotExist: string = 'Windows Media Player貌似不存在，请检查设置';

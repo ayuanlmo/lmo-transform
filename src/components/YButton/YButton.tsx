@@ -31,7 +31,7 @@ function YButton(props: YButtonProps): React.JSX.Element {
             <YExtendTemplate show={icon !== ''}>
                 <img src={icon} alt=""/>
             </YExtendTemplate>
-            {children}
+            <span>{children}</span>
         </button>
     )
 }

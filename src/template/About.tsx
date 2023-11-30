@@ -4,9 +4,12 @@ import Dialog from "../components/Dialog";
 import AppConfig from "../conf/AppConfig";
 import {runCommand} from "../utils";
 import {FFMPEG_BIN_PATH} from "../bin/ffmpeg";
+import * as Process from 'process';
+import * as OS from 'os';
+import Global from "../lib/Global";
 
-const process = window.require('process');
-const os = window.require('os');
+const process: NodeJS.Process = Global.requireNodeModule<typeof Process>('process');
+const os = Global.requireNodeModule<typeof OS>('os');
 
 export interface AboutProps {
     show: boolean;
@@ -18,7 +21,6 @@ function About(props: AboutProps): React.JSX.Element {
     const [showFfmpegDecoders, setShowFfmpegDecoders] = useState<boolean>(true);
     const [showLicenseView, setShowLicenseView] = useState<boolean>(false);
     const [licenseText, setLicenseText] = useState<string>('');
-
 
     useEffect((): void => {
         if (!show) {
@@ -45,7 +47,7 @@ function About(props: AboutProps): React.JSX.Element {
             show={show}
             width={800}
             height={500}
-            title={'About'}
+            title={'关于'}
             showCancel={false}
             confirmLabel={'关闭'}
             preventKeyboardEvent={showLicenseView}
@@ -72,7 +74,7 @@ function About(props: AboutProps): React.JSX.Element {
                         <br/>
                         Chromium version: [ {process.versions.chrome} ]
                         <br/>
-                        OS: [ {os.userInfo().username} / {os.hostname()} ]
+                        OS: [ {os.type()} / {os.userInfo().username} / {os.hostname()} ]
                     </div>
                 </div>
                 {
@@ -93,20 +95,31 @@ function About(props: AboutProps): React.JSX.Element {
                             onConfirm={(): void => {
                                 setShowLicenseView(false)
                             }}
-                            height={550}
+                            height={580}
                             index={9}
                             show={showLicenseView}
                             confirmLabel={'关闭'}
-                            title={'元件许可'}
+                            title={`${AppConfig.appName}使用的第三方软件包`}
                             titleAlign={'start'}
                         >
-                            <textarea
-                                readOnly
-                                cols={70}
-                                rows={32}
-                                defaultValue={licenseText}
-                                className={'lmo_color_white'}
-                            />
+                            <div>
+                                <textarea
+                                    readOnly
+                                    cols={70}
+                                    rows={32}
+                                    defaultValue={licenseText}
+                                    className={'lmo_color_white'}
+                                />
+                                <div
+                                    className={'lmo_position_relative'}
+                                    style={{
+                                        color: '#999999',
+                                        fontSize: '14px',
+                                        top: '8px'
+                                    }}>在此特别感谢以上开源软件/社区 ,
+                                    他们让{AppConfig.appName}得以实现
+                                </div>
+                            </div>
                         </Dialog> : <></>
                 }
                 <button
